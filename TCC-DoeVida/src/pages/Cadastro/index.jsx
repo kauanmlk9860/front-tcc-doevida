@@ -1,15 +1,25 @@
+import { useEffect } from 'react'
 import './style.css'
 import Logo_Branca from '../../assets/Logo_Branca.png'
+import Api from '../../services/api'
 
-function Inicio() {
+function Login() {
 
+  async function PostUser(){
+    await Api.post('/usuario')
+  }
+
+  useEffect(() => {
+
+  }, []) 
+ 
   return (
   
     <div className='container'>
       <div class="bola-cortada"></div>
-      <img src={Logo_Branca} />
+      <img id='Logo_Branca' src={Logo_Branca} />
       <form id='formulario_doador'>
-        <h1>DOEVIDA</h1>
+        <h1>Sou Doador</h1>
         <input id='name_doador' placeholder='Nome Completo' name='Nome completo' type="text" />
         <input id='email_doador' placeholder='E-mail' name='E-mail' type="email" />
         <input id='senha_doador' placeholder='Senha' name='Digite sua Senha' type="text" />
@@ -21,4 +31,4 @@ function Inicio() {
   )
 }
 
-export default Inicio
+export default Login
