@@ -12,6 +12,16 @@ h1 {
   font-size: 56px;
 }
 
+.bola-cortada {
+  width: 40vw;
+  height: 40vw;
+  background-color: #990410;
+  border-radius: 50%;
+  position: fixed;
+  top: -15vw;
+  left: -15vw;
+}
+
 form {
   display: flex;
   flex-direction: column;
@@ -28,6 +38,11 @@ form {
     border-radius: 5px;
     border: none;
     height: 50px;
+    padding: 10px;
+  }
+  & input::placeholder {
+    color: #fff;
+    border: #fff;
   }
   
   & button {
