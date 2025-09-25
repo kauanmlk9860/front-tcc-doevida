@@ -3,7 +3,7 @@ import './style.css'
 import Logo_Branca from '../../assets/Logo_Branca.png'
 import Api from '../../services/api'
 
-function Login() {
+function Cadastro() {
 
   async function PostUser(){
     await Api.post('/usuario')
@@ -16,19 +16,21 @@ function Login() {
   return (
   
     <div className='container'>
-      <div class="bola-cortada"></div>
+      <div class='bola-cortada'></div>
       <img id='Logo_Branca' src={Logo_Branca} />
+      <h1>Sou Doador</h1>
       <form id='formulario_doador'>
-        <h1>Sou Doador</h1>
-        <input id='name_doador' placeholder='Nome Completo' name='Nome completo' type="text" />
-        <input id='email_doador' placeholder='E-mail' name='E-mail' type="email" />
-        <input id='senha_doador' placeholder='Senha' name='Digite sua Senha' type="text" />
-        <input id='confirmar_doador' placeholder='Confirme sua Senha' name='Confirme sua Senha' type="text" />
-        <button id='criar_doador' type='button'>Criar Conta</button>
-        <button id='tem_conta' type='button'>Já tem uma conta?</button>
+        <input id='nome_cadastro' placeholder='Nome Completo' name='Nome' type="text" />
+        <input id='email_cadastro' placeholder='Digite seu E-mail' name='E-mail' type="email" />
+        <input id='senha_cadastro' placeholder='Digite sua Senha' name='Senha' type="text" />
+        <input id='confirmar_senha' placeholder='Confirme sua Senha' name='Senha' type="text" />
       </form>
+      <div className='botoes'>
+        <button id='criar_cadastro' type='button'>Criar Conta</button>
+        <button id='tem_conta' type='button'>Já tem uma conta?</button>
+      </div>
     </div>
   )
 }
 
-export default Login
+export default Cadastro

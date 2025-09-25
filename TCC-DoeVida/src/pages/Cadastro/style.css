@@ -8,14 +8,15 @@
   img {
     /* position: absolute; */
     padding-top: 50px;
-      width: 230px;
-    }
+    width: 230px;
+  }
   
   h1 {
     display: flex;
     align-self: center;
     color: #990410;
     font-size: 100px;
+    margin-bottom: 40px;
   }
   
   .bola-cortada {
@@ -37,7 +38,7 @@
     max-width: 50%;
     width: 600px;
     margin-bottom: 20px;
-  
+    margin-top: 40px;
     & input {
       color: #fff;
       background-color: #990410;
@@ -51,7 +52,35 @@
       color: #fff;
       border: #fff;
     }
-    
+    & #email_login {
+      background-color: #990410;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/561/561127.png');
+      background-repeat: no-repeat;
+      background-position: 15px center;
+      background-size: 24px;
+      padding-left: 50px;
+    }
+  
+    & #senha_login {
+      background-color: #990410;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/3064/3064155.png');
+      background-repeat: no-repeat;
+      background-position: 15px center;
+      background-size: 24px;
+      padding-left: 50px;
+    }
+  }
+  
+  .botoes {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    padding: 10px;
+    padding-top:100px;
+    border-radius: 20px;
+    max-width: 50%;
+    width: 600px;
+    margin-bottom: 20px;
     & button {
       color: #fff;
       background-color: #990410;
@@ -69,4 +98,3 @@
       opacity: 0.8;
     }
   }
-  
