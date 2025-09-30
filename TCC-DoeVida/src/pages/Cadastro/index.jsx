@@ -1,60 +1,67 @@
+// Cadastro.jsx
 import { useEffect, useRef } from 'react'
 import './style.css'
-import Logo_Branca from '../../assets/Logo_Branca.png'
+import logoBranca from '../../assets/Logo_Branca.png'
 import Api from '../../services/api'
 
 function Cadastro() {
+  const nomeRef = useRef(null)
+  const emailRef = useRef(null)
+  const senhaRef = useRef(null)
+  const confirmarSenhaRef = useRef(null)
+  const cpfRef = useRef(null)
+  const cepRef = useRef(null)
+  const numeroRef = useRef(null)
+  const dataNascimentoRef = useRef(null)
+  const tipoSanguineoRef = useRef(null)
+  const fotoPerfilRef = useRef(null)
+  const sexoRef = useRef(null)
 
-  const inputNome = useRef()
-  const inputEmail = useRef()
-  const inputSenha = useRef()
-  // const inputConfirmarSenha = useRef()
-  const inputCpf = useRef()
-  const inputCep = useRef()
-  const inputNumero = useRef()
-  const inputDataNascimento = useRef()
-  const inputTipoSanguineo = useRef()
-  const inputFoto = useRef()
-  const inputSexo = useRef()
-
-  async function PostUser(){
-    // await Api.post('/usuario')
-    console.log(inputNome)
+  async function postUser() {
+    // await Api.post('/usuario', {...})
+    console.log({
+      nome: nomeRef.current?.value,
+      email: emailRef.current?.value,
+      senha: senhaRef.current?.value,
+      confirmarSenha: confirmarSenhaRef.current?.value,
+      cpf: cpfRef.current?.value,
+      cep: cepRef.current?.value,
+      numero: numeroRef.current?.value,
+      dataNascimento: dataNascimentoRef.current?.value,
+      tipoSanguineo: tipoSanguineoRef.current?.value,
+      fotoPerfil: fotoPerfilRef.current?.value,
+      sexo: sexoRef.current?.value
+    })
   }
 
-  useEffect(() => {
+  useEffect(() => {}, [])
 
-  }, []) 
- 
   return (
-  
-    <div className='container'>
+    <div className="cadastro">
+      <div className="cadastro__decor-circle" />
 
-      <div class='bola-cortada'></div>
+      <img className="cadastro__logo" src={logoBranca} alt="DoeVida" />
 
-      <img id='Logo_Branca' src={Logo_Branca} />
+      <h1 className="cadastro__title">Sou Doador</h1>
 
-      <h1>Sou Doador</h1>
-
-      <form id='formulario_doador'>
-        <input id='nome_cadastro'            placeholder='Nome Completo'                 name='Nome'           type="text"   ref={inputNome}/>
-        <input id='email_cadastro'           placeholder='Digite seu E-mail'             name='E-mail'         type="email"  ref={inputEmail}/>
-        <input id='senha_cadastro'           placeholder='Digite sua Senha'              name='Senha'          type="text"   ref={inputSenha}/>
-        <input id='confirmar_senha'          placeholder='Confirme sua Senha'            name='Senha'          type="text"   ref={inputSenha}/>
-        <input id='cpf_cadastro'             placeholder='Digite seu CPF'                name='Cpf'            type="text"   ref={inputCpf}/>
-        <input id='cep_cadastro'             placeholder='Digite seu CEP'                name='Cep'            type="text"   ref={inputCep}/>
-        <input id='numero_cadastro'          placeholder='Digite seu Numero'             name='Cpf'            type="text"   ref={inputNumero}/>
-        <input id='data_nasciemnto_cadastro' placeholder='Digite sua Data de Nascimento' name='Numero'         type="text"   ref={inputDataNascimento}/>
-        <input id='tipo_sanguineo_cadastro'  placeholder='Escolha seu Tipo Sanguineo'    name='Tipo Sanguineo' type="text"   ref={inputTipoSanguineo}/>
-        <input id='foto_cadastro'            placeholder='Escolha sua Foto'              name='Foto de perfil' type="text"   ref={inputFoto}/>
-        <input id='sexo_cadastro'            placeholder='Escolha seu Sexo'              name='Sexo'           type="text"   ref={inputSexo}/>
+      <form className="cadastro__form" autoComplete="off">
+        <input className="input input--name" placeholder="Nome Completo" name="nome" type="text" ref={nomeRef} />
+        <input className="input input--email" placeholder="Digite seu E-mail" name="email" type="email" ref={emailRef} />
+        <input className="input input--password" placeholder="Digite sua Senha" name="senha" type="password" ref={senhaRef} />
+        <input className="input input--password-confirm" placeholder="Confirme sua Senha" name="confirmar-senha" type="password" ref={confirmarSenhaRef} />
+        <input className="input input--cpf" placeholder="Digite seu CPF" name="cpf" type="text" ref={cpfRef} />
+        <input className="input input--cep" placeholder="Digite seu CEP" name="cep" type="text" ref={cepRef} />
+        <input className="input input--number" placeholder="Digite seu Número" name="numero" type="text" ref={numeroRef} />
+        <input className="input input--date" placeholder="Data de Nascimento" name="data-nascimento" type="date" ref={dataNascimentoRef} />
+        <input className="input input--blood" placeholder="Tipo Sanguíneo" name="tipo-sanguineo" type="text" ref={tipoSanguineoRef} />
+        <input className="input input--photo" placeholder="Foto de Perfil" name="foto-perfil" type="" ref={fotoPerfilRef} />
+        <input className="input input--sex" placeholder="Sexo" name="sexo" type="text" ref={sexoRef} />
       </form>
 
-      <div className='botoes'>
-        <button id='criar_cadastro' type='button' onClick={PostUser}>Criar Conta</button>
-        <button id='tem_conta' type='button'>Já tem uma conta?</button>
+      <div className="cadastro__actions">
+        <button className="btn-primary" type="button" onClick={postUser}>Criar Conta</button>
+        <button className="btn-link" type="button">Já tem uma conta?</button>
       </div>
-
     </div>
   )
 }
