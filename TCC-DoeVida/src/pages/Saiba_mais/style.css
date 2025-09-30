@@ -1,0 +1,91 @@
+.saiba {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+  }
+  
+  .saiba__header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+    display: flex;
+
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px clamp(16px, 4vw, 48px);
+    border-bottom: 1px solid rgba(0,0,0,.06);
+  }
+  
+  .saiba__logo { width: 130px; height: auto; display: flex; }
+  
+  .saiba__actions { display: flex; gap: 12px; }
+  
+  .btn {
+    border: none;
+    border-radius: 10px;
+    height: 44px;
+    padding: 0 16px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: opacity .2s ease;
+    background: transparent;
+  }
+  .btn--primary { background: #990410; color: #fff; }
+  .btn--ghost   { background: transparent; color: #111; font-weight: 700; }
+  .btn:hover    { opacity: .9; }
+  
+  .saiba__main {
+    position: relative;
+    flex: 1;
+    padding: clamp(24px, 5vw, 56px) 0;
+  }
+  
+  .hero {
+    position: relative;        
+    z-index: 1;
+    max-width: 1120px;
+    margin-left: clamp(16px, 6vw, 80px);
+    margin-right: clamp(16px, 6vw, 80px);
+  }
+  
+  .hero__title {
+    font-size: clamp(48px, 10vw, 96px);
+    line-height: 1;
+    margin: 8px 0 18px;
+    color: #111;
+    font-weight: 800;
+  }
+  
+  .hero__image {
+    display: block;
+    width: min(720px, 80%);
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto 16px;
+  }
+  
+  .hero__text {
+    max-width: 1100px;
+    font-size: clamp(16px, 2.2vw, 20px);
+    line-height: 1.6;
+    color: #111;
+    font-weight: 600;
+    margin: 8px 0 0;
+  }
+  
+  .decor--bubbles {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 72% 22%, rgba(230, 69, 77, .85) 0 70px,  transparent 71px) no-repeat,
+      radial-gradient(circle at 86% 42%, rgba(240, 100,110, .60) 0 95px,  transparent 96px) no-repeat,
+      radial-gradient(circle at 68% 68%, rgba(199,  32, 41, .80) 0 55px,  transparent 56px) no-repeat,
+      radial-gradient(circle at 58% 86%, rgba(230,  69, 77, .35) 0 85px,  transparent 86px) no-repeat,
+      radial-gradient(circle at 90% 78%, rgba(240, 100,110, .80) 0 65px,  transparent 66px) no-repeat;
+  }
+  
