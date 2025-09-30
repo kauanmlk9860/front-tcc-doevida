@@ -7,6 +7,7 @@ import RecuperarSenha from './pages/Recuperar_senha'
 import SaibaMais from './pages/Saiba_mais'
 import Recuperar_senha from './pages/Recuperar_senha'
 import Redefinir_senha from './pages/Redefinir_senha'
+import Home from './pages/Home'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
@@ -21,6 +22,6 @@ createRoot(document.getElementById('root')).render(
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter> */}
-    <SaibaMais/>
+    <Home/>
   </StrictMode>
 )
