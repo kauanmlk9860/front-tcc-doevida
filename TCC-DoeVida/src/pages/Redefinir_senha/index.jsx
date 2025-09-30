@@ -6,22 +6,43 @@ import Api from '../../services/api'
 function Redefinir_senha() {
 
   useEffect(() => {
-
   }, []) 
  
   return (
-  
     <div className='container'>
-      <div class='bola-cortada'></div>
-      <img id='Logo_Branca' src={Logo_Branca} />
+      <div className='bola-cortada'></div>
+      
+      <img 
+        id='Logo_Branca' 
+        src={Logo_Branca} 
+        alt="Logo DoeVida" 
+      />
+      
       <h1>Redefinir Senha</h1>
+
       <form id='caixa-recuperacao'>
-        <input id='email_recupecao' placeholder='Digite sua senha' name='E-mail' type="email" />
-        <input id='email_recupecao' placeholder='Digite seu E-mail ou Usuário' name='E-mail' type="email" />
-        
+        <div className="input-container">
+          <input 
+            id='senha_nova' 
+            placeholder='Digite sua nova senha' 
+            name='senha_nova' 
+            type='password' 
+          />
+        </div>
+        <div className="input-container">
+          <input 
+            id='senha_confirmar' 
+            placeholder='Confirme sua nova senha' 
+            name='senha_confirmar' 
+            type='password' 
+          />
+        </div>
       </form>
+
       <div className='botoes'>
-        <button id='concluir-recuperacao' type='button'>concluir nova senha</button>
+        <button id='concluir-recuperacao' type='button'>
+          Concluir nova senha
+        </button>
       </div>
     </div>
   )
