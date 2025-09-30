@@ -7,10 +7,6 @@ import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-<<<<<<< HEAD
     <Cadastro />
-=======
-    <Recuperar_senha/>
->>>>>>> fe168d4c8cab791e5b009bcf42f3160c8c0cbfc6
   </StrictMode>,
 )
