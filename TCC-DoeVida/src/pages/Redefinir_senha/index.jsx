@@ -3,7 +3,7 @@ import './style.css'
 import Logo_Branca from '../../assets/Logo_Branca.png'
 import Api from '../../services/api'
 
-function Recuperar_senha() {
+function Redefinir_senha() {
 
   useEffect(() => {
 
@@ -14,15 +14,17 @@ function Recuperar_senha() {
     <div className='container'>
       <div class='bola-cortada'></div>
       <img id='Logo_Branca' src={Logo_Branca} />
-      <h1>Recuperar Senha</h1>
+      <h1>Redefinir Senha</h1>
       <form id='caixa-recuperacao'>
+        <input id='email_recupecao' placeholder='Digite sua senha' name='E-mail' type="email" />
         <input id='email_recupecao' placeholder='Digite seu E-mail ou Usuário' name='E-mail' type="email" />
+        
       </form>
       <div className='botoes'>
-        <button id='concluir-recuperacao' type='button'>concluir</button>
+        <button id='concluir-recuperacao' type='button'>concluir nova senha</button>
       </div>
     </div>
   )
 }
 
-export default Recuperar_senha
+export default Redefinir_senha
