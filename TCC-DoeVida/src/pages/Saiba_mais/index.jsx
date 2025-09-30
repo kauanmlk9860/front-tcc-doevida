@@ -52,7 +52,7 @@ function Saiba_mais() {
             <strong>O projeto DOEVIDA nasceu da vontade de transformar solidariedade em impacto real.</strong>{" "}
             Percebemos que muitas pessoas têm o desejo de doar sangue, mas nem sempre sabem como, quando ou onde. Foi
             assim que criamos essa iniciativa para aproximar doadores e hemocentros, tornando o processo mais acessível,
-            humano e eficiente. Descreva o que deseja adicionar, remover ou substituir...
+            humano e eficiente. 
           </p>
         </div>
       </main>
