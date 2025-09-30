@@ -1,31 +1,37 @@
-import { useEffect } from 'react'
+import { useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './style.css'
-import Logo_Branca from '../../assets/Logo_Branca.png'
+import logoBranca from '../../assets/Logo_Branca.png'
 import Api from '../../services/api'
 
-function Login() {
+export default function Login() {
+  const navigate = useNavigate()
+  const emailRef = useRef(null)
+  const senhaRef = useRef(null)
 
-  useEffect(() => {
+  const handleLogin = () => {
+    console.log({
+      email: emailRef.current?.value,
+      senha: senhaRef.current?.value
+    })
+  }
 
-  }, []) 
- 
   return (
-  
-    <div className='container'>
-      <div class='bola-cortada'></div>
-      <img id='Logo_Branca' src={Logo_Branca} />
-      <h1>Sou Doador</h1>
-      <form id='formulario_doador'>
-        <input id='email_login' placeholder='Digite seu E-mail' name='E-mail' type="email" />
-        <input id='senha_login' placeholder='Digite sua Senha' name='Senha' type="text" />
-        <button id='esqueci_login' type='button'> Esqueci minha Senha?</button>
+    <div className="login">
+      <div className="login__decor-circle" />
+      <img className="login__logo" src={logoBranca} alt="DoeVida" />
+      <h1 className="login__title">Entrar</h1>
+
+      <form className="login__form" autoComplete="off">
+        <input className="input input--email" placeholder="E-mail" type="email" ref={emailRef} />
+        <input className="input input--password" placeholder="Senha" type="password" ref={senhaRef} />
+        <button type="button" className="login__forgot" onClick={() => navigate('/recuperar-senha')}>Esqueci minha senha</button>
       </form>
-      <div className='botoes'>
-        <button id='entrar_login' type='button'>Entrar</button>
-        <button id='sem_conta' type='button'>Não tem uma conta?</button>
+
+      <div className="login__actions">
+        <button className="btn btn--primary" type="button" onClick={handleLogin}>Entrar</button>
+        <button className="btn btn--link" type="button" onClick={() => navigate('/Cadastro')}>Criar conta?</button>
       </div>
     </div>
   )
 }
-
-export default Login

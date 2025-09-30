@@ -1,10 +1,12 @@
 // Cadastro.jsx
 import { useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
 import Api from '../../services/api'
 
 function Cadastro() {
+  const navigate = useNavigate()
   const nomeRef = useRef(null)
   const emailRef = useRef(null)
   const senhaRef = useRef(null)
@@ -18,7 +20,6 @@ function Cadastro() {
   const sexoRef = useRef(null)
 
   async function postUser() {
-    // await Api.post('/usuario', {...})
     console.log({
       nome: nomeRef.current?.value,
       email: emailRef.current?.value,
@@ -39,9 +40,7 @@ function Cadastro() {
   return (
     <div className="cadastro">
       <div className="cadastro__decor-circle" />
-
       <img className="cadastro__logo" src={logoBranca} alt="DoeVida" />
-
       <h1 className="cadastro__title">Sou Doador</h1>
 
       <form className="cadastro__form" autoComplete="off">
@@ -54,13 +53,13 @@ function Cadastro() {
         <input className="input input--number" placeholder="Digite seu Número" name="numero" type="text" ref={numeroRef} />
         <input className="input input--date" placeholder="Data de Nascimento" name="data-nascimento" type="date" ref={dataNascimentoRef} />
         <input className="input input--blood" placeholder="Tipo Sanguíneo" name="tipo-sanguineo" type="text" ref={tipoSanguineoRef} />
-        <input className="input input--photo" placeholder="Foto de Perfil" name="foto-perfil" type="" ref={fotoPerfilRef} />
+        <input className="input input--photo" placeholder="Foto de Perfil" name="foto-perfil" type="url" ref={fotoPerfilRef} />
         <input className="input input--sex" placeholder="Sexo" name="sexo" type="text" ref={sexoRef} />
       </form>
 
       <div className="cadastro__actions">
-        <button className="btn-primary" type="button" onClick={postUser}>Criar Conta</button>
-        <button className="btn-link" type="button">Já tem uma conta?</button>
+        <button className="btn btn--primary" type="button" onClick={postUser}>Criar Conta</button>
+        <button className="btn btn--link" type="button" onClick={() => navigate('/login')}>Já tem uma conta?</button>
       </div>
     </div>
   )

@@ -1,25 +1,25 @@
-.container {
+/* -------- LOGIN (BEM igual ao Cadastro) -------- */
+
+.login {
   display: flex;
   align-items: center;
   flex-direction: column;
   padding-top: 30px;
 }
 
-img {
-  /* position: absolute; */
-  padding-top: 50px;
-  width: 230px;
+.login__logo {
+  padding-top: 30px;
+  width: 150px;
 }
 
-h1 {
-  display: flex;
+.login__title {
   align-self: center;
   color: #990410;
-  font-size: 100px;
-  margin-bottom: 40px;
+  font-size: 50px;
+  margin-bottom: 20px;
 }
 
-.bola-cortada {
+.login__decor-circle {
   width: 35vw;
   height: 35vw;
   background-color: #990410;
@@ -29,84 +29,58 @@ h1 {
   left: -15vw;
 }
 
-form {
+.login__form {
   display: flex;
   flex-direction: column;
-  gap: 40px;
-  padding:10px;
+  gap: 20px;
+  padding: 10px;
   border-radius: 20px;
-  max-width: 50%;
-  width: 600px;
-  margin-bottom: 20px;
-  margin-top: 40px;
-  & input {
-    color: #fff;
-    background-color: #990410;
-    border-radius: 5px;
-    border: none;
-    height: 80px;
-    padding: 10px;
-  }
-  & input::placeholder {
-    font-size: 17px;
-    color: #fff;
-    border: #fff;
-  }
-  & #email_login {
-    background-color: #990410;
-    background-image: url('https://cdn-icons-png.flaticon.com/512/561/561127.png');
-    background-repeat: no-repeat;
-    background-position: 15px center;
-    background-size: 24px;
-    padding-left: 50px;
-  }
-  & #senha_login {
-    background-color: #990410;
-    background-image: url('https://cdn-icons-png.flaticon.com/512/3064/3064155.png');
-    background-repeat: no-repeat;
-    background-position: 15px center;
-    background-size: 24px;
-    padding-left: 50px;
-  }
-  & button {
-    color: #990410;
-    background-color: transparent;
-    border-radius: 10px;
-    height: 20px;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    align-self: flex-end;
-  }
-  & button:hover {
-    opacity: 0.8;
-  }
+  max-width: 600px;
+  width: 100%;
+  margin: 20px 0 10px;
 }
 
-.botoes {
+
+/* ícones (iguais ao Cadastro) */
+.input[class*="input--"] {
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-size: 24px;
+}
+
+.input--email {
+  background-image: url('https://cdn-icons-png.flaticon.com/512/561/561127.png');
+}
+
+.input--password {
+  background-image: url('https://cdn-icons-png.flaticon.com/512/3064/3064155.png');
+}
+
+/* link "esqueci a senha" dentro do form */
+.login__forgot {
+  align-self: flex-end;
+  color: #990410;
+  background: transparent;
+  border: none;
+  height: auto;
+  padding: 0;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login__forgot:hover {
+  opacity: 0.8;
+}
+
+/* Ações (botões principais) */
+.login__actions {
   display: flex;
   flex-direction: column;
-  gap: 0px;
+  gap: 8px;
   padding: 10px;
-  padding-top:100px;
   border-radius: 20px;
-  max-width: 50%;
-  width: 600px;
-  margin-bottom: 20px;
-  & button {
-    color: #fff;
-    background-color: #990410;
-    border-radius: 10px;
-    height: 80px;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-  }
-  & #sem_conta {
-    color: #990410;
-    background-color: transparent;
-  }
-  & button:hover {
-    opacity: 0.8;
-  }
+  max-width: 600px;
+  width: 100%;
+  margin-bottom: 10px;
 }
+

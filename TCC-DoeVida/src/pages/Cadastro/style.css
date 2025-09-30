@@ -122,28 +122,31 @@
 }
 
 /* Botões */
-.btn-primary,
 .btn {
-  color: #fff;
-  background-color: #990410;
+  border: none;
   border-radius: 10px;
   height: 50px;
-  border: none;
   font-size: 18px;
   cursor: pointer;
+  padding: 0 16px;
+  background: transparent;   /* <- base SEM fundo */
+  color: inherit;            /* <- cor herdada */
+  transition: opacity .2s ease;
 }
 
-.btn-link {
+.btn--primary {
+  background-color: #990410; /* preenchido */
+  color: #fff;
+}
+
+.btn--link {
+  background: transparent;   /* transparente */
   color: #990410;
-  background-color: transparent;
-  border: none;
-  height: 44px;
-  font-size: 18px;
-  cursor: pointer;
 }
 
-.btn-primary:hover,
+/* Hover */
 .btn:hover,
-.btn-link:hover {
+.btn--link:hover,
+.btn--primary:hover {
   opacity: 0.9;
 }
