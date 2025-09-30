@@ -11,7 +11,6 @@ import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <SaibaMais/>
     {/* <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
@@ -22,5 +21,6 @@ createRoot(document.getElementById('root')).render(
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter> */}
+    <SaibaMais/>
   </StrictMode>
 )

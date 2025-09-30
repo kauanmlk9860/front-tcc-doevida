@@ -1,95 +1,119 @@
 .container {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    padding-top: 30px;
-  }
-  
-  img {
-    /* position: absolute; */
-    padding-top: 50px;
-    width: 230px;
-  }
-  
-  h1 {
-    display: flex;
-    align-self: center;
-    color: #990410;
-    font-size: 100px;
-    margin-bottom: 40px;
-  }
-  
-  .bola-cortada {
-    width: 35vw;
-    height: 35vw;
-    background-color: #990410;
-    border-radius: 50%;
-    position: fixed;
-    top: -15vw;
-    left: -15vw;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    padding:10px;
-    border-radius: 20px;
-    max-width: 50%;
-    width: 600px;
-    margin-bottom: 20px;
-    margin-top: 40px;
-    & input {
-      color: #fff;
-      background-color: #990410;
-      border-radius: 5px;
-      border: none;
-      height: 80px;
-      padding: 10px;
-    }
-    & input::placeholder {
-      font-size: 17px;
-      color: #fff;
-      border: #fff;
-    }
-  
-    & button {
-      color: #d69fa3;
-      background-color: transparent;
-      border-radius: 10px;
-      height: 20px;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      align-self: flex-end;
-    }
-    & button:hover {
-      opacity: 0.8;
-    }
-  }
-  
-  .botoes {
-    display: flex;
-    flex-direction: column;
-    gap: 0px;
-    padding: 10px;
-    padding-top:100px;
-    border-radius: 20px;
-    max-width: 50%;
-    width: 600px;
-    margin-bottom: 20px;
-    & button {
-      color: #fff;
-      background-color: #990410;
-      border-radius: 10px;
-      height: 80px;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      margin-top: 200px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 30px;
+}
 
-    }
-    & button:hover {
-      opacity: 0.8;
-    }
-  }
+img {
+  padding-top: 50px;
+  width: 230px;
+}
+
+h1 {
+  display: flex;
+  align-self: center;
+  color: #990410;
+  font-size: 100px;
+  margin-bottom: 40px;
+}
+
+.bola-cortada {
+  width: 35vw;
+  height: 35vw;
+  background-color: #990410;
+  border-radius: 50%;
+  position: fixed;
+  top: -15vw;
+  left: -15vw;
+}
+
+/* Formulário */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 10px;
+  border-radius: 20px;
+  max-width: 50%;
+  width: 600px;
+  margin-bottom: 20px;
+  margin-top: 40px;
+}
+
+/* Container do input com ícone */
+.input-container {
+  position: relative;
+  width: 100%;
+}
+
+.input-container input {
+  width: 100%;
+  padding: 10px 10px 10px 50px; /* espaço para o ícone */
+  height: 60px;
+  border-radius: 8px;
+  border: none;
+  background-color: #990410;
+  color: #fff;
+  font-size: 16px;
+
+  /* Ícone como background */
+  background-image: url('../../assets/image-removebg-preview.png');
+  background-repeat: no-repeat;
+  background-position: 12px center;
+  background-size: 30px 24px;
+}
+
+.input-container input::placeholder {
+  color: #fff;
+}
+
+form button {
+  color: #d69fa3;
+  background-color: transparent;
+  border-radius: 10px;
+  height: 20px;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+form button:hover {
+  opacity: 0.8;
+}
+
+/* Botões principais */
+.botoes {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  padding: 10px;
+  padding-top: 100px;
+  border-radius: 20px;
+  max-width: 50%;
+  width: 600px;
+  margin-bottom: 20px;
+}
+
+.botoes button {
+  color: #fff;
+  background-color: #990410;
+  border-radius: 10px;
+  height: 80px;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  margin-top: 200px;
+
+  /* Ícone dentro do botão */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* espaço entre texto e ícone */
+  padding-left: 20px;
+}
+
+.botoes button:hover {
+  opacity: 0.8;
+}
