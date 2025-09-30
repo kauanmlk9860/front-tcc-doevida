@@ -6,8 +6,8 @@ import Api from '../../services/api'
 
 export default function Login() {
   const navigate = useNavigate()
-  const emailRef = useRef(null)
-  const senhaRef = useRef(null)
+  const emailRef = useRef()
+  const senhaRef = useRef()
 
   const handleLogin = () => {
     console.log({
@@ -30,7 +30,7 @@ export default function Login() {
 
       <div className="login__actions">
         <button className="btn btn--primary" type="button" onClick={handleLogin}>Entrar</button>
-        <button className="btn btn--link" type="button" onClick={() => navigate('/Cadastro')}>Criar conta?</button>
+        <button className="btn btn--link" type="button" onClick={(handleLogin) => navigate('/Cadastro')}>Criar conta?</button>
       </div>
     </div>
   )
