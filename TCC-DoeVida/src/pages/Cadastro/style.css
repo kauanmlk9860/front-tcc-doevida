@@ -1,6 +1,3 @@
-/* style.css */
-
-/* Layout base */
 .cadastro {
   display: flex;
   align-items: center;
@@ -20,7 +17,6 @@
   margin-bottom: 20px;
 }
 
-/* Decoração */
 .cadastro__decor-circle {
   width: 35vw;
   height: 35vw;
@@ -31,7 +27,6 @@
   left: -15vw;
 }
 
-/* Formulário */
 .cadastro__form {
   display: flex;
   flex-direction: column;
@@ -43,7 +38,6 @@
   margin: 20px 0 10px;
 }
 
-/* Input base */
 .input {
   color: #fff;
   background-color: #990410;
@@ -60,14 +54,12 @@
   color: #fff;
 }
 
-/* Utilitário de ícone à esquerda */
 .input[class*="input--"] {
   background-repeat: no-repeat;
   background-position: 15px center;
   background-size: 24px;
 }
 
-/* Ícones (substitua URLs se quiser outro estilo) */
 .input--name {
   background-image: url('https://cdn-icons-png.flaticon.com/512/1077/1077114.png');
 }
@@ -109,7 +101,6 @@
   background-image: url(''); 
 }
 
-/* Ações */
 .cadastro__actions {
   display: flex;
   flex-direction: column;
@@ -121,7 +112,6 @@
   margin-bottom: 10px;
 }
 
-/* Botões */
 .btn {
   border: none;
   border-radius: 10px;
@@ -129,22 +119,21 @@
   font-size: 18px;
   cursor: pointer;
   padding: 0 16px;
-  background: transparent;   /* <- base SEM fundo */
-  color: inherit;            /* <- cor herdada */
+  background: transparent;  
+  color: inherit;            
   transition: opacity .2s ease;
 }
 
 .btn--primary {
-  background-color: #990410; /* preenchido */
+  background-color: #990410;
   color: #fff;
 }
 
 .btn--link {
-  background: transparent;   /* transparente */
+  background: transparent;  
   color: #990410;
 }
 
-/* Hover */
 .btn:hover,
 .btn--link:hover,
 .btn--primary:hover {

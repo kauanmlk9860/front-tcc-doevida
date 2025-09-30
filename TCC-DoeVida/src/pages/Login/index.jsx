@@ -20,7 +20,7 @@ export default function Login() {
     <div className="login">
       <div className="login__decor-circle" />
       <img className="login__logo" src={logoBranca} alt="DoeVida" />
-      <h1 className="login__title">Entrar</h1>
+      <h1 className="login__title">Sou Doador</h1>
 
       <form className="login__form" autoComplete="off">
         <input className="input input--email" placeholder="E-mail" type="email" ref={emailRef} />
