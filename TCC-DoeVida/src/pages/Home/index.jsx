@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import './style.css';
 import logoBranca from '../../assets/Logo_Branca.png';
+import { useNavigate } from 'react-router-dom'
 
 /* ÍCONES (ajuste os nomes se forem diferentes) */
 import icHospital     from '../../assets/icons/hospital.png';
@@ -42,6 +43,7 @@ function CountUp({ end = 12340, duration = 1800, prefix = '+', className }) {
 }
 
 function Home() {
+  const navigate = useNavigate();
   // YouTube embed
   const YT_ID = '97Sx0KiExZM';
   const EMBED_URL =
@@ -61,7 +63,7 @@ function Home() {
         </div>
 
         <nav className="nav-buttons" aria-label="Ações principais">
-          <button className="btn-donor" type="button">Sou Doador</button>
+          <button className="btn-donor" onClick={() => navigate('/Login')} type="button">Sou Doador</button>
           <button className="btn-hospital" type="button">Sou Hospital</button>
         </nav>
       </header>
