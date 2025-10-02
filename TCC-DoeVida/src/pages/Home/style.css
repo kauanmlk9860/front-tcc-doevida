@@ -1,77 +1,118 @@
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 3rem;
-  position: relative;
-  z-index: 10;
+:root{
+  --brand: #990410;
+  --brand-dark: #7a0308;
+  --text: #000;
+  --surface: #f6f8fa;
+  --pad-x: 3rem;
+  --pad-x-mobile: 1.25rem;
 }
 
-.logo-container {
-  display: flex;
-  align-items: baseline; /* alinha a logo pela base do texto */
-  gap: 8px;              /* espaçamento entre logo e texto */
-}
-.logo-icon {
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* util */
+.sr-only{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px}
 
+/* HEADER antigo */
+.header{display:flex;justify-content:space-between;align-items:center;padding:1.5rem var(--pad-x);background:#fff}
+.logo-container{display:flex;align-items:baseline;gap:8px}
+.logo-icon{width:56px;height:56px;display:flex;align-items:center;justify-content:center}
+.logo-img{width:56px;height:auto;display:block}
+.logo-text{font-size:1.9rem;font-weight:800;color:var(--text);line-height:1;margin:0}
+.nav-buttons{display:flex;gap:1rem;align-items:center}
+.btn-donor{background:transparent;border:none;color:#000;font-size:1rem;font-weight:500;padding:.75rem 1.5rem;cursor:pointer;transition:opacity .2s}
+.btn-donor:hover{opacity:.7}
+.btn-hospital{background:var(--brand);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:600;padding:.75rem 1.5rem;cursor:pointer;transition:background-color .2s}
+.btn-hospital:hover{background:var(--brand-dark)}
 
-.logo-img {
-  width: 50px;   /* ajuste o tamanho da logo conforme necessário */
-  height: auto;  /* mantém proporção da imagem */
-  display: block;
-  margin: 0;
-  padding: 0;
-}
+/* MAIN */
+.main{background:#fff}
 
+/* HERO */
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:clamp(1.5rem,4vw,3rem);padding:clamp(1.8rem,6vw,5rem) var(--pad-x)}
+.hero-left{max-width:760px;margin-left:auto;text-align:left;width:fit-content;padding-right:.5rem}
+.hero-title{margin:0 0 1.25rem 0;color:var(--text);font-weight:900;letter-spacing:-.02em;font-size:clamp(2.2rem,6.2vw,4.8rem);line-height:1.03}
+.btn-cta{background:var(--brand);color:#fff;border:none;border-radius:16px;padding:1rem 1.8rem;font-size:clamp(1.05rem,1.2vw + .75rem,1.3rem);font-weight:800;cursor:pointer;transition:transform .08s ease,filter .2s ease,background-color .2s ease}
+.btn-cta:hover{filter:brightness(.95)}
+.btn-cta:active{transform:translateY(1px)}
 
+.hero-media{position:relative;width:100%;aspect-ratio:16/9;background:var(--surface);border-radius:32px;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+.media-iframe-wrap{position:relative;width:100%;height:100%;overflow:hidden;border-radius:inherit}
+.media-iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
 
-.logo-text {
-  font-size: 1.75rem; /* ajusta a altura visual do texto */
-  font-weight: 700;
-  color: #000000;
-  margin: 0;
-  line-height: 1;      /* remove espaço extra vertical */
-}
-
-.nav-buttons {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.btn-donor {
-  background: transparent;
-  border: none;
-  color: #000000;
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  transition: opacity 0.2s;
+/* ===== AÇÕES: grid com impacto + 4 cards ===== */
+.actions{padding:0 var(--pad-x); margin-top:clamp(.8rem,2vw,1.4rem)}
+/* 6 colunas: impacto ocupa 2 colunas, 4 cards ocupam 1 coluna cada => todos na mesma linha */
+.actions-grid{
+  column-gap: clamp(.10rem, .6vw, .4rem);
+  display:grid;
+  grid-template-columns:repeat(6, minmax(120px, 1fr));
+  gap:clamp(.8rem,2vw,1.6rem);
+  align-items:stretch;
 }
 
-.btn-donor:hover {
-  opacity: 0.7;
+/* IMPACTO dentro do grid (permanece formato "pílula") */
+.impact-card{
+  background:var(--brand);
+  color:#fff;
+  border-radius:0 72px 72px 0;
+  padding:.9rem 1.4rem;
+  display:flex;align-items:center;justify-content:flex-start;text-align:left;
+}
+.impact-in-grid{grid-column:span 2; align-self:stretch; display:flex}
+.impact-text{display:grid;gap:.25rem;line-height:1.04;justify-items:start}
+.impact-number{font-weight:900;font-size:clamp(1.8rem,3.4vw,2.4rem);color:#fff;letter-spacing:-.01em}
+.impact-label{font-weight:800;font-size:clamp(.95rem,2.2vw,1.25rem);color:#fff}
+
+/* CARDS QUADRADOS – menores, com ícone e texto maiores */
+.feature-card.square{
+  background:#fff;
+  border:2px solid #111;
+  border-radius:18px;
+  padding:.45rem;                   /* menos padding => card menor */
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  aspect-ratio:1/1;                /* 👈 quadrado */
+  min-width:140px;                 /* tamanho base menor */
+  max-width:180px;
+  margin:0 auto;                   /* centraliza no grid */
+  text-align:center;
+  transition:box-shadow .2s ease, transform .08s ease;
+}
+.feature-card.square:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(0,0,0,.06)}
+
+/* ícone maior dentro de card menor */
+.feature-emoji.big{width:86px;height:86px;object-fit:contain;display:block;user-select:none}
+
+/* texto MAIOR */
+.feature-title-only.bigger{
+  margin:.1rem 0 0 0;
+  font-size:1.55rem;     /* ↑ maior que antes */
+  font-weight:800;
+  color:#0a0a0a;
+  line-height:1.05;
+  letter-spacing:-.01em;
 }
 
-.btn-hospital {
-  background-color: #990410;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
+/* ===== Responsivo ===== */
+@media (max-width:1200px){
+  /* 2 colunas para o impacto, e 2 colunas para os cards (total 4) */
+  .actions-grid{grid-template-columns:repeat(4, minmax(120px, 1fr))}
+  .impact-in-grid{grid-column:span 2}
 }
-
-.btn-hospital:hover {
-  background-color: #7a0308;
+@media (max-width:900px){
+  .header{padding:1rem var(--pad-x-mobile)}
+  .hero-grid{grid-template-columns:1fr;padding:1.5rem var(--pad-x-mobile) 1rem}
+  .hero-left{margin-left:0;width:auto;padding-right:0}
+  .actions{padding:0 var(--pad-x-mobile)}
+  .actions-grid{grid-template-columns:repeat(2, minmax(120px, 1fr))}
+  .impact-in-grid{grid-column:1 / -1} /* impacto ocupa a linha inteira no mobile */
+  .feature-card.square{max-width:none}
+  .feature-emoji.big{width:78px;height:78px}
+  .feature-title-only.bigger{font-size:1.4rem}
+}
+@media (max-width:520px){
+  .actions-grid{grid-template-columns:1fr}
+  .feature-emoji.big{width:74px;height:74px}
+  .feature-title-only.bigger{font-size:1.35rem}
 }

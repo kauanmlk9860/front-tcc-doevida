@@ -12,6 +12,7 @@ import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+<<<<<<< HEAD
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
@@ -22,5 +23,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
+=======
+   <Home/>
+>>>>>>> 22e7217c8c426530724c6e59fe52e2cd5ca3bd67
   </StrictMode>
 )
