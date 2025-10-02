@@ -75,7 +75,7 @@ function Home() {
             <h2 id="hero-title" className="hero-title">
               Doe sangue,<br /> salve até 4 vidas
             </h2>
-            <button type="button" className="btn-cta">Agendar Doação</button>
+            <button type="button" className="btn-cta" onClick={() => navigate('/Login')} >Agendar Doação</button>
           </div>
 
           <div className="hero-media">
