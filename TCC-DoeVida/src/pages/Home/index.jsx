@@ -3,7 +3,6 @@ import './style.css';
 import logoBranca from '../../assets/Logo_Branca.png';
 import { useNavigate } from 'react-router-dom'
 
-/* ÍCONES (ajuste os nomes se forem diferentes) */
 import icHospital     from '../../assets/icons/hospital.png';
 import icBancoSangue  from '../../assets/icons/banco-sangue.png';
 import icHistorico    from '../../assets/icons/historico.png';
