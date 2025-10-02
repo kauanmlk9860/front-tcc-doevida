@@ -41,43 +41,64 @@
 .actions{padding:0 var(--pad-x); margin-top:clamp(.8rem,2vw,1.4rem)}
 /* 6 colunas: impacto ocupa 2 colunas, 4 cards ocupam 1 coluna cada => todos na mesma linha */
 .actions-grid{
-  column-gap: clamp(.10rem, .6vw, .4rem);
-  display:grid;
-  grid-template-columns:repeat(6, minmax(120px, 1fr));
-  gap:clamp(.8rem,2vw,1.6rem);
-  align-items:stretch;
+  display: flex !important;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  gap: clamp(.15rem, .5vw, .35rem);   /* grudados */
+  justify-content: flex-start;        /* combinado com auto empurra p/ direita */
 }
 
 /* IMPACTO dentro do grid (permanece formato "pílula") */
 .impact-card{
-  background:var(--brand);
-  color:#fff;
-  border-radius:0 72px 72px 0;
-  padding:.9rem 1.4rem;
-  display:flex;align-items:center;justify-content:flex-start;text-align:left;
+  background: var(--brand);
+  color: #fff;
+  border-radius: 0 72px 72px 0;
+  padding: .8rem 1rem;              /* ↓ um pouco menos de padding lateral */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+
+  /* controle de largura */
+  width: clamp(260px, 24vw, 380px); /* ↓ ajuste aqui conforme desejar */
+  box-sizing: border-box;
 }
-.impact-in-grid{grid-column:span 2; align-self:stretch; display:flex}
+.impact-in-grid{
+  flex: 0 0 auto;
+  margin-inline-end: auto;            /* 👈 truque p/ colar o resto na direita */
+}
+
+
 .impact-text{display:grid;gap:.25rem;line-height:1.04;justify-items:start}
 .impact-number{font-weight:900;font-size:clamp(1.8rem,3.4vw,2.4rem);color:#fff;letter-spacing:-.01em}
 .impact-label{font-weight:800;font-size:clamp(.95rem,2.2vw,1.25rem);color:#fff}
 
 /* CARDS QUADRADOS – menores, com ícone e texto maiores */
+/* QUADRADINHOS — versão horizontal, compacta */
 .feature-card.square{
-  background:#fff;
-  border:2px solid #111;
-  border-radius:18px;
-  padding:.45rem;                   /* menos padding => card menor */
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:.5rem;
-  aspect-ratio:1/1;                /* 👈 quadrado */
-  min-width:140px;                 /* tamanho base menor */
-  max-width:180px;
-  margin:0 auto;                   /* centraliza no grid */
-  text-align:center;
-  transition:box-shadow .2s ease, transform .08s ease;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 18px;
+  padding: .40rem;                 /* compacto */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+
+  /* mantém o formato quadrado */
+  aspect-ratio: 1 / 1;
+
+  /* largura fixa para alinhar em linha (usado pelo .actions-grid em flex) */
+  flex: 0 0 clamp(140px, 16vw, 168px);
+  width: clamp(140px, 16vw, 168px);
+  min-width: clamp(140px, 16vw, 168px);
+
+  /* sem margens extras que empurram os cards */
+  margin: 0;
+  text-align: center;
+
+  transition: box-shadow .2s ease, transform .08s ease;
 }
 .feature-card.square:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(0,0,0,.06)}
 
