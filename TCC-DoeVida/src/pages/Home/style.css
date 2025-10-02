@@ -3,7 +3,6 @@
   --brand-dark: #7a0308;
   --text: #000;
   --surface: #f6f8fa;
-
   --pad-x: 3rem;
   --pad-x-mobile: 1.25rem;
 }
@@ -21,7 +20,7 @@
   margin: -1px;
 }
 
-/* ================= HEADER ================= */
+/* HEADER antigo */
 .header {
   display: flex;
   justify-content: space-between;
@@ -95,21 +94,18 @@
   background: var(--brand-dark);
 }
 
-/* ================= MAIN ================= */
+/* MAIN */
 .main {
   background: #fff;
 }
 
-/* ================= HERO ================= */
-/* puxa o hero mais para a ESQUERDA */
+/* HERO */
 .hero-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: clamp(1.5rem, 4vw, 3rem);
-  padding-right: var(--pad-x);
-  padding-left: clamp(0.75rem, 2.5vw, 1.25rem); /* encosta mais na esquerda */
-  justify-items: start; /* alinha filhos à esquerda */
+  padding: clamp(1.8rem, 6vw, 5rem) var(--pad-x);
 }
 
 .hero-left {
@@ -160,7 +156,6 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-  justify-self: start; /* vídeo alinhado à esquerda */
 }
 
 .media-iframe-wrap {
@@ -180,42 +175,40 @@
   pointer-events: none;
 }
 
-/* ============ AÇÕES: impacto + 4 quadradinhos (em LINHA) ============ */
-/* puxa a seção de cards para a ESQUERDA também */
+/* ===== AÇÕES: grid com impacto + 4 cards ===== */
 .actions {
-  padding-right: var(--pad-x);
-  padding-left: clamp(0.75rem, 2.5vw, 1.25rem);
+  padding: 0 var(--pad-x);
   margin-top: clamp(0.8rem, 2vw, 1.4rem);
 }
 
-/* usa FLEX para ficar tudo em uma linha */
+/* 6 colunas: impacto ocupa 2 colunas, 4 cards 1 coluna cada => todos na mesma linha */
 .actions-grid {
   display: flex !important;
   align-items: stretch;
-  flex-wrap: nowrap;                 /* não quebra linha */
-  gap: clamp(0.15rem, 0.5vw, 0.35rem); /* quadradinhos bem juntinhos */
-  justify-content: flex-start;       /* início da linha */
-  overflow-x: auto;                  /* rolagem se não couber */
-  scroll-snap-type: x proximity;     /* deslize suave no mobile (opcional) */
+  flex-wrap: nowrap;
+  gap: clamp(0.15rem, 0.5vw, 0.35rem); /* grudados */
+  justify-content: flex-start;         /* combinado com auto empurra p/ direita */
 }
 
-/* -------- Card de IMPACTO (vidas salvas) -------- */
+/* IMPACTO dentro do grid (permanece formato "pílula") */
 .impact-card {
   background: var(--brand);
   color: #fff;
   border-radius: 0 72px 72px 0;
-  padding: 0.8rem 1rem;               /* lateral menor */
+  padding: 0.10rem 1rem;               /* menos padding lateral */
   display: flex;
   align-items: center;
   justify-content: flex-start;
   text-align: left;
-  width: clamp(260px, 24vw, 380px);   /* controle de largura */
+
+  /* controle de largura */
+  width: clamp(260px, 24vw, 380px);    /* ajuste conforme desejar */
   box-sizing: border-box;
 }
 
 .impact-in-grid {
-  flex: 0 0 auto;                     /* não estica */
-  margin-inline-end: auto;            /* empurra os quadradinhos para a DIREITA */
+  flex: 0 0 auto;
+  margin-inline-end: auto;             /* empurra o resto para a direita */
 }
 
 .impact-text {
@@ -238,7 +231,7 @@
   color: #fff;
 }
 
-/* -------- Quadradinhos (cards) -------- */
+/* CARDS QUADRADOS – menores, com ícone e texto maiores */
 .feature-card.square {
   background: #fff;
   border: 2px solid #111;
@@ -250,14 +243,18 @@
   justify-content: center;
   gap: 0.45rem;
 
-  /* formato quadrado e largura fixa p/ linha horizontal */
+  /* mantém o formato quadrado */
   aspect-ratio: 1 / 1;
+
+  /* largura fixa para alinhar em linha (usado pelo .actions-grid em flex) */
   flex: 0 0 clamp(140px, 16vw, 168px);
   width: clamp(140px, 16vw, 168px);
   min-width: clamp(140px, 16vw, 168px);
 
+  /* sem margens extras que empurram os cards */
   margin: 0;
   text-align: center;
+
   transition: box-shadow 0.2s ease, transform 0.08s ease;
 }
 
@@ -266,6 +263,7 @@
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06);
 }
 
+/* ícone maior dentro de card menor */
 .feature-emoji.big {
   width: 86px;
   height: 86px;
@@ -274,19 +272,24 @@
   user-select: none;
 }
 
+/* texto MAIOR */
 .feature-title-only.bigger {
   margin: 0.1rem 0 0 0;
-  font-size: 1.55rem;
+  font-size: 1.55rem;   /* maior que antes */
   font-weight: 800;
   color: #0a0a0a;
   line-height: 1.05;
   letter-spacing: -0.01em;
 }
 
-/* ================== RESPONSIVO ================== */
+/* ===== Responsivo ===== */
 @media (max-width: 1200px) {
+  /* 2 colunas para o impacto, e 2 colunas para os cards (total 4) */
+  .actions-grid {
+    grid-template-columns: repeat(4, minmax(120px, 1fr));
+  }
   .impact-in-grid {
-    margin-inline-end: clamp(1rem, 5vw, 5rem);
+    grid-column: span 2;
   }
 }
 
@@ -297,8 +300,7 @@
 
   .hero-grid {
     grid-template-columns: 1fr;
-    padding: 1.5rem var(--pad-x-mobile) 1rem; /* volta padding padrão no mobile */
-    justify-items: stretch;
+    padding: 1.5rem var(--pad-x-mobile) 1rem;
   }
 
   .hero-left {
@@ -309,22 +311,18 @@
 
   .actions {
     padding: 0 var(--pad-x-mobile);
-    margin-top: 0.9rem;
   }
 
   .actions-grid {
-    gap: 0.6rem;
-    flex-wrap: nowrap; /* mantém em linha com scroll horizontal */
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
   }
 
   .impact-in-grid {
-    margin-inline-end: clamp(1rem, 6vw, 2rem);
+    grid-column: 1 / -1; /* impacto ocupa a linha inteira no mobile */
   }
 
   .feature-card.square {
-    flex-basis: clamp(128px, 40vw, 150px);
-    width: clamp(128px, 40vw, 150px);
-    min-width: clamp(128px, 40vw, 150px);
+    max-width: none;
   }
 
   .feature-emoji.big {
@@ -333,13 +331,13 @@
   }
 
   .feature-title-only.bigger {
-    font-size: 1.45rem;
+    font-size: 1.4rem;
   }
 }
 
 @media (max-width: 520px) {
   .actions-grid {
-    gap: 0.55rem;
+    grid-template-columns: 1fr;
   }
 
   .feature-emoji.big {
@@ -348,6 +346,6 @@
   }
 
   .feature-title-only.bigger {
-    font-size: 1.38rem;
+    font-size: 1.35rem;
   }
 }
