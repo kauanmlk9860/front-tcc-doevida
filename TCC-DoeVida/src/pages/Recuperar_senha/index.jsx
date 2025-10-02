@@ -1,28 +1,26 @@
 import { useEffect } from 'react'
 import './style.css'
 import Logo_Branca from '../../assets/Logo_Branca.png'
-import Api from '../../services/http'
 import { useNavigate } from 'react-router-dom'
 
 function Recuperar_senha() {
   const navigate = useNavigate()
+  useEffect(() => {}, []) 
 
-  useEffect(() => {
-
-  }, []) 
- 
   return (
-  
-    <div className='container'>
-      <div class='bola-cortada'></div>
-      <img id='Logo_Branca' src={Logo_Branca} />
-      <h1>Recuperar Senha</h1>
-      <form id='caixa-recuperacao'>
-        <input id='email_recupecao' placeholder='Digite seu E-mail ou Usuário' name='E-mail' type="email" />
+    <div className="rec-senha">
+      <div className="rec-senha__decor"></div>
+      <img className="rec-senha__logo" src={Logo_Branca} alt="DoeVida" />
+      <h1 className="rec-senha__title">Recuperar Senha</h1>
+      <form className="rec-senha__form" autoComplete="off">
+        <input id="email_recuperacao" className="rec-senha__input rec-senha__input--email" placeholder="Digite seu E-mail ou usuário" name="email" type="email"/>
       </form>
-      <div className='botoes'>
-        <button id='concluir-recuperacao' type='button'>Concluir</button>
-        <button className="btn btn--link" type="button" onClick={() => navigate('/Login')}>Voltar ao Login</button>
+      <div className="rec-senha__actions">
+        <button className="rec-senha__submit" type="button">Concluir</button>
+        <button
+          type="button"
+          className="rec-senha__back"
+          onClick={() => navigate('/login')}>Voltar ao Login</button>
       </div>
     </div>
   )
