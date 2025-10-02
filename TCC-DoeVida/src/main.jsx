@@ -22,6 +22,5 @@ createRoot(document.getElementById('root')).render(
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
-    {/* <Home/> */}
   </StrictMode>
 )
