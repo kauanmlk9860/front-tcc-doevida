@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
 import pessoas from '../../assets/pessoas.png'
-import Api from '../../services/api'
+
 
 function Home(){
+    const navigate = useNavigate()
+
   return(
        <header className="header">
             <div className="logo-container">
@@ -20,7 +22,7 @@ function Home(){
             </div>
     
             <nav className="nav-buttons">
-              <button className="btn-donor">Sou Doador</button>
+              <button className="btn-donor" type='button' onClick={() => navigate('/Cadastro')}>Sou Doador</button>
               <button className="btn-hospital">Sou Hospital</button>
             </nav>
           </header>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
 import pessoas from '../../assets/pessoas.png'
-import Api from '../../services/api'
+
 
 function Saiba_mais() {
   return (

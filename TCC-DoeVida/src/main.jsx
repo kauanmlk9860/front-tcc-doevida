@@ -12,7 +12,7 @@ import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    {/* <BrowserRouter>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
@@ -21,7 +21,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/redefinir-senha" element={<Redefinir_senha />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
-    </BrowserRouter> */}
-    <Home/>
+    </BrowserRouter>
+    {/* <Home/> */}
   </StrictMode>
 )

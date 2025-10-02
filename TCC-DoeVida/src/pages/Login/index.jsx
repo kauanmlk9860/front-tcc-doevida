@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
-import Api from '../../services/api'
+
 
 export default function Login() {
   const navigate = useNavigate()

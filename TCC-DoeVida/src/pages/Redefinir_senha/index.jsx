@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import './style.css'
 import Logo_Branca from '../../assets/Logo_Branca.png'
-import Api from '../../services/api'
+
 
 function Redefinir_senha() {
 
