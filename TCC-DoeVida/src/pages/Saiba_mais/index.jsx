@@ -1,8 +1,27 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./style.css";
 import logoBranca from "../../assets/Logo_Branca.png";
 import pessoas from "../../assets/pessoas.png";
+import AuthService from "../../services/auth.js";
 
 function SaibaMais() {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const loggedIn = AuthService.isLoggedIn();
+    setIsLoggedIn(loggedIn);
+  }, []);
+
+  const handleDoadorClick = () => {
+    if (isLoggedIn) {
+      navigate("/home"); // já logado, vai para home
+    } else {
+      navigate("/cadastro"); // não logado, vai para cadastro
+    }
+  };
+
   return (
     <div className="app">
       {/* Decorative Circles */}
@@ -23,7 +42,9 @@ function SaibaMais() {
         </div>
 
         <nav className="nav-buttons">
-          <button className="btn-donor">Sou Doador</button>
+          <button className="btn-donor" onClick={handleDoadorClick}>
+            Sou Doador
+          </button>
           <button className="btn-hospital">Sou Hospital</button>
         </nav>
       </header>
