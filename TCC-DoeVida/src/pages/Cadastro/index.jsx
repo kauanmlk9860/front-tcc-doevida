@@ -290,7 +290,7 @@ function Cadastro() {
         
         <input 
           className="input input--cpf" 
-          placeholder="Digite seu CPF (opcional)" 
+          placeholder="Digite seu CPF" 
           name="cpf" 
           type="text" 
           ref={cpfRef}
@@ -300,7 +300,7 @@ function Cadastro() {
         
         <input 
           className="input input--cep" 
-          placeholder="Digite seu CEP (opcional)" 
+          placeholder="Digite seu CEP" 
           name="cep" 
           type="text" 
           ref={cepRef}
@@ -310,7 +310,7 @@ function Cadastro() {
         
         <input 
           className="input input--number" 
-          placeholder="Número da residência (opcional)" 
+          placeholder="Número de Telefone" 
           name="numero" 
           type="text" 
           ref={numeroRef}
@@ -320,7 +320,7 @@ function Cadastro() {
         
         <input 
           className="input input--date" 
-          placeholder="Data de Nascimento (opcional)" 
+          placeholder="Data de Nascimento" 
           name="data-nascimento" 
           type="date" 
           ref={dataNascimentoRef}
