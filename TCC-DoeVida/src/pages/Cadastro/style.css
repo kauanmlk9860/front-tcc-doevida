@@ -139,3 +139,201 @@
 .btn--primary:hover {
   opacity: 0.9;
 }
+/* ===== RESPONSIVIDADE ===== */
+
+/* Telas muito grandes (4K e ultrawide) */
+@media (min-width: 1600px) {
+  .cadastro__logo {
+    width: 200px;
+  }
+
+  .cadastro__title {
+    font-size: 64px;
+  }
+
+  .cadastro__form,
+  .cadastro__actions {
+    max-width: 700px;
+  }
+
+  .input {
+    height: 70px;
+    font-size: 18px;
+    background-size: 28px;
+    padding-left: 60px;
+  }
+
+  .btn {
+    height: 60px;
+    font-size: 20px;
+  }
+}
+
+/* Telas grandes (desktops e notebooks padrão) */
+@media (max-width: 1599px) and (min-width: 1200px) {
+  .cadastro__logo {
+    width: 160px;
+  }
+
+  .cadastro__title {
+    font-size: 56px;
+  }
+
+  .cadastro__form,
+  .cadastro__actions {
+    max-width: 600px;
+  }
+
+  .input {
+    height: 60px;
+    font-size: 17px;
+    padding-left: 50px;
+    background-size: 24px;
+  }
+
+  .btn {
+    height: 55px;
+    font-size: 18px;
+  }
+}
+
+/* Telas médias (tablets e notebooks pequenos) */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .cadastro {
+    padding-top: 40px;
+  }
+
+  .cadastro__logo {
+    width: 130px;
+  }
+
+  .cadastro__title {
+    font-size: 48px;
+  }
+
+  .cadastro__decor-circle {
+    width: 40vw;
+    height: 35vw;
+    top: -20vw;
+    left: -20vw;
+  }
+
+  .cadastro__form,
+  .cadastro__actions {
+    max-width: 500px;
+  }
+
+  .input {
+    height: 55px;
+    font-size: 16px;
+    padding-left: 45px;
+  }
+
+  .btn {
+    height: 50px;
+    font-size: 17px;
+  }
+}
+
+/* Telas pequenas (smartphones médios) */
+@media (max-width: 767px) {
+  .cadastro {
+    padding-top: 60px;
+  }
+
+  .cadastro__logo {
+    width: 110px;
+  }
+
+  .cadastro__title {
+    font-size: 42px;
+  }
+
+  .cadastro__decor-circle {
+    width: 60vw;
+    height: 50vw;
+    top: -25vw;
+    left: -25vw;
+  }
+
+  .cadastro__form,
+  .cadastro__actions {
+    max-width: 90%;
+    gap: 16px;
+  }
+
+  .input {
+    height: 52px;
+    font-size: 15px;
+    padding-left: 45px;
+    background-size: 22px;
+  }
+
+  .btn {
+    height: 48px;
+    font-size: 16px;
+  }
+}
+
+/* Telas muito pequenas (celulares compactos e antigos) */
+@media (max-width: 480px) {
+  .cadastro {
+    padding-top: 40px;
+  }
+
+  .cadastro__logo {
+    width: 90px;
+  }
+
+  .cadastro__title {
+    font-size: 34px;
+  }
+
+  .cadastro__decor-circle {
+    width: 80vw;
+    height: 70vw;
+    top: -30vw;
+    left: -35vw;
+  }
+
+  .cadastro__form,
+  .cadastro__actions {
+    width: 90%;
+    gap: 14px;
+  }
+
+  .input {
+    height: 48px;
+    font-size: 14px;
+    padding-left: 40px;
+    background-size: 20px;
+  }
+
+  .btn {
+    height: 45px;
+    font-size: 15px;
+  }
+}
+
+/* Telas extremamente pequenas (menores que 360px) */
+@media (max-width: 360px) {
+  .cadastro__logo {
+    width: 80px;
+  }
+
+  .cadastro__title {
+    font-size: 28px;
+  }
+
+  .input {
+    height: 45px;
+    font-size: 13px;
+    padding-left: 38px;
+    background-size: 18px;
+  }
+
+  .btn {
+    height: 42px;
+    font-size: 14px;
+  }
+}

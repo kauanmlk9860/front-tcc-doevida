@@ -115,3 +115,224 @@
   opacity: .85;
   text-decoration: underline;
 }
+/* ===== RESPONSIVIDADE RECUPERAÇÃO DE SENHA ===== */
+
+/* Telas muito grandes (4K, ultrawide) */
+@media (min-width: 1600px) {
+  .rec-senha__logo {
+    width: 280px;
+  }
+
+  .rec-senha__title {
+    font-size: 96px;
+    margin: 60px 0;
+  }
+
+  .rec-senha__form {
+    max-width: 700px;
+    width: 700px;
+    gap: 28px;
+  }
+
+  .rec-senha__input {
+    height: 80px;
+    font-size: 18px;
+    padding-left: 60px;
+  }
+
+  .rec-senha__submit {
+    height: 64px;
+    font-size: 20px;
+  }
+
+  .rec-senha__back {
+    font-size: 18px;
+  }
+}
+
+/* Telas grandes (desktops e notebooks padrão) */
+@media (max-width: 1599px) and (min-width: 1200px) {
+  .rec-senha__logo {
+    width: 230px;
+  }
+
+  .rec-senha__title {
+    font-size: 80px;
+  }
+
+  .rec-senha__form {
+    max-width: 600px;
+    width: 600px;
+  }
+
+  .rec-senha__input {
+    height: 70px;
+    font-size: 16px;
+  }
+
+  .rec-senha__submit {
+    height: 58px;
+    font-size: 18px;
+  }
+}
+
+/* Telas médias (tablets, notebooks pequenos) */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .rec-senha {
+    padding-top: 50px;
+  }
+
+  .rec-senha__logo {
+    width: 200px;
+  }
+
+  .rec-senha__title {
+    font-size: 64px;
+    margin: 30px 0;
+  }
+
+  .rec-senha__decor {
+    width: 45vw;
+    height: 40vw;
+    top: -20vw;
+    left: -20vw;
+  }
+
+  .rec-senha__form {
+    max-width: 480px;
+    width: 90%;
+    gap: 20px;
+  }
+
+  .rec-senha__input {
+    height: 64px;
+    font-size: 15px;
+    padding-left: 50px;
+    background-size: 22px;
+  }
+
+  .rec-senha__submit {
+    height: 54px;
+    font-size: 17px;
+  }
+
+  .rec-senha__back {
+    font-size: 15px;
+  }
+}
+
+/* Telas pequenas (celulares médios e grandes) */
+@media (max-width: 767px) {
+  .rec-senha {
+    padding-top: 70px;
+  }
+
+  .rec-senha__logo {
+    width: 160px;
+  }
+
+  .rec-senha__title {
+    font-size: 48px;
+    margin: 20px 0;
+  }
+
+  .rec-senha__decor {
+    width: 60vw;
+    height: 55vw;
+    top: -25vw;
+    left: -30vw;
+  }
+
+  .rec-senha__form {
+    max-width: 90%;
+    width: 90%;
+    gap: 16px;
+  }
+
+  .rec-senha__input {
+    height: 58px;
+    font-size: 15px;
+    padding-left: 45px;
+    background-size: 20px;
+  }
+
+  .rec-senha__submit {
+    height: 50px;
+    font-size: 16px;
+  }
+
+  .rec-senha__back {
+    font-size: 14px;
+  }
+}
+
+/* Telas muito pequenas (celulares compactos) */
+@media (max-width: 480px) {
+  .rec-senha {
+    padding-top: 50px;
+  }
+
+  .rec-senha__logo {
+    width: 120px;
+  }
+
+  .rec-senha__title {
+    font-size: 38px;
+    margin: 16px 0;
+  }
+
+  .rec-senha__decor {
+    width: 80vw;
+    height: 70vw;
+    top: -30vw;
+    left: -35vw;
+  }
+
+  .rec-senha__form {
+    width: 90%;
+    gap: 14px;
+  }
+
+  .rec-senha__input {
+    height: 52px;
+    font-size: 14px;
+    padding-left: 40px;
+    background-size: 18px;
+  }
+
+  .rec-senha__submit {
+    height: 46px;
+    font-size: 15px;
+  }
+
+  .rec-senha__back {
+    font-size: 13px;
+  }
+}
+
+/* Telas extremamente pequenas (menores que 360px) */
+@media (max-width: 360px) {
+  .rec-senha__logo {
+    width: 100px;
+  }
+
+  .rec-senha__title {
+    font-size: 32px;
+  }
+
+  .rec-senha__input {
+    height: 48px;
+    font-size: 13px;
+    padding-left: 36px;
+    background-size: 16px;
+  }
+
+  .rec-senha__submit {
+    height: 42px;
+    font-size: 14px;
+  }
+
+  .rec-senha__back {
+    font-size: 12px;
+  }
+}

@@ -107,3 +107,218 @@
 .btn--primary:hover {
   opacity: 0.9;
 }
+/* ===== RESPONSIVIDADE LOGIN ===== */
+
+/* Telas muito grandes (4K e ultrawide) */
+@media (min-width: 1600px) {
+  .login__logo {
+    width: 260px;
+  }
+
+  .login__title {
+    font-size: 96px;
+  }
+
+  .login__form,
+  .login__actions {
+    max-width: 700px;
+  }
+
+  .input[class*="input--"] {
+    height: 90px;
+    background-size: 28px;
+    padding-left: 60px;
+    font-size: 18px;
+  }
+
+  .btn {
+    height: 60px;
+    font-size: 20px;
+  }
+}
+
+/* Telas grandes (desktops e notebooks padrão) */
+@media (max-width: 1599px) and (min-width: 1200px) {
+  .login__logo {
+    width: 220px;
+  }
+
+  .login__title {
+    font-size: 80px;
+  }
+
+  .login__form,
+  .login__actions {
+    max-width: 600px;
+  }
+
+  .input[class*="input--"] {
+    height: 80px;
+    padding-left: 50px;
+    background-size: 24px;
+    font-size: 17px;
+  }
+
+  .btn {
+    height: 55px;
+    font-size: 18px;
+  }
+}
+
+/* Telas médias (tablets e notebooks pequenos) */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .login {
+    padding-top: 40px;
+  }
+
+  .login__logo {
+    width: 180px;
+  }
+
+  .login__title {
+    font-size: 64px;
+  }
+
+  .login__decor-circle {
+    width: 40vw;
+    height: 35vw;
+    top: -20vw;
+    left: -20vw;
+  }
+
+  .login__form,
+  .login__actions {
+    max-width: 500px;
+  }
+
+  .input[class*="input--"] {
+    height: 70px;
+    font-size: 16px;
+    padding-left: 45px;
+    background-size: 22px;
+  }
+
+  .btn {
+    height: 50px;
+    font-size: 17px;
+  }
+
+  .login__forgot {
+    font-size: 15px;
+  }
+}
+
+/* Telas pequenas (smartphones médios) */
+@media (max-width: 767px) {
+  .login {
+    padding-top: 60px;
+  }
+
+  .login__logo {
+    width: 150px;
+  }
+
+  .login__title {
+    font-size: 54px;
+  }
+
+  .login__decor-circle {
+    width: 60vw;
+    height: 50vw;
+    top: -25vw;
+    left: -25vw;
+  }
+
+  .login__form,
+  .login__actions {
+    max-width: 90%;
+    gap: 16px;
+  }
+
+  .input[class*="input--"] {
+    height: 60px;
+    font-size: 15px;
+    padding-left: 45px;
+    background-size: 20px;
+  }
+
+  .btn {
+    height: 48px;
+    font-size: 16px;
+  }
+
+  .login__forgot {
+    font-size: 14px;
+  }
+}
+
+/* Telas muito pequenas (celulares compactos e antigos) */
+@media (max-width: 480px) {
+  .login {
+    padding-top: 40px;
+  }
+
+  .login__logo {
+    width: 120px;
+  }
+
+  .login__title {
+    font-size: 42px;
+  }
+
+  .login__decor-circle {
+    width: 80vw;
+    height: 70vw;
+    top: -30vw;
+    left: -35vw;
+  }
+
+  .login__form,
+  .login__actions {
+    width: 90%;
+    gap: 14px;
+  }
+
+  .input[class*="input--"] {
+    height: 52px;
+    font-size: 14px;
+    padding-left: 40px;
+    background-size: 18px;
+  }
+
+  .btn {
+    height: 45px;
+    font-size: 15px;
+  }
+
+  .login__forgot {
+    font-size: 13px;
+  }
+}
+
+/* Telas extremamente pequenas (menores que 360px) */
+@media (max-width: 360px) {
+  .login__logo {
+    width: 100px;
+  }
+
+  .login__title {
+    font-size: 34px;
+  }
+
+  .input[class*="input--"] {
+    height: 48px;
+    font-size: 13px;
+    padding-left: 38px;
+    background-size: 16px;
+  }
+
+  .btn {
+    height: 42px;
+    font-size: 14px;
+  }
+
+  .login__forgot {
+    font-size: 12px;
+  }
+}

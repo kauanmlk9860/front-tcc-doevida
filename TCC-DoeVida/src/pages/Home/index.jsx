@@ -67,10 +67,9 @@ function Home() {
     `&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3`;
 
   useEffect(() => {
-    // Verifica se usuário está logado
     const loggedIn = AuthService.isLoggedIn();
     setIsLoggedIn(loggedIn);
-    
+
     if (loggedIn) {
       const userData = AuthService.getUsuario();
       setUsuario(userData);
@@ -81,12 +80,13 @@ function Home() {
     AuthService.logout();
     setIsLoggedIn(false);
     setUsuario(null);
-    navigate('/');
+    navigate("/");
   };
 
   const handleNavigation = (path) => {
-    if (!isLoggedIn && path !== '/login') {
-      navigate('/login');
+    // Permite acesso livre a home, saiba-mais e login
+    if (!isLoggedIn && !["/login", "/saiba-mais", "/home"].includes(path)) {
+      navigate("/login");
     } else {
       navigate(path);
     }
@@ -98,16 +98,20 @@ function Home() {
       <header className="header" role="banner">
         <div className="logo-container">
           <div className="logo-icon">
-            <img src={logoBranca || "/placeholder.svg"} alt="Logo DoeVida" className="logo-img" />
+            <img
+              src={logoBranca || "/placeholder.svg"}
+              alt="Logo DoeVida"
+              className="logo-img"
+            />
           </div>
           <h1 className="logo-text">DOEVIDA</h1>
         </div>
 
         <nav className="nav-buttons" aria-label="Ações principais">
           {isLoggedIn ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <span style={{ color: 'white', fontSize: '14px' }}>
-                Olá, {usuario?.nome || 'Usuário'}!
+            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+              <span style={{ color: "white", fontSize: "14px" }}>
+                Olá, {usuario?.nome || "Usuário"}!
               </span>
               <button className="btn-donor" onClick={handleLogout} type="button">
                 Sair
@@ -115,7 +119,11 @@ function Home() {
             </div>
           ) : (
             <>
-              <button className="btn-donor" onClick={() => navigate("/login")} type="button">
+              <button
+                className="btn-donor"
+                onClick={() => handleNavigation("/login")}
+                type="button"
+              >
                 Sou Doador
               </button>
               <button className="btn-hospital" type="button">
@@ -134,9 +142,9 @@ function Home() {
               Doe sangue,
               <br /> salve até 4 vidas
             </h2>
-            <button 
-              type="button" 
-              className="btn-cta" 
+            <button
+              type="button"
+              className="btn-cta"
               onClick={() => handleNavigation("/agendamento")}
             >
               Agendar Doação
@@ -164,7 +172,6 @@ function Home() {
           </h3>
 
           <div className="actions-layout">
-            {/* Card de impacto */}
             <div className="impact-card" role="status" aria-label="Vidas salvas este ano">
               <div className="impact-text">
                 <CountUp end={12340} duration={1800} prefix="+" className="impact-number" />
@@ -176,15 +183,14 @@ function Home() {
               </div>
             </div>
 
-            {/* Grid dos 4 cards quadrados */}
             <div className="square-cards-grid">
-              <article 
-                className="feature-card squareSpecificity" 
-                role="button" 
-                tabIndex={0} 
+              <article
+                className="feature-card squareSpecificity"
+                role="button"
+                tabIndex={0}
                 aria-label="Hospitais"
-                onClick={() => handleNavigation('/hospitais')}
-                style={{ cursor: 'pointer' }}
+                onClick={() => handleNavigation("/hospitais")}
+                style={{ cursor: "pointer" }}
               >
                 <img src={icHospital || "/placeholder.svg"} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">Hospitais</h4>
@@ -195,8 +201,8 @@ function Home() {
                 role="button"
                 tabIndex={0}
                 aria-label="Banco de Sangue"
-                onClick={() => handleNavigation('/banco-sangue')}
-                style={{ cursor: 'pointer' }}
+                onClick={() => handleNavigation("/banco-sangue")}
+                style={{ cursor: "pointer" }}
               >
                 <img src={icBancoSangue || "/placeholder.svg"} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">
@@ -211,8 +217,8 @@ function Home() {
                 role="button"
                 tabIndex={0}
                 aria-label="Histórico"
-                onClick={() => handleNavigation('/historico')}
-                style={{ cursor: 'pointer' }}
+                onClick={() => handleNavigation("/historico")}
+                style={{ cursor: "pointer" }}
               >
                 <img src={icHistorico || "/placeholder.svg"} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">Histórico</h4>
@@ -223,8 +229,8 @@ function Home() {
                 role="button"
                 tabIndex={0}
                 aria-label="Registrar Doação"
-                onClick={() => handleNavigation('/registrar-doacao')}
-                style={{ cursor: 'pointer' }}
+                onClick={() => handleNavigation("/registrar-doacao")}
+                style={{ cursor: "pointer" }}
               >
                 <img src={icRegistrar || "/placeholder.svg"} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">
@@ -243,11 +249,17 @@ function Home() {
         </section>
       </main>
 
+      {/* FOOTER */}
       <footer className="footer" role="contentinfo">
         <div className="footer-content">
-          <a href="#" className="footer-link highlight">
+          <button
+            type="button"
+            className="footer-link highlight"
+            onClick={() => handleNavigation("/saiba-mais")}
+          >
             Saiba Mais
-          </a>
+          </button>
+
           <div className="footer-link-group">
             <a href="#" className="footer-link">
               Política de Privacidade

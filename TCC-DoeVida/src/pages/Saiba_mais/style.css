@@ -195,43 +195,32 @@ body {
   right: -150px;
 }
 
-/* ================= RESPONSIVE ================= */
+/* ================= RESPONSIVIDADE AVANÇADA ================= */
+
+/* Tablets */
 @media (max-width: 1024px) {
   .header {
     padding: 1.5rem 2rem;
   }
 
-  .main-content {
-    padding: 2rem 2rem;
-  }
-
   .hero-title {
-    font-size: 4rem;
+    margin-bottom: 2.5rem;
   }
 
   .description-text {
-    font-size: 1.25rem;
+    text-align: left;
   }
 
-  .circle-1 {
-    width: 300px;
-    height: 300px;
-  }
-
-  .circle-3 {
-    width: 250px;
-    height: 250px;
-  }
-
-  .circle-4 {
-    width: 350px;
-    height: 350px;
+  .decorative-circles {
+    width: 70%;
   }
 }
 
+/* Celulares */
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
+    align-items: center;
     gap: 1rem;
     padding: 1rem;
   }
@@ -241,62 +230,72 @@ body {
     justify-content: center;
   }
 
-  .main-content {
-    padding: 1.5rem 1rem;
-  }
-
   .hero-title {
-    font-size: 3rem;
-    text-align: center;
+    font-size: clamp(2rem, 6vw, 3rem);
+    margin-bottom: 2rem;
   }
 
   .description-text {
-    font-size: 1.1rem;
-  }
-
-  .decorative-circles {
-    width: 100%;
+    font-size: clamp(0.95rem, 2.2vw, 1.1rem);
+    padding: 0 0.5rem;
   }
 
   .circle-1 {
-    width: 200px;
-    height: 200px;
     right: -50px;
   }
 
-  .circle-2 {
-    width: 120px;
-    height: 120px;
-  }
-
-  .circle-3 {
-    width: 180px;
-    height: 180px;
-  }
-
   .circle-4 {
-    width: 250px;
-    height: 250px;
     right: -100px;
+    bottom: -120px;
+  }
+
+  .illustration-container {
+    max-width: 90%;
   }
 }
 
+/* Smartphones pequenos */
 @media (max-width: 480px) {
   .logo-text {
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 4vw, 1.25rem);
   }
 
   .hero-title {
-    font-size: 2.5rem;
+    font-size: clamp(1.8rem, 6vw, 2.4rem);
+    margin-bottom: 1.5rem;
   }
 
   .btn-donor,
   .btn-hospital {
     font-size: 0.9rem;
-    padding: 0.6rem 1.2rem;
+    padding: 0.6rem 1rem;
   }
 
   .description-text {
-    font-size: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .circle-1,
+  .circle-2,
+  .circle-3,
+  .circle-4 {
+    opacity: 0.5;
+  }
+}
+
+/* Monitores muito grandes */
+@media (min-width: 1600px) {
+  .hero-title {
+    font-size: 6rem;
+  }
+
+  .description-text {
+    font-size: 1.75rem;
+  }
+
+  .circle-1,
+  .circle-4 {
+    transform: scale(1.1);
   }
 }
