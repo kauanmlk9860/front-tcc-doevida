@@ -13,7 +13,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/Home" replace />} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/recuperar-senha" element={<Recuperar_senha />} />

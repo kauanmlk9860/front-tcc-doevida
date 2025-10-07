@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "./style.css";
 import logoBranca from "../../assets/Logo_Branca.png";
 import { useNavigate } from "react-router-dom";
+import AuthService from "../../services/auth.js";
 
 import icHospital from "../../assets/icons/hospital.png";
 import icBancoSangue from "../../assets/icons/banco-sangue.png";
@@ -55,12 +56,41 @@ function CountUp({ end = 12340, duration = 1800, prefix = "+", className }) {
 
 function Home() {
   const navigate = useNavigate();
+  const [usuario, setUsuario] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   // YouTube embed
   const YT_ID = "97Sx0KiExZM";
   const EMBED_URL =
     `https://www.youtube.com/embed/${YT_ID}` +
     `?autoplay=1&mute=1&loop=1&playlist=${YT_ID}` +
     `&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3`;
+
+  useEffect(() => {
+    // Verifica se usuário está logado
+    const loggedIn = AuthService.isLoggedIn();
+    setIsLoggedIn(loggedIn);
+    
+    if (loggedIn) {
+      const userData = AuthService.getUsuario();
+      setUsuario(userData);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    AuthService.logout();
+    setIsLoggedIn(false);
+    setUsuario(null);
+    navigate('/');
+  };
+
+  const handleNavigation = (path) => {
+    if (!isLoggedIn && path !== '/login') {
+      navigate('/login');
+    } else {
+      navigate(path);
+    }
+  };
 
   return (
     <>
@@ -74,12 +104,25 @@ function Home() {
         </div>
 
         <nav className="nav-buttons" aria-label="Ações principais">
-          <button className="btn-donor" onClick={() => navigate("/Login")} type="button">
-            Sou Doador
-          </button>
-          <button className="btn-hospital" type="button">
-            Sou Hospital
-          </button>
+          {isLoggedIn ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <span style={{ color: 'white', fontSize: '14px' }}>
+                Olá, {usuario?.nome || 'Usuário'}!
+              </span>
+              <button className="btn-donor" onClick={handleLogout} type="button">
+                Sair
+              </button>
+            </div>
+          ) : (
+            <>
+              <button className="btn-donor" onClick={() => navigate("/login")} type="button">
+                Sou Doador
+              </button>
+              <button className="btn-hospital" type="button">
+                Sou Hospital
+              </button>
+            </>
+          )}
         </nav>
       </header>
 
@@ -91,7 +134,11 @@ function Home() {
               Doe sangue,
               <br /> salve até 4 vidas
             </h2>
-            <button type="button" className="btn-cta" onClick={() => navigate("/Login")}>
+            <button 
+              type="button" 
+              className="btn-cta" 
+              onClick={() => handleNavigation("/agendamento")}
+            >
               Agendar Doação
             </button>
           </div>
@@ -131,7 +178,14 @@ function Home() {
 
             {/* Grid dos 4 cards quadrados */}
             <div className="square-cards-grid">
-              <article className="feature-card squareSpecificity" role="button" tabIndex={0} aria-label="Hospitais">
+              <article 
+                className="feature-card squareSpecificity" 
+                role="button" 
+                tabIndex={0} 
+                aria-label="Hospitais"
+                onClick={() => handleNavigation('/hospitais')}
+                style={{ cursor: 'pointer' }}
+              >
                 <img src={icHospital || "/placeholder.svg"} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">Hospitais</h4>
               </article>
@@ -141,6 +195,8 @@ function Home() {
                 role="button"
                 tabIndex={0}
                 aria-label="Banco de Sangue"
+                onClick={() => handleNavigation('/banco-sangue')}
+                style={{ cursor: 'pointer' }}
               >
                 <img src={icBancoSangue || "/placeholder.svg"} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">
@@ -155,6 +211,8 @@ function Home() {
                 role="button"
                 tabIndex={0}
                 aria-label="Histórico"
+                onClick={() => handleNavigation('/historico')}
+                style={{ cursor: 'pointer' }}
               >
                 <img src={icHistorico || "/placeholder.svg"} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">Histórico</h4>
@@ -165,6 +223,8 @@ function Home() {
                 role="button"
                 tabIndex={0}
                 aria-label="Registrar Doação"
+                onClick={() => handleNavigation('/registrar-doacao')}
+                style={{ cursor: 'pointer' }}
               >
                 <img src={icRegistrar || "/placeholder.svg"} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">

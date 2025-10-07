@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Use .env: VITE_API_URL=http://localhost:8080/v1/doevida
 const http = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://10.107.144.16:8080/v1/doevida/',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida',
   timeout: 15000,
 });
 
@@ -18,5 +18,18 @@ http.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Interceptor de resposta para tratamento de erros
+http.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expirado ou inválido
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default http;
