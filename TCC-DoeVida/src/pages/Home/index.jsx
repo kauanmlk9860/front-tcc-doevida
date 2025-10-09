@@ -58,8 +58,8 @@ function Home() {
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showModal, setShowModal] = useState(false); // ← controle do modal
 
-  // YouTube embed
   const YT_ID = "97Sx0KiExZM";
   const EMBED_URL =
     `https://www.youtube.com/embed/${YT_ID}` +
@@ -97,11 +97,7 @@ function Home() {
       <header className="header" role="banner">
         <div className="logo-container">
           <div className="logo-icon">
-            <img
-              src={logoBranca || "/placeholder.svg"}
-              alt="Logo DoeVida"
-              className="logo-img"
-            />
+            <img src={logoBranca} alt="Logo DoeVida" className="logo-img" />
           </div>
           <h1 className="logo-text">DOEVIDA</h1>
         </div>
@@ -187,12 +183,7 @@ function Home() {
               aria-label="Vidas salvas este ano"
             >
               <div className="impact-text">
-                <CountUp
-                  end={12340}
-                  duration={1800}
-                  prefix="+"
-                  className="impact-number"
-                />
+                <CountUp end={12340} duration={1800} prefix="+" className="impact-number" />
                 <span className="impact-label">
                   vidas salvas
                   <br />
@@ -204,69 +195,37 @@ function Home() {
             <div className="square-cards-grid">
               <article
                 className="feature-card squareSpecificity"
-                role="button"
-                tabIndex={0}
-                aria-label="Hospitais"
                 onClick={() => handleNavigation("/hospitais")}
               >
-                <img
-                  src={icHospital || "/placeholder.svg"}
-                  alt=""
-                  className="feature-emoji big"
-                />
+                <img src={icHospital} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">Hospitais</h4>
               </article>
 
               <article
                 className="feature-card squareSpecificity"
-                role="button"
-                tabIndex={0}
-                aria-label="Banco de Sangue"
                 onClick={() => handleNavigation("/banco-sangue")}
               >
-                <img
-                  src={icBancoSangue || "/placeholder.svg"}
-                  alt=""
-                  className="feature-emoji big"
-                />
+                <img src={icBancoSangue} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">
-                  Banco de
-                  <br />
-                  Sangue
+                  Banco de <br /> Sangue
                 </h4>
               </article>
 
               <article
                 className="feature-card squareSpecificity"
-                role="button"
-                tabIndex={0}
-                aria-label="Histórico"
                 onClick={() => handleNavigation("/historico")}
               >
-                <img
-                  src={icHistorico || "/placeholder.svg"}
-                  alt=""
-                  className="feature-emoji big"
-                />
+                <img src={icHistorico} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">Histórico</h4>
               </article>
 
               <article
                 className="feature-card squareSpecificity"
-                role="button"
-                tabIndex={0}
-                aria-label="Registrar Doação"
                 onClick={() => handleNavigation("/registrar-doacao")}
               >
-                <img
-                  src={icRegistrar || "/placeholder.svg"}
-                  alt=""
-                  className="feature-emoji big"
-                />
+                <img src={icRegistrar} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">
-                  Registrar
-                  <br />
-                  Doação
+                  Registrar <br /> Doação
                 </h4>
               </article>
             </div>
@@ -297,12 +256,54 @@ function Home() {
             <a href="#" className="footer-link">
               Termos de Uso
             </a>
-            <a href="#" className="footer-link">
+            <button
+              type="button"
+              className="footer-link btn-link"
+              onClick={() => setShowModal(true)}
+            >
               Contato
-            </a>
+            </button>
           </div>
         </div>
       </footer>
+
+      {/* MODAL DE CONTATO */}
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+          >
+            <h2 id="modal-title">Contatos dos Responsáveis</h2>
+            <p>
+              <strong>Gabriel Soares: <br /> </strong> gabriellssoares2016@gmail.com.br
+            </p>
+            <p>
+              <strong>Daniel Torres: <br /> </strong> victor.hugo@doevida.com.br
+            </p>
+            <p>
+              <strong>Kauan Rodrigues: <br /> </strong> kauan.rodrigues@doevida.com.br
+            </p>
+            <p>
+              <strong>Rafaella Toscano: <br /> </strong> kauan.rodrigues@doevida.com.br
+            </p>
+            <p>
+              <strong>Victor Hugo: <br /> </strong> victor.hugo@doevida.com.br
+            </p>
+
+            <button
+              type="button"
+              className="btn-close-modal"
+              onClick={() => setShowModal(false)}
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
