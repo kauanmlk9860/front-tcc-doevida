@@ -126,7 +126,8 @@ function Home() {
               >
                 Sou Hospital
               </button>
-              <button className="btn-hospital" type="button">
+              <button className="btn-hospital" type="button" onClick={() => handleNavigation("/login")}>
+
                 Sou Doador
               </button>
             </>
