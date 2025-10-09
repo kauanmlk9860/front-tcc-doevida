@@ -119,7 +119,7 @@ function Home() {
             <>
               <button
                 className="btn-donor"
-                onClick={() => handleNavigation("/login")}
+                onClick={() => handleNavigation("/Hospital_cadastro")}
                 type="button"
               >
                 Sou Hospital
