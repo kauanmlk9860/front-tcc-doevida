@@ -84,7 +84,6 @@ function Home() {
   };
 
   const handleNavigation = (path) => {
-    // Permite acesso livre a home, saiba-mais e login
     if (!isLoggedIn && !["/login", "/saiba-mais", "/home"].includes(path)) {
       navigate("/login");
     } else {
@@ -109,10 +108,13 @@ function Home() {
 
         <nav className="nav-buttons" aria-label="Ações principais">
           {isLoggedIn ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-              <span style={{ color: "white", fontSize: "14px" }}>
-                Olá, {usuario?.nome || "Usuário"}!
-              </span>
+            <div className="user-info">
+              <img
+                src={usuario?.fotoPerfil || "/placeholder-profile.png"}
+                alt="Foto de perfil"
+                className="user-avatar"
+              />
+              <span className="user-name">Olá, {usuario?.nome || "Usuário"}!</span>
               <button className="btn-donor" onClick={handleLogout} type="button">
                 Sair
               </button>
@@ -126,8 +128,11 @@ function Home() {
               >
                 Sou Hospital
               </button>
-              <button className="btn-hospital" type="button" onClick={() => handleNavigation("/login")}>
-
+              <button
+                className="btn-hospital"
+                type="button"
+                onClick={() => handleNavigation("/login")}
+              >
                 Sou Doador
               </button>
             </>
@@ -153,7 +158,10 @@ function Home() {
           </div>
 
           <div className="hero-media">
-            <div className="media-iframe-wrap" aria-label="Pessoas doando sangue em um hemocentro">
+            <div
+              className="media-iframe-wrap"
+              aria-label="Pessoas doando sangue em um hemocentro"
+            >
               <iframe
                 className="media-iframe"
                 src={EMBED_URL}
@@ -173,9 +181,18 @@ function Home() {
           </h3>
 
           <div className="actions-layout">
-            <div className="impact-card" role="status" aria-label="Vidas salvas este ano">
+            <div
+              className="impact-card"
+              role="status"
+              aria-label="Vidas salvas este ano"
+            >
               <div className="impact-text">
-                <CountUp end={12340} duration={1800} prefix="+" className="impact-number" />
+                <CountUp
+                  end={12340}
+                  duration={1800}
+                  prefix="+"
+                  className="impact-number"
+                />
                 <span className="impact-label">
                   vidas salvas
                   <br />
@@ -191,9 +208,12 @@ function Home() {
                 tabIndex={0}
                 aria-label="Hospitais"
                 onClick={() => handleNavigation("/hospitais")}
-                style={{ cursor: "pointer" }}
               >
-                <img src={icHospital || "/placeholder.svg"} alt="" className="feature-emoji big" />
+                <img
+                  src={icHospital || "/placeholder.svg"}
+                  alt=""
+                  className="feature-emoji big"
+                />
                 <h4 className="feature-title-only bigger">Hospitais</h4>
               </article>
 
@@ -203,9 +223,12 @@ function Home() {
                 tabIndex={0}
                 aria-label="Banco de Sangue"
                 onClick={() => handleNavigation("/banco-sangue")}
-                style={{ cursor: "pointer" }}
               >
-                <img src={icBancoSangue || "/placeholder.svg"} alt="" className="feature-emoji big" />
+                <img
+                  src={icBancoSangue || "/placeholder.svg"}
+                  alt=""
+                  className="feature-emoji big"
+                />
                 <h4 className="feature-title-only bigger">
                   Banco de
                   <br />
@@ -219,9 +242,12 @@ function Home() {
                 tabIndex={0}
                 aria-label="Histórico"
                 onClick={() => handleNavigation("/historico")}
-                style={{ cursor: "pointer" }}
               >
-                <img src={icHistorico || "/placeholder.svg"} alt="" className="feature-emoji big" />
+                <img
+                  src={icHistorico || "/placeholder.svg"}
+                  alt=""
+                  className="feature-emoji big"
+                />
                 <h4 className="feature-title-only bigger">Histórico</h4>
               </article>
 
@@ -231,9 +257,12 @@ function Home() {
                 tabIndex={0}
                 aria-label="Registrar Doação"
                 onClick={() => handleNavigation("/registrar-doacao")}
-                style={{ cursor: "pointer" }}
               >
-                <img src={icRegistrar || "/placeholder.svg"} alt="" className="feature-emoji big" />
+                <img
+                  src={icRegistrar || "/placeholder.svg"}
+                  alt=""
+                  className="feature-emoji big"
+                />
                 <h4 className="feature-title-only bigger">
                   Registrar
                   <br />
