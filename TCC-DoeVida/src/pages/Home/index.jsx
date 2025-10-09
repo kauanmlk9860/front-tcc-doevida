@@ -24,8 +24,8 @@ function CountUp({ end = 12340, duration = 1800, prefix = "+", className }) {
   const fmt = useNumberFormatter();
   const reduced = useRef(
     typeof window !== "undefined" &&
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
 
   useEffect(() => {
