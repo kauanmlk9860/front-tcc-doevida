@@ -4,7 +4,7 @@ import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
 
 function Hospital_cadastro() {
- 
+  const navigate = useNavigate()
 
   // Refs
   const nomeRef = useRef()
@@ -340,7 +340,7 @@ function Hospital_cadastro() {
         <button
           className="btn btn--link"
           type="button"
-          onClick={() => navigate('/login')}
+          onClick={() => navigate('/hospital-login')}
           disabled={loading}
         >
           Já tem uma conta?

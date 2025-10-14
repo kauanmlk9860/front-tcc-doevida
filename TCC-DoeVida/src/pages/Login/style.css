@@ -25,6 +25,7 @@
   position: fixed;
   top: -15vw;
   left: -15vw;
+  z-index: -1;
 }
 
 .login__form {
@@ -36,7 +37,6 @@
   max-width: 600px;
   width: 100%;
   margin: 20px 0 10px;
-  height: 600px;
 }
 
 .input[class*="input--"] {
@@ -44,6 +44,16 @@
   background-position: 15px center;
   background-size: 24px;
   height: 80px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding-left: 55px;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.input[class*="input--"]:focus {
+  border-color: #990410;
 }
 
 .input--email {
@@ -63,6 +73,7 @@
   padding: 0;
   font-size: 16px;
   cursor: pointer;
+  transition: opacity 0.2s ease;
 }
 
 .login__forgot:hover {
@@ -72,6 +83,8 @@
 .login__actions {
   display: flex;
   flex-direction: column;
+  align-items: center; /* ✅ Centraliza os botões */
+  justify-content: center;
   gap: 8px;
   padding: 10px;
   border-radius: 20px;
@@ -87,9 +100,13 @@
   font-size: 18px;
   cursor: pointer;
   padding: 0 16px;
-  background: transparent;  
-  color: inherit;            
-  transition: opacity .2s ease;
+  background: transparent;
+  color: inherit;
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.btn:hover {
+  transform: scale(1.02);
 }
 
 .btn--primary {
@@ -98,15 +115,14 @@
 }
 
 .btn--link {
-  background: transparent;  
+  background: transparent;
   color: #990410;
 }
 
-.btn:hover,
-.btn--link:hover,
-.btn--primary:hover {
+.btn--link:hover {
   opacity: 0.9;
 }
+
 /* ===== RESPONSIVIDADE LOGIN ===== */
 
 /* Telas muito grandes (4K e ultrawide) */

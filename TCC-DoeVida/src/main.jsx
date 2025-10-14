@@ -10,11 +10,16 @@ import Redefinir_senha from "./pages/Redefinir_senha";
 import SaibaMais from "./pages/Saiba_mais";
 import Hospital_Login from "./pages/Hospital_Login";
 import Hospital_cadastro from "./pages/Hospital_cadastro";
+import Protocolo_agendamento from "./pages/Protocolo_agendamento";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>
+      <Protocolo_agendamento/>
+    </BrowserRouter>
+  </StrictMode>
+);
+      {/* <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
@@ -24,8 +29,6 @@ createRoot(document.getElementById("root")).render(
         <Route path="/home" element={<Home />} />
         <Route path="/hospital-cadastro" element={<Hospital_cadastro />} />
         <Route path="/hospital-login" element={<Hospital_Login />} /> 
+        <Route path="/protocolo-agendamento" element={<Protocolo_agendamento />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </BrowserRouter>
-  </StrictMode>
-);
+      </Routes> */}

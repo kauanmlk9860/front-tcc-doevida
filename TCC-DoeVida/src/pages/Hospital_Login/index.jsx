@@ -87,14 +87,6 @@ export default function Hospital_Login() {
           </div>
         )}
 
-        <button 
-          type="button" 
-          className="login__forgot" 
-          onClick={() => navigate('/recuperar-senha')}
-          disabled={loading}
-        >
-          Esqueci minha senha
-        </button>
       </form>
 
       <div className="login__actions">
