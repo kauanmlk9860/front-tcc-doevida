@@ -5,11 +5,12 @@ import logoBranca from '../../assets/Logo_Branca.png'
 import AuthService from '../../services/auth.js'
 
 export default function Hospital_Login() {
-  const navigate = useNavigate()
+  const navigate = useNavigate()  // <== Ativado
   const emailRef = useRef()
   const senhaRef = useRef()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('') // Mensagem de sucesso
 
   const handleLogin = async () => {
     const email = emailRef.current?.value?.trim()
@@ -33,13 +34,16 @@ export default function Hospital_Login() {
 
     setLoading(true)
     setError('')
+    setSuccess('')
 
     try {
       const result = await AuthService.login(email, senha)
       
       if (result.success) {
-        // Login bem-sucedido, redireciona para home
-        navigate('/home')
+        setSuccess('Login efetuado com sucesso! Redirecionando...')
+        setTimeout(() => {
+          navigate('/home')
+        }, 1000) // 1 segundo antes de redirecionar
       } else {
         setError(result.message || 'Erro ao fazer login')
       }
@@ -84,6 +88,12 @@ export default function Hospital_Login() {
         {error && (
           <div style={{ color: 'red', fontSize: '14px', marginTop: '10px', textAlign: 'center' }}>
             {error}
+          </div>
+        )}
+
+        {success && (
+          <div style={{ color: 'green', fontSize: '14px', marginTop: '10px', textAlign: 'center' }}>
+            {success}
           </div>
         )}
 
