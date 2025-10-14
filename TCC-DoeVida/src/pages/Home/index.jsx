@@ -24,8 +24,8 @@ function CountUp({ end = 12340, duration = 1800, prefix = "+", className }) {
   const fmt = useNumberFormatter();
   const reduced = useRef(
     typeof window !== "undefined" &&
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
 
   useEffect(() => {
@@ -95,7 +95,7 @@ function Home() {
     <>
       {/* HEADER */}
       <header className="header" role="banner">
-        <div className="logo-container">
+        <div className="logo-container" onClick={() => navigate("/home")}>
           <div className="logo-icon">
             <img src={logoBranca} alt="Logo DoeVida" className="logo-img" />
           </div>
@@ -117,17 +117,19 @@ function Home() {
             </div>
           ) : (
             <>
+              {/* 🔴 AJUSTADO: agora leva para /hospital-login */}
               <button
                 className="btn-donor"
-                onClick={() => handleNavigation("/Hospital_cadastro")}
+                onClick={() => navigate("/hospital-login")}
                 type="button"
               >
                 Sou Hospital
               </button>
+
               <button
                 className="btn-hospital"
                 type="button"
-                onClick={() => handleNavigation("/login")}
+                onClick={() => navigate("/login")}
               >
                 Sou Doador
               </button>
@@ -279,19 +281,19 @@ function Home() {
           >
             <h2 id="modal-title">Contatos dos Responsáveis</h2>
             <p>
-              <strong>Gabriel Soares: <br /> </strong> gabriellssoares2016@gmail.com.br
+              <strong>Gabriel Soares:</strong> gabriellssoares2016@gmail.com.br
             </p>
             <p>
-              <strong>Daniel Torres: <br /> </strong> victor.hugo@doevida.com.br
+              <strong>Daniel Torres:</strong> victor.hugo@doevida.com.br
             </p>
             <p>
-              <strong>Kauan Rodrigues: <br /> </strong> kauan.rodrigues@doevida.com.br
+              <strong>Kauan Rodrigues:</strong> kauan.rodrigues@doevida.com.br
             </p>
             <p>
-              <strong>Rafaella Toscano: <br /> </strong> kauan.rodrigues@doevida.com.br
+              <strong>Rafaella Toscano:</strong> kauan.rodrigues@doevida.com.br
             </p>
             <p>
-              <strong>Victor Hugo: <br /> </strong> victor.hugo@doevida.com.br
+              <strong>Victor Hugo:</strong> victor.hugo@doevida.com.br
             </p>
 
             <button

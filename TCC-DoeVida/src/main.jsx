@@ -1,18 +1,16 @@
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Cadastro from './pages/Cadastro';
-import Login from './pages/Login';
-import SaibaMais from './pages/Saiba_mais';
-import Recuperar_senha from './pages/Recuperar_senha';
-import Redefinir_senha from './pages/Redefinir_senha';
-import Home from './pages/Home';
-import Hospital_Login from './pages/Hospital_Login';
-import './index.css';
-import Hospital_cadastro from './pages/Hospital_cadastro';
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Cadastro from "./pages/Cadastro";
+import Recuperar_senha from "./pages/Recuperar_senha";
+import Redefinir_senha from "./pages/Redefinir_senha";
+import SaibaMais from "./pages/Saiba_mais";
+import Hospital_Login from "./pages/Hospital_Login";
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
@@ -28,6 +26,4 @@ createRoot(document.getElementById('root')).render(
       </Routes>
     </BrowserRouter>
   </StrictMode>
-)
-
-    
+);
