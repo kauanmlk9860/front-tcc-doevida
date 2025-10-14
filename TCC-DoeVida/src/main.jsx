@@ -9,6 +9,7 @@ import Recuperar_senha from "./pages/Recuperar_senha";
 import Redefinir_senha from "./pages/Redefinir_senha";
 import SaibaMais from "./pages/Saiba_mais";
 import Hospital_Login from "./pages/Hospital_Login";
+import Hospital_cadastro from "./pages/Hospital_cadastro";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -21,6 +22,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/redefinir-senha" element={<Redefinir_senha />} />
         <Route path="/saiba-mais" element={<SaibaMais />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/hospital-cadastro" element={<Hospital_cadastro />} />
         <Route path="/hospital-login" element={<Hospital_Login />} /> 
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

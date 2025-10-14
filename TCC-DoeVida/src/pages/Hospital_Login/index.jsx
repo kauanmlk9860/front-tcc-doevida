@@ -5,18 +5,17 @@ import logoBranca from '../../assets/Logo_Branca.png'
 import AuthService from '../../services/auth.js'
 
 export default function Hospital_Login() {
-  const navigate = useNavigate()  // <== Ativado
+  const navigate = useNavigate()
   const emailRef = useRef()
   const senhaRef = useRef()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('') // Mensagem de sucesso
 
   const handleLogin = async () => {
     const email = emailRef.current?.value?.trim()
     const senha = senhaRef.current?.value
 
-    // Validações básicas
+    // 🔹 Validações básicas
     if (!email) {
       setError('Por favor, digite seu e-mail')
       return
@@ -34,18 +33,15 @@ export default function Hospital_Login() {
 
     setLoading(true)
     setError('')
-    setSuccess('')
 
     try {
       const result = await AuthService.login(email, senha)
       
       if (result.success) {
-        setSuccess('Login efetuado com sucesso! Redirecionando...')
-        setTimeout(() => {
-          navigate('/home')
-        }, 1000) // 1 segundo antes de redirecionar
+        // 🔹 Login validado no banco → redireciona para home
+        navigate('/home')
       } else {
-        setError(result.message || 'Erro ao fazer login')
+        setError(result.message || 'E-mail ou senha incorretos')
       }
     } catch (error) {
       console.error('Erro no login:', error)
@@ -91,12 +87,6 @@ export default function Hospital_Login() {
           </div>
         )}
 
-        {success && (
-          <div style={{ color: 'green', fontSize: '14px', marginTop: '10px', textAlign: 'center' }}>
-            {success}
-          </div>
-        )}
-
         <button 
           type="button" 
           className="login__forgot" 
@@ -119,7 +109,7 @@ export default function Hospital_Login() {
         <button 
           className="btn btn--link" 
           type="button" 
-          onClick={() => navigate('/cadastro')}
+          onClick={() => navigate('/hospital-cadastro')}
           disabled={loading}
         >
           Criar conta?

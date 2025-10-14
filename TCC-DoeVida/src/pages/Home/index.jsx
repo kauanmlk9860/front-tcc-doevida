@@ -24,8 +24,8 @@ function CountUp({ end = 12340, duration = 1800, prefix = "+", className }) {
   const fmt = useNumberFormatter();
   const reduced = useRef(
     typeof window !== "undefined" &&
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
 
   useEffect(() => {
@@ -58,7 +58,7 @@ function Home() {
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showModal, setShowModal] = useState(false); // ← controle do modal
+  const [showModal, setShowModal] = useState(false);
 
   const YT_ID = "97Sx0KiExZM";
   const EMBED_URL =
@@ -84,7 +84,7 @@ function Home() {
   };
 
   const handleNavigation = (path) => {
-    if (!isLoggedIn && !["/login", "/saiba-mais", "/home"].includes(path)) {
+    if (!isLoggedIn && !["/login", "/hospital-login", "/saiba-mais", "/home"].includes(path)) {
       navigate("/login");
     } else {
       navigate(path);
@@ -95,7 +95,7 @@ function Home() {
     <>
       {/* HEADER */}
       <header className="header" role="banner">
-        <div className="logo-container" onClick={() => navigate("/home")}>
+        <div className="logo-container">
           <div className="logo-icon">
             <img src={logoBranca} alt="Logo DoeVida" className="logo-img" />
           </div>
@@ -117,19 +117,20 @@ function Home() {
             </div>
           ) : (
             <>
-              {/* 🔴 AJUSTADO: agora leva para /hospital-login */}
+              {/* ✅ Corrigido: hospital → hospital-login */}
               <button
-                className="btn-donor"
-                onClick={() => navigate("/hospital-login")}
+                className="btn-hospital"
+                onClick={() => handleNavigation("/hospital-login")}
                 type="button"
               >
                 Sou Hospital
               </button>
 
+              {/* ✅ Corrigido: doador → login */}
               <button
-                className="btn-hospital"
+                className="btn-donor"
                 type="button"
-                onClick={() => navigate("/login")}
+                onClick={() => handleNavigation("/login")}
               >
                 Sou Doador
               </button>
@@ -281,19 +282,19 @@ function Home() {
           >
             <h2 id="modal-title">Contatos dos Responsáveis</h2>
             <p>
-              <strong>Gabriel Soares:</strong> gabriellssoares2016@gmail.com.br
+              <strong>Gabriel Soares: </strong> gabriellssoares2016@gmail.com.br
             </p>
             <p>
-              <strong>Daniel Torres:</strong> victor.hugo@doevida.com.br
+              <strong>Daniel Torres: </strong> victor.hugo@doevida.com.br
             </p>
             <p>
-              <strong>Kauan Rodrigues:</strong> kauan.rodrigues@doevida.com.br
+              <strong>Kauan Rodrigues: </strong> kauan.rodrigues@doevida.com.br
             </p>
             <p>
-              <strong>Rafaella Toscano:</strong> kauan.rodrigues@doevida.com.br
+              <strong>Rafaella Toscano: </strong> rafaella.toscano@doevida.com.br
             </p>
             <p>
-              <strong>Victor Hugo:</strong> victor.hugo@doevida.com.br
+              <strong>Victor Hugo: </strong> victor.hugo@doevida.com.br
             </p>
 
             <button
