@@ -14,7 +14,7 @@ import Hospital_cadastro from './pages/Hospital_cadastro';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-       <BrowserRouter>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/login" element={<Login />} />
