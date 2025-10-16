@@ -11,6 +11,7 @@ import SaibaMais from "../../pages/Saiba_mais";
 import Hospital_Login from "../../pages/Hospital_Login";
 import Hospital_cadastro from "../../pages/Hospital_cadastro";
 import Protocolo_agendamento from "../../pages/Protocolo_agendamento";
+import Agendamento from "../../pages/Agendamento";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -38,6 +39,7 @@ const AnimatedRoutes = () => {
         <Route path="/hospital-cadastro" element={<Hospital_cadastro />} />
         <Route path="/hospital-login" element={<Hospital_Login />} />
         <Route path="/protocolo-agendamento" element={<Protocolo_agendamento />} />
+        <Route path="/agendamento" element={<Agendamento />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </div>
