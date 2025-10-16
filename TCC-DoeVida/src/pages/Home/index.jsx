@@ -16,7 +16,7 @@ function useNumberFormatter(locale = "pt-BR") {
   return useMemo(() => new Intl.NumberFormat(locale), [locale]);
 }
 
-/** CountUp simples */
+/** CountUp simples */  
 function CountUp({ end = 12340, duration = 1800, prefix = "+", className }) {
   const [value, setValue] = useState(0);
   const startRef = useRef(null);
