@@ -5,6 +5,7 @@ import "./style.css";
 import logoBranca from "../../assets/Logo_Branca.png";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../../services/auth.js";
+import LogoutModal from "../../components/LogoutModal";
 
 import icHospital from "../../assets/icons/hospital.png";
 import icBancoSangue from "../../assets/icons/banco-sangue.png";
@@ -59,6 +60,7 @@ function Home() {
   const [usuario, setUsuario] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const YT_ID = "97Sx0KiExZM";
   const EMBED_URL =
@@ -76,11 +78,20 @@ function Home() {
     }
   }, []);
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = () => {
     AuthService.logout();
     setIsLoggedIn(false);
     setUsuario(null);
+    setShowLogoutModal(false);
     navigate("/");
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
   };
 
   const handleNavigation = (path) => {
@@ -111,7 +122,7 @@ function Home() {
                 className="user-avatar"
               />
               <span className="user-name">Olá, {usuario?.nome || "Usuário"}!</span>
-              <button className="btn-donor" onClick={handleLogout} type="button">
+              <button className="btn-donor" onClick={handleLogoutClick} type="button">
                 Sair
               </button>
             </div>
@@ -307,6 +318,14 @@ function Home() {
           </div>
         </div>
       )}
+
+      {/* MODAL DE LOGOUT */}
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={handleLogoutCancel}
+        onConfirm={handleLogoutConfirm}
+        userName={usuario?.nome}
+      />
     </>
   );
 }

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
 import AuthService from '../../services/auth.js'
+import PasswordInput from '../../components/PasswordInput'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -72,11 +73,9 @@ export default function Login() {
           onKeyPress={handleKeyPress}
           disabled={loading}
         />
-        <input 
-          className="input input--password" 
-          placeholder="Senha" 
-          type="password" 
+        <PasswordInput
           ref={senhaRef}
+          placeholder="Senha"
           onKeyPress={handleKeyPress}
           disabled={loading}
         />

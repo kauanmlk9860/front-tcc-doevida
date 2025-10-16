@@ -2,6 +2,10 @@ import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
+import FormattedInput from '../../components/FormattedInput'
+import PhotoUpload from '../../components/PhotoUpload'
+import PasswordInput from '../../components/PasswordInput'
+import { InputIcons } from '../../components/InputIcons'
 
 function Hospital_cadastro() {
   const navigate = useNavigate()
@@ -20,6 +24,7 @@ function Hospital_cadastro() {
   const aberturaRef = useRef()
   const fechamentoRef = useRef()
   const fotoRef = useRef()
+  const photoUploadRef = useRef()
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -104,19 +109,31 @@ function Hospital_cadastro() {
 
     setLoading(true)
 
+    // Preparar foto do hospital
+    let fotoHospitalData = null;
+    if (photoUploadRef.current?.hasFile) {
+      const file = photoUploadRef.current.file;
+      // Converter para base64 para envio
+      fotoHospitalData = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      });
+    }
+
     const dadosHospital = {
       nome: nomeRef.current.value.trim(),
       email: emailRef.current.value.trim(),
       senha: senhaRef.current.value,
-      cnpj: cnpjRef.current.value.trim(),
-      cep: cepRef.current.value.trim(),
-      telefone: telefoneRef.current.value.trim(),
+      cnpj: cnpjRef.current.value.replace(/\D/g, ''),
+      cep: cepRef.current.value.replace(/\D/g, ''),
+      telefone: telefoneRef.current.value.replace(/\D/g, ''),
       capacidade_maxima: Number(capacidadeRef.current.value),
       convenios: conveniosRef.current.value.trim(),
       crm: crmRef.current.value.trim(),
       horario_abertura: aberturaRef.current.value,
       horario_fechamento: fechamentoRef.current.value,
-      foto: (fotoRef.current?.value?.trim() || 'https://via.placeholder.com/600x400?text=Hospital')
+      foto: fotoHospitalData || 'https://via.placeholder.com/600x400?text=Hospital'
     }
 
     try {
@@ -159,163 +176,128 @@ function Hospital_cadastro() {
       {/* ✅ ativa o grid de 2 colunas do CSS novo */}
       <form className="cadastro__form form-grid" autoComplete="off" onSubmit={(e) => e.preventDefault()}>
 
-        <input
-          className="input input--name"
-          placeholder="Nome do Hospital *"
-          name="nome"
-          type="text"
+        <FormattedInput
           ref={nomeRef}
+          placeholder="Nome do Hospital *"
+          icon={<InputIcons.Hospital />}
           onKeyPress={handleKeyPress}
           disabled={loading}
-          required
           maxLength={70}
         />
 
-        <input
-          className="input input--email"
-          placeholder="Digite o E-mail *"
-          name="email"
-          type="email"
+        <FormattedInput
           ref={emailRef}
+          type="email"
+          placeholder="Digite o E-mail *"
+          icon={<InputIcons.Email />}
           onKeyPress={handleKeyPress}
           disabled={loading}
-          required
           maxLength={100}
         />
 
-        <input
-          className="input input--password"
-          placeholder="Digite a Senha *"
-          name="senha"
-          type="password"
+        <PasswordInput
           ref={senhaRef}
+          placeholder="Digite a Senha *"
           onKeyPress={handleKeyPress}
           disabled={loading}
-          required
           minLength={6}
           maxLength={255}
         />
 
-        <input
-          className="input input--password-confirm"
-          placeholder="Confirme a Senha *"
-          name="confirmar-senha"
-          type="password"
+        <PasswordInput
           ref={confirmarSenhaRef}
+          placeholder="Confirme a Senha *"
           onKeyPress={handleKeyPress}
           disabled={loading}
-          required
           minLength={6}
           maxLength={255}
         />
 
-        {/* ✅ campos sem ícone recebem .no-icon para remover padding esquerdo */}
-        <input
-          className="input no-icon"
-          placeholder="CNPJ *"
-          name="cnpj"
-          type="text"
+        <FormattedInput
           ref={cnpjRef}
+          formatType="cnpj"
+          placeholder="CNPJ *"
+          icon={<InputIcons.Building />}
           onKeyPress={handleKeyPress}
           disabled={loading}
-          required
           maxLength={20}
         />
 
-        <input
-          className="input no-icon"
-          placeholder="CEP *"
-          name="cep"
-          type="text"
+        <FormattedInput
           ref={cepRef}
+          formatType="cep"
+          placeholder="CEP *"
+          icon={<InputIcons.Location />}
           onKeyPress={handleKeyPress}
           disabled={loading}
-          required
           maxLength={10}
         />
 
-        <input
-          className="input no-icon"
-          placeholder="Telefone *"
-          name="telefone"
-          type="text"
+        <FormattedInput
           ref={telefoneRef}
+          formatType="phone"
+          placeholder="Telefone *"
+          icon={<InputIcons.Phone />}
           onKeyPress={handleKeyPress}
           disabled={loading}
-          required
           maxLength={20}
         />
 
-        <input
-          className="input no-icon"
-          placeholder="Capacidade Máxima (Doadores) *"
-          name="capacidade"
-          type="number"
+        <FormattedInput
           ref={capacidadeRef}
+          type="number"
+          placeholder="Capacidade Máxima (Doadores) *"
+          icon={<InputIcons.Capacity />}
           onKeyPress={handleKeyPress}
           disabled={loading}
-          required
           min={1}
         />
 
-        <input
-          className="input no-icon"
-          placeholder="Convênios Aceitos *"
-          name="convenios"
-          type="text"
+        <FormattedInput
           ref={conveniosRef}
+          placeholder="Convênios Aceitos *"
+          icon={<InputIcons.Insurance />}
           onKeyPress={handleKeyPress}
           disabled={loading}
-          required
           maxLength={255}
         />
 
-        <input
-          className="input no-icon"
-          placeholder="CRM (Link) *"
-          name="crm"
-          type="text"
+        <FormattedInput
           ref={crmRef}
+          placeholder="CRM (Link) *"
+          icon={<InputIcons.Link />}
           onKeyPress={handleKeyPress}
           disabled={loading}
-          required
           maxLength={255}
         />
 
-        <input
-          className="input input--date"
-          placeholder="Horário de Abertura *"
-          name="horario-abertura"
-          type="time"
+        <FormattedInput
           ref={aberturaRef}
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          required
-          step="900"
-        />
-
-        <input
-          className="input input--date"
-          placeholder="Horário de Fechamento *"
-          name="horario-fechamento"
           type="time"
-          ref={fechamentoRef}
+          placeholder="Horário de Abertura *"
+          icon={<InputIcons.Clock />}
           onKeyPress={handleKeyPress}
           disabled={loading}
-          required
           step="900"
         />
 
-        <input
-          className="input input--photo"
-          placeholder="URL da Foto (opcional)"
-          name="foto"
-          type="url"
-          ref={fotoRef}
+        <FormattedInput
+          ref={fechamentoRef}
+          type="time"
+          placeholder="Horário de Fechamento *"
+          icon={<InputIcons.Clock />}
           onKeyPress={handleKeyPress}
           disabled={loading}
-          maxLength={255}
+          step="900"
         />
+
+        <div style={{ gridColumn: '1 / -1' }}>
+          <PhotoUpload
+            ref={photoUploadRef}
+            placeholder="Adicione foto do hospital (opcional)"
+            disabled={loading}
+          />
+        </div>
 
         {error && (
           <div className="error-msg">{error}</div>

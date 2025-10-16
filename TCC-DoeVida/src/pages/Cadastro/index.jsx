@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
+import FormattedInput from '../../components/FormattedInput'
+import PhotoUpload from '../../components/PhotoUpload'
+import PasswordInput from '../../components/PasswordInput'
+import { InputIcons } from '../../components/InputIcons'
 
 function Cadastro() {
   const navigate = useNavigate()
@@ -16,6 +20,7 @@ function Cadastro() {
   const numeroRef = useRef()
   const dataNascimentoRef = useRef()
   const fotoPerfilRef = useRef()
+  const photoUploadRef = useRef()
 
   // Estados
   const [sexos, setSexos] = useState([])
@@ -85,15 +90,27 @@ function Cadastro() {
     if (erro) return setError(erro)
     setLoading(true)
 
+    // Preparar foto de perfil
+    let fotoPerfilData = null;
+    if (photoUploadRef.current?.hasFile) {
+      const file = photoUploadRef.current.file;
+      // Converter para base64 para envio
+      fotoPerfilData = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      });
+    }
+
     const dadosUsuario = {
       nome: nomeRef.current.value.trim(),
       email: emailRef.current.value.trim(),
       senha: senhaRef.current.value,
-      cpf: cpfRef.current?.value?.trim() || null,
-      cep: cepRef.current?.value?.trim() || null,
-      numero: numeroRef.current?.value?.trim() || null,
+      cpf: cpfRef.current?.value?.replace(/\D/g, '') || null,
+      cep: cepRef.current?.value?.replace(/\D/g, '') || null,
+      numero: numeroRef.current?.value?.replace(/\D/g, '') || null,
       data_nascimento: dataNascimentoRef.current?.value || null,
-      foto_perfil: fotoPerfilRef.current?.value?.trim() || null,
+      foto_perfil: fotoPerfilData || null,
       id_sexo: Number(idSexo),
       id_tipo_sanguineo: Number(idTipoSanguineo)
     }
@@ -141,68 +158,127 @@ function Cadastro() {
         <div className="form-grid">
           <div className="field">
             <span>Nome Completo *</span>
-            <input className="input input--name" type="text" ref={nomeRef} onKeyPress={handleKeyPress} disabled={loading} />
+            <FormattedInput
+              ref={nomeRef}
+              placeholder="Digite seu nome completo"
+              icon={<InputIcons.User />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+            />
           </div>
 
           <div className="field">
             <span>E-mail *</span>
-            <input className="input input--email" type="email" ref={emailRef} onKeyPress={handleKeyPress} disabled={loading} />
+            <FormattedInput
+              ref={emailRef}
+              type="email"
+              placeholder="Digite seu e-mail"
+              icon={<InputIcons.Email />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+            />
           </div>
 
           <div className="field">
             <span>Senha *</span>
-            <input className="input input--password" type="password" ref={senhaRef} onKeyPress={handleKeyPress} disabled={loading} />
+            <PasswordInput
+              ref={senhaRef}
+              placeholder="Digite sua senha"
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+            />
           </div>
 
           <div className="field">
             <span>Confirmar Senha *</span>
-            <input className="input input--password-confirm" type="password" ref={confirmarSenhaRef} onKeyPress={handleKeyPress} disabled={loading} />
+            <PasswordInput
+              ref={confirmarSenhaRef}
+              placeholder="Confirme sua senha"
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+            />
           </div>
 
           <div className="field">
             <span>CPF</span>
-            <input className="input input--cpf" type="text" ref={cpfRef} onKeyPress={handleKeyPress} disabled={loading} />
+            <FormattedInput
+              ref={cpfRef}
+              formatType="cpf"
+              placeholder="000.000.000-00"
+              icon={<InputIcons.Document />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+            />
           </div>
 
           <div className="field">
             <span>CEP</span>
-            <input className="input input--cep" type="text" ref={cepRef} onKeyPress={handleKeyPress} disabled={loading} />
+            <FormattedInput
+              ref={cepRef}
+              formatType="cep"
+              placeholder="00000-000"
+              icon={<InputIcons.Location />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+            />
           </div>
 
           <div className="field">
             <span>Número de Telefone</span>
-            <input className="input input--number" type="text" ref={numeroRef} onKeyPress={handleKeyPress} disabled={loading} />
+            <FormattedInput
+              ref={numeroRef}
+              formatType="phone"
+              placeholder="(00) 00000-0000"
+              icon={<InputIcons.Phone />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+            />
           </div>
 
           <div className="field">
             <span>Data de Nascimento</span>
-            <input className="input input--date" type="date" ref={dataNascimentoRef} disabled={loading} />
+            <FormattedInput
+              ref={dataNascimentoRef}
+              type="date"
+              icon={<InputIcons.Calendar />}
+              disabled={loading}
+            />
           </div>
 
           <div className="field">
             <span>Tipo Sanguíneo *</span>
-            <select className="input input--blood" value={idTipoSanguineo} onChange={e => setIdTipoSanguineo(e.target.value)} disabled={loading}>
-              <option value="" disabled>Selecione...</option>
-              {tiposSangue.map(tipo => <option key={tipo.id} value={tipo.id}>{tipo.tipo}</option>)}
-            </select>
+            <div className="select-wrapper">
+              <InputIcons.Blood />
+              <select className="input input--blood" value={idTipoSanguineo} onChange={e => setIdTipoSanguineo(e.target.value)} disabled={loading}>
+                <option value="" disabled>Selecione...</option>
+                {tiposSangue.map(tipo => <option key={tipo.id} value={tipo.id}>{tipo.tipo}</option>)}
+              </select>
+            </div>
           </div>
 
           <div className="field">
             <span>Sexo *</span>
-            <select className="input input--sex" value={idSexo} onChange={e => setIdSexo(e.target.value)} disabled={loading}>
-              <option value="" disabled>Selecione...</option>
-              {sexos.map(sexo => (
-                <option key={sexo.id} value={sexo.id}>
-                  {sexo.sexo === 'MASCULINO' ? 'Masculino' :
-                   sexo.sexo === 'FEMININO' ? 'Feminino' : 'Outro'}
-                </option>
-              ))}
-            </select>
+            <div className="select-wrapper">
+              <InputIcons.Gender />
+              <select className="input input--sex" value={idSexo} onChange={e => setIdSexo(e.target.value)} disabled={loading}>
+                <option value="" disabled>Selecione...</option>
+                {sexos.map(sexo => (
+                  <option key={sexo.id} value={sexo.id}>
+                    {sexo.sexo === 'MASCULINO' ? 'Masculino' :
+                     sexo.sexo === 'FEMININO' ? 'Feminino' : 'Outro'}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="field">
-            <span>URL da Foto de Perfil</span>
-            <input className="input input--photo" type="url" ref={fotoPerfilRef} onKeyPress={handleKeyPress} disabled={loading} />
+          <div className="field field--full">
+            <span>Foto de Perfil</span>
+            <PhotoUpload
+              ref={photoUploadRef}
+              placeholder="Adicione sua foto de perfil"
+              disabled={loading}
+            />
           </div>
         </div>
 
