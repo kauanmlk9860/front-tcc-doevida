@@ -1,0 +1,123 @@
+.page-transition {
+  width: 100%;
+  min-height: 100vh;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animação de entrada */
+.page-transition.fadeIn {
+  opacity: 1;
+  transform: translateY(0);
+  animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Animação de saída */
+.page-transition.fadeOut {
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: slideOutUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Keyframes para entrada */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Keyframes para saída */
+@keyframes slideOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* Animação alternativa: fade simples */
+.page-transition.fade-enter {
+  opacity: 0;
+  animation: fadeIn 0.4s ease-in-out forwards;
+}
+
+.page-transition.fade-exit {
+  opacity: 1;
+  animation: fadeOut 0.3s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Animação para dispositivos móveis - mais sutil */
+@media (max-width: 768px) {
+  .page-transition.fadeIn {
+    animation: mobileSlideIn 0.3s ease-out forwards;
+  }
+  
+  .page-transition.fadeOut {
+    animation: mobileSlideOut 0.25s ease-in forwards;
+  }
+  
+  @keyframes mobileSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes mobileSlideOut {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(-15px);
+    }
+  }
+}
+
+/* Reduzir animações para usuários que preferem menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    transition: opacity 0.2s ease;
+    animation: none !important;
+  }
+  
+  .page-transition.fadeIn {
+    opacity: 1;
+    transform: none;
+  }
+  
+  .page-transition.fadeOut {
+    opacity: 0;
+    transform: none;
+  }
+}

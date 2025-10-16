@@ -1,14 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
 :root {
   --brand: #990410;
   --brand-dark: #7a0308;
   --text: #000;
-  --surface: #f6f8fa;
+  --surface: #ffffff;
   --pad-x: 3.5rem;
   --pad-x-mobile: 1.5rem;
   --gap-large: 2rem;
   --transition-fast: 0.3s ease-in-out;
   --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.15);
   --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Garantir fundo branco */
+body {
+  background-color: #ffffff !important;
+}
+
+.main {
+  background-color: #ffffff;
+  min-height: 100vh;
 }
 
 /* Util */
@@ -54,11 +66,13 @@
 }
 
 .logo-text {
+  font-family: 'Poppins', sans-serif;
   font-size: 2.4rem;
   font-weight: 800;
   color: var(--text);
   line-height: 1;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .nav-buttons {
@@ -115,9 +129,11 @@
 .hero-title {
   margin: 0 0 1.5rem 0;
   color: var(--text);
+  font-family: 'Poppins', sans-serif;
   font-weight: 900;
   font-size: clamp(3rem, 7vw, 6rem);
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .btn-cta {
@@ -126,6 +142,7 @@
   border: none;
   border-radius: 16px;
   padding: 1.5rem 2rem;
+  font-family: 'Poppins', sans-serif;
   font-size: clamp(1.5rem, 1.5vw + 1rem, 2rem);
   font-weight: 800;
   cursor: pointer;
@@ -198,11 +215,14 @@
 }
 
 .impact-number {
+  font-family: 'Poppins', sans-serif;
   font-weight: 900;
   font-size: clamp(2.8rem, 5vw, 4rem);
+  letter-spacing: -0.02em;
 }
 
 .impact-label {
+  font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: clamp(1.5rem, 3vw, 2rem);
 }
@@ -314,6 +334,7 @@
   }
 
   .logo-text {
+    font-family: 'Poppins', sans-serif;
     font-size: 2rem;
   }
 
@@ -388,6 +409,7 @@
   }
 
   .logo-text {
+    font-family: 'Poppins', sans-serif;
     font-size: 1.6rem;
   }
 

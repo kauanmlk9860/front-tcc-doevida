@@ -1,34 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Cadastro from "./pages/Cadastro";
-import Recuperar_senha from "./pages/Recuperar_senha";
-import Redefinir_senha from "./pages/Redefinir_senha";
-import SaibaMais from "./pages/Saiba_mais";
-import Hospital_Login from "./pages/Hospital_Login";
-import Hospital_cadastro from "./pages/Hospital_cadastro";
-import Protocolo_agendamento from "./pages/Protocolo_agendamento";
+import { BrowserRouter } from "react-router-dom";
+import AnimatedRoutes from "./components/AnimatedRoutes";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <Protocolo_agendamento/>
+      <AnimatedRoutes />
     </BrowserRouter>
   </StrictMode>
 );
-      {/* <Routes>
-        <Route path="/" element={<Navigate to="/home" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/cadastro" element={<Cadastro />} />
-        <Route path="/recuperar-senha" element={<Recuperar_senha />} />
-        <Route path="/redefinir-senha" element={<Redefinir_senha />} />
-        <Route path="/saiba-mais" element={<SaibaMais />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/hospital-cadastro" element={<Hospital_cadastro />} />
-        <Route path="/hospital-login" element={<Hospital_Login />} /> 
-        <Route path="/protocolo-agendamento" element={<Protocolo_agendamento />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes> */}
