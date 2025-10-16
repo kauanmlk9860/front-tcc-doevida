@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
 import AuthService from '../../services/auth.js'
+import PasswordInput from '../../components/PasswordInput'
 
 export default function Hospital_Login() {
   const navigate = useNavigate()
@@ -15,7 +16,7 @@ export default function Hospital_Login() {
     const email = emailRef.current?.value?.trim()
     const senha = senhaRef.current?.value
 
-    // Validações básicas
+    // 🔹 Validações básicas
     if (!email) {
       setError('Por favor, digite seu e-mail')
       return
@@ -38,10 +39,10 @@ export default function Hospital_Login() {
       const result = await AuthService.login(email, senha)
       
       if (result.success) {
-        // Login bem-sucedido, redireciona para home
+        // 🔹 Login validado no banco → redireciona para home
         navigate('/home')
       } else {
-        setError(result.message || 'Erro ao fazer login')
+        setError(result.message || 'E-mail ou senha incorretos')
       }
     } catch (error) {
       console.error('Erro no login:', error)
@@ -72,11 +73,9 @@ export default function Hospital_Login() {
           onKeyPress={handleKeyPress}
           disabled={loading}
         />
-        <input 
-          className="input input--password" 
-          placeholder="Senha" 
-          type="password" 
+        <PasswordInput
           ref={senhaRef}
+          placeholder="Senha"
           onKeyPress={handleKeyPress}
           disabled={loading}
         />
@@ -87,14 +86,6 @@ export default function Hospital_Login() {
           </div>
         )}
 
-        <button 
-          type="button" 
-          className="login__forgot" 
-          onClick={() => navigate('/recuperar-senha')}
-          disabled={loading}
-        >
-          Esqueci minha senha
-        </button>
       </form>
 
       <div className="login__actions">
@@ -109,7 +100,7 @@ export default function Hospital_Login() {
         <button 
           className="btn btn--link" 
           type="button" 
-          onClick={() => navigate('/cadastro')}
+          onClick={() => navigate('/hospital-cadastro')}
           disabled={loading}
         >
           Criar conta?

@@ -1,0 +1,404 @@
+/* =========================
+   BASE / LAYOUT GERAL
+   ========================= */
+
+/* Estilos para select com ícones */
+.select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.select-wrapper svg {
+  position: absolute;
+  left: 12px;
+  z-index: 2;
+  color: rgba(255, 255, 255, 0.8);
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.select-wrapper select {
+  padding-left: 45px !important;
+}
+
+.select-wrapper:focus-within svg {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* Campo que ocupa largura total */
+.field--full {
+  grid-column: 1 / -1;
+}
+   :root{
+    --brand:#990410;
+    --brand-dark:#7c0a14;
+    --radius:12px;           /* caixas mais arredondadas */
+    --input-h:72px;          /* altura padrão maior */
+    --font-input:18px;       /* fonte dos inputs maior */
+    --font-label:16px;       /* fonte dos labels maior */
+    --gap-y:22px;            /* espaço vertical entre campos maior */
+  }
+  
+  *{box-sizing:border-box}
+  
+  .cadastro {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 30px;
+  }
+  
+  .cadastro__logo {
+    padding-top: 30px;
+    width: 170px; /* maior */
+  }
+  
+  .cadastro__title {
+    align-self: center;
+    color: var(--brand);
+    font-size: 64px; /* maior */
+    margin-bottom: 28px;
+    font-weight: 800;
+    letter-spacing: .3px;
+  }
+  
+  .cadastro__decor-circle {
+    width: 35vw;
+    height: 30vw;
+    background-color: var(--brand);
+    border-radius: 50%;
+    position: fixed;
+    top: -15vw;
+    left: -15vw;
+    z-index: 0;
+  }
+  
+  /* =========================
+     FORM BASE
+     ========================= */
+  .cadastro__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-y);
+    padding: 10px;
+    border-radius: 20px;
+    max-width: 980px; /* mais largo p/ 2 colunas */
+    width: 100%;
+    margin: 20px 0 10px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Grid para “Sou Hospital” (2 colunas no desktop) */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;     /* mobile: 1 col */
+    gap: 22px 38px;                  /* espaçamento linha x coluna */
+    max-width: 980px;
+    width: 100%;
+    margin: 16px auto 10px;
+    padding: 2px;
+  }
+  
+  /* Wrapper de campo com label acima do input */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .field > span {
+    color: var(--brand-dark);
+    font-weight: 700;
+    font-size: var(--font-label);
+    margin-left: 6px;
+  }
+  
+  /* 2 colunas a partir desta largura */
+  @media (min-width: 920px) {
+    .form-grid { grid-template-columns: 1fr 1fr; }
+  }
+  
+  /* =========================
+     INPUTS / SELECTS / ESTADOS
+     ========================= */
+  .input {
+    color: #fff;
+    background-color: var(--brand);
+    border-radius: var(--radius);
+    border: none;
+    height: var(--input-h);
+    padding: 12px 14px 12px 60px;   /* espaço p/ ícone (quando houver) */
+    width: 100%;
+    outline: none;
+    font-size: var(--font-input);
+    /* sombras e leve relevo como no print */
+    box-shadow: 0 3px 0 rgba(0,0,0,.25), 0 10px 18px rgba(0,0,0,.06);
+    transition: box-shadow .2s ease, transform .06s ease;
+  }
+  
+  .input::placeholder {
+    font-size: var(--font-input);
+    color: #fff;
+    opacity: 0.95;
+  }
+  
+  .input[class*="input--"] {
+    background-repeat: no-repeat;
+    background-position: 18px center;
+    background-size: 28px;
+  }
+  
+  /* Foco e estados */
+  .input:focus {
+    box-shadow: 0 4px 0 rgba(0,0,0,.28), 0 12px 22px rgba(0,0,0,.09);
+    transform: translateY(-1px);
+  }
+  
+  .input:disabled,
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* Select com aparência normalizada */
+  select.input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 44px; /* espaço p/ caret nativo */
+  }
+  
+  /* Time pickers */
+  input[type="time"].input {
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  
+  /* Utilitário para inputs SEM ícone (usado em “Sou Hospital”) */
+  .no-icon {
+    background-image: none !important;
+    padding-left: 16px !important; /* remove espaço do ícone */
+  }
+  
+  /* =========================
+     ÍCONES (mantidos p/ “Sou Doador” – pode trocar URLs depois)
+     ========================= */
+  .input--name   { background-image: url('https://cdn-icons-png.flaticon.com/512/1077/1077114.png'); }
+  .input--email  { background-image: url('https://cdn-icons-png.flaticon.com/512/561/561127.png'); }
+  .input--password,
+  .input--password-confirm { background-image: url('https://cdn-icons-png.flaticon.com/512/3064/3064155.png'); }
+  .input--cpf    { background-image: url(''); }
+  .input--cep    { background-image: url(''); }
+  .input--number { background-image: url(''); }
+  .input--date   { background-image: url('https://cdn-icons-png.flaticon.com/512/747/747310.png'); }
+  .input--blood  { background-image: url(''); }
+  .input--photo  { background-image: url('https://cdn-icons-png.flaticon.com/512/709/709496.png'); }
+  .input--sex    { background-image: url(''); }
+  
+  /* Ícones opcionais p/ “Sou Hospital” (você colocará depois; por enquanto use .no-icon) */
+  .input--cnpj       { background-image: url(''); }
+  .input--crm        { background-image: url(''); }
+  .input--capacidade { background-image: url(''); }
+  .input--convenios  { background-image: url(''); }
+  .input--type       { background-image: url(''); }
+  
+  /* =========================
+     MENSAGENS
+     ========================= */
+  .error-msg,
+  .success-msg {
+    font-size: 16px;        /* maior */
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 4px;
+    text-align: center;
+    grid-column: 1 / -1;    /* ocupa as 2 colunas */
+  }
+  
+  .error-msg {
+    color: #ff4444;
+    background-color: rgba(255, 68, 68, 0.1);
+    border: 1px solid #ff4444;
+  }
+  
+  .success-msg {
+    color: #00ff88;
+    background-color: rgba(0, 255, 136, 0.1);
+    border: 1px solid #00ff88;
+  }
+  
+  /* =========================
+     AÇÕES / BOTÕES
+     ========================= */
+  .cadastro__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;        /* centraliza botão */
+    gap: 10px;
+    padding: 10px;
+    border-radius: 20px;
+    max-width: 980px;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  
+  .btn {
+    border: none;
+    border-radius: 12px;
+    height: 60px;           /* maior */
+    font-size: 20px;        /* maior */
+    cursor: pointer;
+    padding: 0 18px;
+    background: transparent;
+    color: inherit;
+    transition: opacity .2s ease, transform .06s ease-in-out, filter .2s ease;
+  }
+  
+  .btn--primary {
+    background-color: var(--brand);
+    color: #fff;
+    width: 260px;           /* botão largo e centralizado como no print */
+    box-shadow: 0 3px 0 rgba(0,0,0,.25), 0 10px 18px rgba(0,0,0,.06);
+  }
+  
+  .btn--primary:hover {
+    opacity: .95;
+    transform: translateY(-1px);
+  }
+  
+  .btn--link {
+    background: transparent;
+    color: var(--brand);
+    font-weight: 600;
+  }
+  
+  .btn:hover,
+  .btn--link:hover,
+  .btn--primary:hover {
+    opacity: 0.92;
+    filter: saturate(1.05);
+  }
+  
+  .btn:active {
+    transform: translateY(1px);
+  }
+  
+  /* =========================
+     RESPONSIVIDADE
+     ========================= */
+  
+  /* Telas muito grandes (4K e ultrawide) */
+  @media (min-width: 1600px) {
+    .cadastro__logo { width: 220px; }
+    .cadastro__title { font-size: 72px; }
+  
+    :root{
+      --input-h:80px;
+      --font-input:20px;
+      --font-label:18px;
+      --radius:14px;
+      --gap-y:24px;
+    }
+  
+    .input { background-size: 32px; padding-left: 68px; }
+    .no-icon { padding-left: 20px !important; }
+    .btn { height: 68px; font-size: 22px; }
+  }
+  
+  /* Telas grandes (desktops/notebooks) */
+  @media (max-width: 1599px) and (min-width: 1200px) {
+    .cadastro__title { font-size: 60px; }
+  
+    :root{
+      --input-h:70px;
+      --font-input:18px;
+      --font-label:16px;
+      --radius:12px;
+      --gap-y:22px;
+    }
+  
+    .input { background-size: 28px; padding-left: 60px; }
+    .no-icon { padding-left: 16px !important; }
+    .btn { height: 60px; font-size: 20px; }
+  }
+  
+  /* Telas médias (tablets / notebooks pequenos) */
+  @media (max-width: 1199px) and (min-width: 768px) {
+    .cadastro { padding-top: 40px; }
+    .cadastro__logo { width: 140px; }
+    .cadastro__title { font-size: 54px; }
+    .cadastro__decor-circle { width: 40vw; height: 35vw; top: -20vw; left: -20vw; }
+  
+    :root{
+      --input-h:66px;
+      --font-input:18px;
+      --font-label:16px;
+      --gap-y:20px;
+    }
+  
+    .input { background-size: 26px; padding-left: 56px; }
+    .no-icon { padding-left: 16px !important; }
+    .btn { height: 58px; font-size: 19px; }
+  }
+  
+  /* Telas pequenas (smartphones médios) */
+  @media (max-width: 767px) {
+    .cadastro { padding-top: 60px; }
+    .cadastro__logo { width: 120px; }
+    .cadastro__title { font-size: 48px; }
+    .cadastro__decor-circle { width: 60vw; height: 50vw; top: -25vw; left: -25vw; }
+    .cadastro__form,
+    .cadastro__actions { max-width: 92%; gap: 18px; }
+  
+    :root{
+      --input-h:62px;
+      --font-input:17px;
+      --font-label:15px;
+      --gap-y:18px;
+    }
+  
+    .input { background-size: 24px; padding-left: 50px; }
+    .no-icon { padding-left: 14px !important; }
+    .btn { height: 56px; font-size: 18px; }
+  }
+  
+  /* Telas muito pequenas (<=480px) */
+  @media (max-width: 480px) {
+    .cadastro { padding-top: 44px; }
+    .cadastro__logo { width: 100px; }
+    .cadastro__title { font-size: 40px; }
+    .cadastro__decor-circle { width: 80vw; height: 70vw; top: -30vw; left: -35vw; }
+    .cadastro__form,
+    .cadastro__actions { width: 92%; gap: 16px; }
+  
+    :root{
+      --input-h:58px;
+      --font-input:16px;
+      --font-label:14.5px;
+      --gap-y:16px;
+    }
+  
+    .input { background-size: 22px; padding-left: 46px; }
+    .no-icon { padding-left: 12px !important; }
+    .btn { height: 52px; font-size: 17px; }
+  }
+  
+  /* Telas extremamente pequenas (<360px) */
+  @media (max-width: 360px) {
+    .cadastro__logo { width: 84px; }
+    .cadastro__title { font-size: 34px; }
+  
+    :root{
+      --input-h:54px;
+      --font-input:15px;
+      --font-label:14px;
+      --gap-y:14px;
+    }
+  
+    .input { background-size: 20px; padding-left: 42px; }
+    .btn { height: 48px; font-size: 16px; }
+  }
+  

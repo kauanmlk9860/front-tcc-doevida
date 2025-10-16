@@ -5,6 +5,7 @@ import "./style.css";
 import logoBranca from "../../assets/Logo_Branca.png";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../../services/auth.js";
+import LogoutModal from "../../components/LogoutModal";
 
 import icHospital from "../../assets/icons/hospital.png";
 import icBancoSangue from "../../assets/icons/banco-sangue.png";
@@ -58,7 +59,8 @@ function Home() {
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showModal, setShowModal] = useState(false); // ← controle do modal
+  const [showModal, setShowModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const YT_ID = "97Sx0KiExZM";
   const EMBED_URL =
@@ -76,15 +78,24 @@ function Home() {
     }
   }, []);
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = () => {
     AuthService.logout();
     setIsLoggedIn(false);
     setUsuario(null);
+    setShowLogoutModal(false);
     navigate("/");
   };
 
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
+  };
+
   const handleNavigation = (path) => {
-    if (!isLoggedIn && !["/login", "/saiba-mais", "/home"].includes(path)) {
+    if (!isLoggedIn && !["/login", "/hospital-login", "/saiba-mais", "/home"].includes(path)) {
       navigate("/login");
     } else {
       navigate(path);
@@ -111,21 +122,24 @@ function Home() {
                 className="user-avatar"
               />
               <span className="user-name">Olá, {usuario?.nome || "Usuário"}!</span>
-              <button className="btn-donor" onClick={handleLogout} type="button">
+              <button className="btn-donor" onClick={handleLogoutClick} type="button">
                 Sair
               </button>
             </div>
           ) : (
             <>
+              {/* ✅ Corrigido: hospital → hospital-login */}
               <button
-                className="btn-donor"
-                onClick={() => handleNavigation("/login")}
+                className="btn-hospital"
+                onClick={() => handleNavigation("/hospital-login")}
                 type="button"
               >
                 Sou Hospital
               </button>
+
+              {/* ✅ Corrigido: doador → login */}
               <button
-                className="btn-hospital"
+                className="btn-donor"
                 type="button"
                 onClick={() => handleNavigation("/login")}
               >
@@ -279,19 +293,19 @@ function Home() {
           >
             <h2 id="modal-title">Contatos dos Responsáveis</h2>
             <p>
-              <strong>Gabriel Soares: <br /> </strong> gabriellssoares2016@gmail.com.br
+              <strong>Gabriel Soares: </strong> gabriellssoares2016@gmail.com.br
             </p>
             <p>
-              <strong>Daniel Torres: <br /> </strong> victor.hugo@doevida.com.br
+              <strong>Daniel Torres: </strong> victor.hugo@doevida.com.br
             </p>
             <p>
-              <strong>Kauan Rodrigues: <br /> </strong> kauan.rodrigues@doevida.com.br
+              <strong>Kauan Rodrigues: </strong> kauan.rodrigues@doevida.com.br
             </p>
             <p>
-              <strong>Rafaella Toscano: <br /> </strong> kauan.rodrigues@doevida.com.br
+              <strong>Rafaella Toscano: </strong> rafaella.toscano@doevida.com.br
             </p>
             <p>
-              <strong>Victor Hugo: <br /> </strong> victor.hugo@doevida.com.br
+              <strong>Victor Hugo: </strong> victor.hugo@doevida.com.br
             </p>
 
             <button
@@ -304,6 +318,14 @@ function Home() {
           </div>
         </div>
       )}
+
+      {/* MODAL DE LOGOUT */}
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={handleLogoutCancel}
+        onConfirm={handleLogoutConfirm}
+        userName={usuario?.nome}
+      />
     </>
   );
 }

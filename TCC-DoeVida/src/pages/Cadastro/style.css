@@ -1,3 +1,50 @@
+/* =========================
+   BASE / LAYOUT GERAL (IDÊNTICO AO DE HOSPITAL)
+   ========================= */
+
+/* Estilos para select com ícones */
+.select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.select-wrapper svg {
+  position: absolute;
+  left: 12px;
+  z-index: 2;
+  color: rgba(255, 255, 255, 0.8);
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.select-wrapper select {
+  padding-left: 45px !important;
+}
+
+.select-wrapper:focus-within svg {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* Campo que ocupa largura total */
+.field--full {
+  grid-column: 1 / -1;
+}
+:root {
+  --brand: #990410;
+  --brand-dark: #7c0a14;
+  --radius: 12px;
+  --input-h: 72px;
+  --font-input: 18px;
+  --font-label: 16px;
+  --gap-y: 22px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .cadastro {
   display: flex;
   align-items: center;
@@ -7,333 +54,243 @@
 
 .cadastro__logo {
   padding-top: 30px;
-  width: 150px;
+  width: 170px;
 }
 
 .cadastro__title {
   align-self: center;
-  color: #990410;
-  font-size: 50px;
-  margin-bottom: 20px;
+  color: var(--brand);
+  font-size: 64px;
+  margin-bottom: 28px;
+  font-weight: 800;
+  letter-spacing: .3px;
 }
 
 .cadastro__decor-circle {
   width: 35vw;
   height: 30vw;
-  background-color: #990410;
+  background-color: var(--brand);
   border-radius: 50%;
   position: fixed;
   top: -15vw;
   left: -15vw;
+  z-index: 0;
 }
 
+/* =========================
+   FORM BASE
+   ========================= */
 .cadastro__form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--gap-y);
   padding: 10px;
   border-radius: 20px;
-  max-width: 600px;
+  max-width: 980px;
   width: 100%;
   margin: 20px 0 10px;
+  position: relative;
+  z-index: 1;
 }
 
+/* Grid de campos — 2 colunas em telas grandes */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px 38px;
+  max-width: 980px;
+  width: 100%;
+  margin: 16px auto 10px;
+  padding: 2px;
+}
+
+@media (min-width: 920px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Campo com label acima do input */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field > span {
+  color: var(--brand-dark);
+  font-weight: 700;
+  font-size: var(--font-label);
+  margin-left: 6px;
+}
+
+/* =========================
+   INPUTS
+   ========================= */
 .input {
   color: #fff;
-  background-color: #990410;
-  border-radius: 6px;
+  background-color: var(--brand);
+  border-radius: var(--radius);
   border: none;
-  height: 60px;
-  padding: 10px 12px 10px 50px; /* espaço pro ícone à esquerda */
+  height: var(--input-h);
+  padding: 12px 14px 12px 60px;
   width: 100%;
   outline: none;
+  font-size: var(--font-input);
+  box-shadow: 0 3px 0 rgba(0,0,0,.25), 0 10px 18px rgba(0,0,0,.06);
+  transition: box-shadow .2s ease, transform .06s ease;
 }
 
 .input::placeholder {
-  font-size: 16px;
+  font-size: var(--font-input);
   color: #fff;
+  opacity: 0.95;
 }
 
 .input[class*="input--"] {
   background-repeat: no-repeat;
-  background-position: 15px center;
-  background-size: 24px;
+  background-position: 18px center;
+  background-size: 28px;
 }
 
-.input--name {
-  background-image: url('https://cdn-icons-png.flaticon.com/512/1077/1077114.png');
+.input:focus {
+  box-shadow: 0 4px 0 rgba(0,0,0,.28), 0 12px 22px rgba(0,0,0,.09);
+  transform: translateY(-1px);
 }
 
-.input--email {
-  background-image: url('https://cdn-icons-png.flaticon.com/512/561/561127.png');
+.input:disabled,
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.input--password,
-.input--password-confirm {
-  background-image: url('https://cdn-icons-png.flaticon.com/512/3064/3064155.png');
+.no-icon {
+  background-image: none !important;
+  padding-left: 16px !important;
 }
 
-.input--cpf {
-  background-image: url('');
+/* ÍCONES */
+.input--name { background-image: url('https://cdn-icons-png.flaticon.com/512/1077/1077114.png'); }
+.input--email { background-image: url('https://cdn-icons-png.flaticon.com/512/561/561127.png'); }
+.input--password, .input--password-confirm { background-image: url('https://cdn-icons-png.flaticon.com/512/3064/3064155.png'); }
+.input--cpf { background-image: url(''); }
+.input--cep { background-image: url(''); }
+.input--date { background-image: url('https://cdn-icons-png.flaticon.com/512/747/747310.png'); }
+.input--blood { background-image: url(''); }
+.input--photo { background-image: url('https://cdn-icons-png.flaticon.com/512/709/709496.png'); }
+
+/* =========================
+   MENSAGENS
+   ========================= */
+.error-msg,
+.success-msg {
+  font-size: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 4px;
+  text-align: center;
+  grid-column: 1 / -1;
 }
 
-.input--cep {
-  background-image: url('');
+.error-msg {
+  color: #ff4444;
+  background-color: rgba(255, 68, 68, 0.1);
+  border: 1px solid #ff4444;
 }
 
-.input--number {
-  background-image: url(''); 
+.success-msg {
+  color: #00ff88;
+  background-color: rgba(0, 255, 136, 0.1);
+  border: 1px solid #00ff88;
 }
 
-.input--date {
-  background-image: url('https://cdn-icons-png.flaticon.com/512/747/747310.png'); 
-}
-
-.input--blood {
-  background-image: url(''); 
-}
-
-.input--photo {
-  background-image: url('https://cdn-icons-png.flaticon.com/512/709/709496.png'); 
-}
-
-.input--sex {
-  background-image: url(''); 
-}
-
+/* =========================
+   AÇÕES / BOTÕES
+   ========================= */
 .cadastro__actions {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
   padding: 10px;
   border-radius: 20px;
-  max-width: 600px;
+  max-width: 980px;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .btn {
   border: none;
-  border-radius: 10px;
-  height: 50px;
-  font-size: 18px;
+  border-radius: 12px;
+  height: 60px;
+  font-size: 20px;
   cursor: pointer;
-  padding: 0 16px;
-  background: transparent;  
-  color: inherit;            
-  transition: opacity .2s ease;
+  padding: 0 18px;
+  background: transparent;
+  color: inherit;
+  transition: opacity .2s ease, transform .06s ease-in-out, filter .2s ease;
 }
 
 .btn--primary {
-  background-color: #990410;
+  background-color: var(--brand);
   color: #fff;
+  width: 260px;
+  box-shadow: 0 3px 0 rgba(0,0,0,.25), 0 10px 18px rgba(0,0,0,.06);
+}
+
+.btn--primary:hover {
+  opacity: .95;
+  transform: translateY(-1px);
 }
 
 .btn--link {
-  background: transparent;  
-  color: #990410;
+  background: transparent;
+  color: var(--brand);
+  font-weight: 600;
 }
 
 .btn:hover,
 .btn--link:hover,
 .btn--primary:hover {
-  opacity: 0.9;
+  opacity: 0.92;
+  filter: saturate(1.05);
 }
-/* ===== RESPONSIVIDADE ===== */
 
-/* Telas muito grandes (4K e ultrawide) */
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* =========================
+   RESPONSIVIDADE
+   ========================= */
 @media (min-width: 1600px) {
-  .cadastro__logo {
-    width: 200px;
+  .cadastro__logo { width: 220px; }
+  .cadastro__title { font-size: 72px; }
+
+  :root {
+    --input-h: 80px;
+    --font-input: 20px;
+    --font-label: 18px;
+    --radius: 14px;
+    --gap-y: 24px;
   }
 
-  .cadastro__title {
-    font-size: 64px;
-  }
-
-  .cadastro__form,
-  .cadastro__actions {
-    max-width: 700px;
-  }
-
-  .input {
-    height: 70px;
-    font-size: 18px;
-    background-size: 28px;
-    padding-left: 60px;
-  }
-
-  .btn {
-    height: 60px;
-    font-size: 20px;
-  }
+  .input { background-size: 32px; padding-left: 68px; }
+  .no-icon { padding-left: 20px !important; }
+  .btn { height: 68px; font-size: 22px; }
 }
 
-/* Telas grandes (desktops e notebooks padrão) */
-@media (max-width: 1599px) and (min-width: 1200px) {
-  .cadastro__logo {
-    width: 160px;
-  }
-
-  .cadastro__title {
-    font-size: 56px;
-  }
-
-  .cadastro__form,
-  .cadastro__actions {
-    max-width: 600px;
-  }
-
-  .input {
-    height: 60px;
-    font-size: 17px;
-    padding-left: 50px;
-    background-size: 24px;
-  }
-
-  .btn {
-    height: 55px;
-    font-size: 18px;
-  }
-}
-
-/* Telas médias (tablets e notebooks pequenos) */
 @media (max-width: 1199px) and (min-width: 768px) {
-  .cadastro {
-    padding-top: 40px;
-  }
-
-  .cadastro__logo {
-    width: 130px;
-  }
-
-  .cadastro__title {
-    font-size: 48px;
-  }
-
-  .cadastro__decor-circle {
-    width: 40vw;
-    height: 35vw;
-    top: -20vw;
-    left: -20vw;
-  }
-
-  .cadastro__form,
-  .cadastro__actions {
-    max-width: 500px;
-  }
-
-  .input {
-    height: 55px;
-    font-size: 16px;
-    padding-left: 45px;
-  }
-
-  .btn {
-    height: 50px;
-    font-size: 17px;
-  }
+  .cadastro__logo { width: 140px; }
+  .cadastro__title { font-size: 54px; }
+  .cadastro__decor-circle { width: 40vw; height: 35vw; top: -20vw; left: -20vw; }
 }
 
-/* Telas pequenas (smartphones médios) */
 @media (max-width: 767px) {
-  .cadastro {
-    padding-top: 60px;
-  }
-
-  .cadastro__logo {
-    width: 110px;
-  }
-
-  .cadastro__title {
-    font-size: 42px;
-  }
-
-  .cadastro__decor-circle {
-    width: 60vw;
-    height: 50vw;
-    top: -25vw;
-    left: -25vw;
-  }
-
-  .cadastro__form,
-  .cadastro__actions {
-    max-width: 90%;
-    gap: 16px;
-  }
-
-  .input {
-    height: 52px;
-    font-size: 15px;
-    padding-left: 45px;
-    background-size: 22px;
-  }
-
-  .btn {
-    height: 48px;
-    font-size: 16px;
-  }
+  .cadastro__form, .cadastro__actions { max-width: 92%; gap: 18px; }
+  .form-grid { grid-template-columns: 1fr; }
 }
 
-/* Telas muito pequenas (celulares compactos e antigos) */
 @media (max-width: 480px) {
-  .cadastro {
-    padding-top: 40px;
-  }
-
-  .cadastro__logo {
-    width: 90px;
-  }
-
-  .cadastro__title {
-    font-size: 34px;
-  }
-
-  .cadastro__decor-circle {
-    width: 80vw;
-    height: 70vw;
-    top: -30vw;
-    left: -35vw;
-  }
-
-  .cadastro__form,
-  .cadastro__actions {
-    width: 90%;
-    gap: 14px;
-  }
-
-  .input {
-    height: 48px;
-    font-size: 14px;
-    padding-left: 40px;
-    background-size: 20px;
-  }
-
-  .btn {
-    height: 45px;
-    font-size: 15px;
-  }
-}
-
-/* Telas extremamente pequenas (menores que 360px) */
-@media (max-width: 360px) {
-  .cadastro__logo {
-    width: 80px;
-  }
-
-  .cadastro__title {
-    font-size: 28px;
-  }
-
-  .input {
-    height: 45px;
-    font-size: 13px;
-    padding-left: 38px;
-    background-size: 18px;
-  }
-
-  .btn {
-    height: 42px;
-    font-size: 14px;
-  }
+  .cadastro__form, .cadastro__actions { width: 92%; gap: 16px; }
 }
