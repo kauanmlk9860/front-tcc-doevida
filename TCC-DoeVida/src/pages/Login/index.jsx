@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
 import AuthService from '../../services/auth.js'
-import PasswordInput from '../../components/PasswordInput'
+import PasswordInput from '../../components/jsx/PasswordInput'
 
 export default function Login() {
   const navigate = useNavigate()

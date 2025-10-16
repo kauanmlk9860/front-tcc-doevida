@@ -1,5 +1,5 @@
 import { useState, forwardRef, useImperativeHandle } from 'react';
-import './PhotoUpload.css';
+import '../style/PhotoUpload.css';
 
 const PhotoUpload = forwardRef(({ 
   placeholder = "Clique para adicionar foto",
