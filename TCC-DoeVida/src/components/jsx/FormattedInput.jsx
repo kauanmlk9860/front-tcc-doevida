@@ -1,5 +1,5 @@
 import { useState, forwardRef, useImperativeHandle, useRef } from 'react';
-import './FormattedInput.css';
+import '../style/FormattedInput.css';
 
 const FormattedInput = forwardRef(({ 
   type = 'text',

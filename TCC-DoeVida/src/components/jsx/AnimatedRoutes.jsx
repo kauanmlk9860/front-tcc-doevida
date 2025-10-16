@@ -1,16 +1,16 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import "./AnimatedRoutes.css";
+import "../style/AnimatedRoutes.css";
 
-import Home from "../pages/Home";
-import Login from "../pages/Login";
-import Cadastro from "../pages/Cadastro";
-import Recuperar_senha from "../pages/Recuperar_senha";
-import Redefinir_senha from "../pages/Redefinir_senha";
-import SaibaMais from "../pages/Saiba_mais";
-import Hospital_Login from "../pages/Hospital_Login";
-import Hospital_cadastro from "../pages/Hospital_cadastro";
-import Protocolo_agendamento from "../pages/Protocolo_agendamento";
+import Home from "../../pages/Home";
+import Login from "../../pages/Login";
+import Cadastro from "../../pages/Cadastro";
+import Recuperar_senha from "../../pages/Recuperar_senha";
+import Redefinir_senha from "../../pages/Redefinir_senha";
+import SaibaMais from "../../pages/Saiba_mais";
+import Hospital_Login from "../../pages/Hospital_Login";
+import Hospital_cadastro from "../../pages/Hospital_cadastro";
+import Protocolo_agendamento from "../../pages/Protocolo_agendamento";
 
 const AnimatedRoutes = () => {
   const location = useLocation();

@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
-import FormattedInput from '../../components/FormattedInput'
-import PhotoUpload from '../../components/PhotoUpload'
-import PasswordInput from '../../components/PasswordInput'
-import { InputIcons } from '../../components/InputIcons'
+import FormattedInput from '../../components/jsx/FormattedInput'
+import PhotoUpload from '../../components/jsx/PhotoUpload'
+import PasswordInput from '../../components/jsx/PasswordInput'
+import { InputIcons } from '../../components/jsx/InputIcons'
 
 function Cadastro() {
   const navigate = useNavigate()
