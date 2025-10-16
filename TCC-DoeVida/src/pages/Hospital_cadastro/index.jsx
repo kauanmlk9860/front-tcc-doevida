@@ -109,37 +109,35 @@ function Hospital_cadastro() {
 
     setLoading(true)
 
-    // Preparar foto do hospital
-    let fotoHospitalData = null;
-    if (photoUploadRef.current?.hasFile) {
-      const file = photoUploadRef.current.file;
-      // Converter para base64 para envio
-      fotoHospitalData = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.readAsDataURL(file);
-      });
-    }
-
-    const dadosHospital = {
-      nome: nomeRef.current.value.trim(),
-      email: emailRef.current.value.trim(),
-      senha: senhaRef.current.value,
-      cnpj: cnpjRef.current.value.replace(/\D/g, ''),
-      cep: cepRef.current.value.replace(/\D/g, ''),
-      telefone: telefoneRef.current.value.replace(/\D/g, ''),
-      capacidade_maxima: Number(capacidadeRef.current.value),
-      convenios: conveniosRef.current.value.trim(),
-      crm: crmRef.current.value.trim(),
-      horario_abertura: aberturaRef.current.value,
-      horario_fechamento: fechamentoRef.current.value,
-      foto: fotoHospitalData || 'https://via.placeholder.com/600x400?text=Hospital'
-    }
-
     try {
-      const url = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida'}/hospital`
+      // Preparar foto do hospital
+      let fotoHospitalData = null;
+      if (photoUploadRef.current?.hasFile) {
+        const file = photoUploadRef.current.file;
+        // Converter para base64 para envio
+        fotoHospitalData = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(file);
+        });
+      }
 
-      const response = await fetch(url, {
+      const dadosHospital = {
+        nome: nomeRef.current.value.trim(),
+        email: emailRef.current.value.trim(),
+        senha: senhaRef.current.value,
+        cnpj: cnpjRef.current.value.replace(/\D/g, ''),
+        cep: cepRef.current.value.replace(/\D/g, ''),
+        telefone: telefoneRef.current.value.replace(/\D/g, ''),
+        capacidade_maxima: Number(capacidadeRef.current.value),
+        convenios: conveniosRef.current.value.trim(),
+        crm: crmRef.current.value.trim(),
+        horario_abertura: aberturaRef.current.value,
+        horario_fechamento: fechamentoRef.current.value,
+        foto: fotoHospitalData || 'https://via.placeholder.com/600x400?text=Hospital'
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida'}/hospital`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dadosHospital)
@@ -150,7 +148,7 @@ function Hospital_cadastro() {
 
       if (okDaApi) {
         setSuccess(resultado.message || 'Hospital criado com sucesso! Redirecionando para login...')
-        setTimeout(() => navigate('/login'), 2000)
+        setTimeout(() => navigate('/hospital-login'), 2000)
       } else {
         setError(resultado.message || `Erro ${response.status}: ${response.statusText}`)
       }
