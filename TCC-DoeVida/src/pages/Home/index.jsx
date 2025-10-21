@@ -91,6 +91,15 @@ function Home() {
     }
   };
 
+  // Mostrar loading se ainda carregando
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner">Carregando...</div>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* HEADER */}
@@ -106,11 +115,16 @@ function Home() {
           {isLoggedIn ? (
             <div className="user-info">
               <img
-                src={usuario?.fotoPerfil || "/placeholder-profile.png"}
+                src={user?.foto_perfil || "/placeholder-profile.png"}
                 alt="Foto de perfil"
                 className="user-avatar"
+                onClick={() => navigate('/perfil')}
+                style={{ cursor: 'pointer' }}
               />
-              <span className="user-name">Olá, {usuario?.nome || "Usuário"}!</span>
+              <div className="user-details">
+                <span className="user-name">Olá, {user?.nome || "Usuário"}!</span>
+                <span className="user-email">{user?.email}</span>
+              </div>
               <button className="btn-donor" onClick={handleLogoutClick} type="button">
                 Sair
               </button>
@@ -313,7 +327,7 @@ function Home() {
         isOpen={showLogoutModal}
         onClose={handleLogoutCancel}
         onConfirm={handleLogoutConfirm}
-        userName={usuario?.nome}
+        userName={user?.nome}
       />
     </>
   );

@@ -15,6 +15,7 @@
 
 ---
 
+<<<<<<< HEAD
 ## 🌟 Sobre o Projeto
 
 **DoeVida** é uma aplicação web desenvolvida como Trabalho de Conclusão de Curso (TCC) que revoluciona o processo de doação de sangue no Brasil. Nossa missão é **conectar doadores e hospitais** de forma eficiente, moderna e segura.
@@ -281,3 +282,8 @@ Este projeto é um Trabalho de Conclusão de Curso (TCC) desenvolvido para fins 
 ⭐ **Se este projeto te ajudou, considere dar uma estrela!** ⭐
 
 </div>
+=======
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+---
+>>>>>>> 42406b126c1138fe7e225114ce1bb9661d48a660
