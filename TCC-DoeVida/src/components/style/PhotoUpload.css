@@ -1,0 +1,293 @@
+.photo-upload-container {
+  width: 100%;
+}
+
+.photo-upload-area {
+  position: relative;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #fafafa;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-upload-area:hover:not(.disabled) {
+  border-color: #990410;
+  background-color: rgba(153, 4, 16, 0.02);
+}
+
+.photo-upload-area.dragging {
+  border-color: #990410;
+  background-color: rgba(153, 4, 16, 0.05);
+  transform: scale(1.02);
+}
+
+.photo-upload-area.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: #f8f9fa;
+}
+
+.photo-upload-area.has-error {
+  border-color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.02);
+}
+
+.photo-upload-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.photo-upload-input:disabled {
+  cursor: not-allowed;
+}
+
+.photo-upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  pointer-events: none;
+}
+
+.upload-icon {
+  color: #6b7280;
+  transition: color 0.3s ease;
+}
+
+.photo-upload-area:hover:not(.disabled) .upload-icon {
+  color: #990410;
+}
+
+.upload-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.upload-primary {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.upload-secondary {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.upload-formats {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* Preview da foto */
+.photo-preview {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f3f4f6;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.7)
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.photo-preview:hover .photo-overlay {
+  opacity: 1;
+}
+
+.photo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: auto;
+}
+
+.file-name {
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  word-break: break-all;
+}
+
+.file-size {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.8rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.remove-photo-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(220, 53, 69, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+.remove-photo-btn:hover:not(:disabled) {
+  background: #dc3545;
+  transform: scale(1.1);
+}
+
+.remove-photo-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.photo-upload-error {
+  margin-top: 0.75rem;
+  font-size: 14px;
+  color: #dc3545;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.photo-upload-error::before {
+  content: "⚠";
+  font-size: 12px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .photo-upload-area {
+    padding: 1.5rem 1rem;
+    min-height: 160px;
+  }
+  
+  .upload-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .upload-primary {
+    font-size: 1rem;
+  }
+  
+  .upload-secondary {
+    font-size: 0.85rem;
+  }
+  
+  .upload-formats {
+    font-size: 0.75rem;
+  }
+  
+  .photo-preview {
+    height: 160px;
+  }
+  
+  .photo-overlay {
+    padding: 0.75rem;
+  }
+  
+  .remove-photo-btn {
+    width: 32px;
+    height: 32px;
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+  
+  .remove-photo-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Animações */
+.photo-preview {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.photo-upload-error {
+  animation: slideDown 0.3s ease forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reduzir animações para usuários que preferem menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  .photo-upload-area,
+  .photo-overlay,
+  .remove-photo-btn,
+  .photo-preview,
+  .photo-upload-error {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .photo-upload-area.dragging {
+    transform: none;
+  }
+  
+  .remove-photo-btn:hover:not(:disabled) {
+    transform: none;
+  }
+}

@@ -6,12 +6,10 @@ function buildCreatePayload(data) {
     nome: data.nome?.trim(),
     email: data.email?.trim(),
     senha: data.senha,     
-    confirmar_senha: data.confirmar_senha, 
     cpf: data.cpf || null,
     cep: data.cep || null,
     numero: data.numero || null,
     data_nascimento: data.data_nascimento || null,
-    id_banco_sangue: data.id_banco_sangue || null,
     foto_perfil: data.foto_perfil || null,
     id_sexo: data.id_sexo || null,
     id_tipo_sanguineo: data.id_tipo_sanguineo || null,
@@ -27,7 +25,6 @@ function buildUpdatePayload(data) {
     cep: data.cep || null,
     numero: data.numero || null,
     data_nascimento: data.data_nascimento || null,
-    id_banco_sangue: data.id_banco_sangue || null,
     foto_perfil: data.foto_perfil ?? null,
     id_sexo: data.id_sexo,
     id_tipo_sanguineo: data.id_tipo_sanguineo,
@@ -40,52 +37,140 @@ function buildUpdatePayload(data) {
 
 /** CREATE */
 export async function criarUsuario(data) {
-  const payload = buildCreatePayload(data);
-  console.log(payload);
-  
-  const res = await http.post('usuario', payload);
-  return res.data;
+  try {
+    const payload = buildCreatePayload(data);
+    console.log('Payload para criação:', payload);
+    
+    const res = await http.post('/usuario', payload);
+    
+    return {
+      success: res.data.status || false,
+      data: res.data.usuario,
+      message: res.data.message || 'Usuário criado com sucesso!'
+    };
+  } catch (error) {
+    console.error('Erro ao criar usuário:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Erro ao criar usuário'
+    };
+  }
 }
 
 /** UPDATE (id obrigatório) */
 export async function atualizarUsuario(id, data) {
-  const payload = buildUpdatePayload(data);
-  const res = await http.put(`/usuario/${id}`, payload);
-  return res.data;
+  try {
+    const payload = buildUpdatePayload(data);
+    const res = await http.put(`/usuario/${id}`, payload);
+    
+    return {
+      success: res.data.status || false,
+      data: res.data,
+      message: res.data.message || 'Usuário atualizado com sucesso!'
+    };
+  } catch (error) {
+    console.error('Erro ao atualizar usuário:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Erro ao atualizar usuário'
+    };
+  }
 }
 
 /** DELETE */
 export async function excluirUsuario(id) {
-  const res = await http.delete(`/usuario/${id}`);
-  return res.data;
+  try {
+    const res = await http.delete(`/usuario/${id}`);
+    return {
+      success: res.data.status || false,
+      message: res.data.message || 'Usuário excluído com sucesso!'
+    };
+  } catch (error) {
+    console.error('Erro ao excluir usuário:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Erro ao excluir usuário'
+    };
+  }
 }
 
 /** LISTAR TODOS OS USUÁRIOS */
 export async function listarUsuarios() {
-  const res = await http.get('/usuario');
-  return res.data;
+  try {
+    const res = await http.get('/usuario');
+    return {
+      success: res.data.status || false,
+      data: res.data.usuarios || res.data,
+      message: res.data.message
+    };
+  } catch (error) {
+    console.error('Erro ao listar usuários:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Erro ao listar usuários'
+    };
+  }
 }
 
 /** BUSCAR USUÁRIO POR ID */
 export async function buscarUsuario(id) {
-  const res = await http.get(`/usuario/${id}`);
-  return res.data;
+  try {
+    const res = await http.get(`/usuario/${id}`);
+    return {
+      success: res.data.status || false,
+      data: res.data.usuario || res.data,
+      message: res.data.message
+    };
+  } catch (error) {
+    console.error('Erro ao buscar usuário:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Erro ao buscar usuário'
+    };
+  }
 }
 
-/** BUSCAR USUÁRIO POR EMAIL */
-export async function buscarUsuarioPorEmail(email) {
-  const res = await http.get(`/usuario/email/${encodeURIComponent(email)}`);
-  return res.data;
+/** OBTER TIPOS SANGUÍNEOS */
+export async function obterTiposSanguineos() {
+  try {
+    const res = await http.get('/tipo-sanguineo');
+    return {
+      success: res.data.status || false,
+      data: res.data.tipos_sanguineos || res.data,
+      message: res.data.message
+    };
+  } catch (error) {
+    console.error('Erro ao obter tipos sanguíneos:', error);
+    return {
+      success: false,
+      data: [
+        { id: 1, tipo: 'A+' }, { id: 2, tipo: 'A-' },
+        { id: 3, tipo: 'B+' }, { id: 4, tipo: 'B-' },
+        { id: 5, tipo: 'AB+' }, { id: 6, tipo: 'AB-' },
+        { id: 7, tipo: 'O+' }, { id: 8, tipo: 'O-' }
+      ]
+    };
+  }
 }
 
-/** BUSCAR USUÁRIO POR NOME */
-export async function buscarUsuarioPorNome(nome) {
-  const res = await http.get(`/usuario/nome/${encodeURIComponent(nome)}`);
-  return res.data;
-}
-
-/** LOGIN */
-export async function login(email, senha) {
-  const res = await http.post('/login', { email, senha });
-  return res.data;
+/** OBTER SEXOS */
+export async function obterSexos() {
+  try {
+    const res = await http.get('/sexo-usuario');
+    return {
+      success: res.data.status || false,
+      data: res.data.sexos || res.data,
+      message: res.data.message
+    };
+  } catch (error) {
+    console.error('Erro ao obter sexos:', error);
+    return {
+      success: false,
+      data: [
+        { id: 1, sexo: 'MASCULINO' },
+        { id: 2, sexo: 'FEMININO' },
+        { id: 3, sexo: 'OUTRO' }
+      ]
+    };
+  }
 }
