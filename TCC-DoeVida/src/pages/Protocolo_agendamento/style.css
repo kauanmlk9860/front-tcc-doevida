@@ -1,142 +1,175 @@
-/* Reset básico */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  height: 100%;
-  width: 100%;
-  font-family: Arial, sans-serif;
-  background: #ffffff;
-  position: relative;
-  overflow-x: hidden;
-  background-image: 
-    radial-gradient(circle at 80% 20%, rgba(153,4,16,0.02) 0%, transparent 50%),
-    radial-gradient(circle at 20% 80%, rgba(153,4,16,0.015) 0%, transparent 50%);
-  background-size: 800px 800px, 600px 600px;
-  background-position: 0 0, 100px 100px;
-  background-attachment: fixed;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    linear-gradient(45deg, transparent 49%, rgba(153,4,16,0.01) 50%, transparent 51%);
-  background-size: 60px 60px;
-  z-index: 0;
-  pointer-events: none;
-  animation: pattern-drift 40s linear infinite;
-}
-
-@keyframes pattern-drift {
-  0%   { background-position: 0 0; }
-  50%  { background-position: 30px 30px; }
-  100% { background-position: 0 0; }
-}
-
-/* Container ocupa a tela inteira */
-.agendamento-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-/* Header proporcional e responsivo */
-.agendamento-header {
-  background-color: #990000;
-  color: #fff;
-  padding: 5vh 5vw; /* proporcional à viewport */
-  text-align: start;
-}
-
-.agendamento-header h1 {
-  margin-bottom: 4rem;
-  font-size: clamp(2rem, 5vw, 4rem); /* responsivo */
-  color: #fff;
-  align-items: center;
-}
-
-.agendamento-header p {
-  margin: 0.3rem 0;
-  font-size: clamp(1rem, 1.5vw, 1.5rem);
-  color: #fff;
-}
-
-/* Body ocupa largura completa e fica proporcional */
-.agendamento-body {
-  flex: 1;
-  background-color: #fff;
-  padding: 5vh 5vw;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-.agendamento-body h2 {
-  text-align: center;
-  margin-bottom: 4.5rem;
-  font-size: clamp(2rem, 5vw, 4rem);
-}
-
-.agendamento-body p {
-  margin-bottom: 1rem;
-  line-height: 1.6;
-  font-size: 35px;
-}
-
-.agendamento-body ul {
-  list-style: none;
-  padding-left: 0;
-  margin-bottom: 2rem;
-}
-
-.agendamento-body ul li {
-  margin-bottom: 0.8rem;
-  font-weight: bold;
-  font-size: 30px;
-}
-
-.alerta {
-  color: #990000;
-  font-weight: bold;
-  margin-bottom: 2rem;
-  font-size: clamp(1rem, 1.2vw, 1.2rem);
-}
-
-/* Botão proporcional e centralizado */
-.confirm-btn {
-  display: block;
-  background-color: #990000;
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: clamp(1rem, 1.5vw, 1.2rem);
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-  margin: 0 auto;
-  transition: background-color 0.3s ease;
-}
-
-.confirm-btn:hover {
-  background-color: #b30000;
-}
-
-/* Responsividade para telas menores */
-@media (max-width: 600px) {
+/* =========================
+   Reset básico (mantido)
+   ========================= */
+   * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    height: 100%;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+    position: relative;
+    overflow-x: hidden;
+    background-image: 
+      radial-gradient(circle at 80% 20%, rgba(153,4,16,0.02) 0%, transparent 50%),
+      radial-gradient(circle at 20% 80%, rgba(153,4,16,0.015) 0%, transparent 50%);
+    background-size: 800px 800px, 600px 600px;
+    background-position: 0 0, 100px 100px;
+    background-attachment: fixed;
+  }
+  
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      linear-gradient(45deg, transparent 49%, rgba(153,4,16,0.01) 50%, transparent 51%);
+    background-size: 60px 60px;
+    z-index: 0;
+    pointer-events: none;
+    animation: pattern-drift 40s linear infinite;
+  }
+  
+  @keyframes pattern-drift {
+    0%   { background-position: 0 0; }
+    50%  { background-position: 30px 30px; }
+    100% { background-position: 0 0; }
+  }
+  
+  /* =========================
+     Container ocupa a tela inteira (mantido)
+     ========================= */
+  .agendamento-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    z-index: 1; /* acima do ::before */
+  }
+  
+  /* =========================
+     Header proporcional e responsivo (mantém vermelho)
+     ========================= */
+  .agendamento-header {
+    background-color: #990000;
+    color: #fff;
+    padding: 5vh 5vw;
+    text-align: start;
+  }
+  
   .agendamento-header h1 {
-    font-size: 2rem;
+    margin-bottom: 3.5rem; /* levemente menor p/ equilibrar o respiro */
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: #fff;
   }
+  
+  .agendamento-header p {
+    margin: 0.35rem 0; /* microajuste */
+    font-size: clamp(1rem, 1.5vw, 1.5rem);
+    color: #fff;
+  }
+  
+  /* =========================
+     Body ocupa largura completa (mantido)
+     ========================= */
+  .agendamento-body {
+    flex: 1;
+    background-color: #fff;
+    padding: 5vh 5vw;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  
   .agendamento-body h2 {
-    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 3.8rem; /* leve ajuste p/ ganhar espaço ao botão */
+    font-size: clamp(2rem, 5vw, 4rem);
   }
-}
+  
+  .agendamento-body p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    font-size: 35px; /* mantido como antes */
+  }
+  
+  .agendamento-body ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 2rem;
+  }
+  
+  .agendamento-body ul li {
+    margin-bottom: 0.8rem;
+    font-weight: bold;
+    font-size: 30px;
+  }
+  
+  /* =========================
+     Alerta (mantido)
+     ========================= */
+  .alerta {
+    color: #990000;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+  }
+  
+  /* =========================
+     Botão proporcional e centralizado
+     (apenas AJUSTES MÍNIMOS: maior, mais abaixo, sombra/hover melhor)
+     ========================= */
+  .confirm-btn {
+    display: block;
+    background-color: #990000;
+    color: white;
+    border: none;
+    padding: clamp(1rem, 2.2vw, 1.25rem) clamp(3rem, 4.5vw, 3rem); /* pouco maior */
+    font-size: clamp(1rem, 1.8vw, 1.4rem);                          /* ligeiramente maior */
+    font-weight: bold;
+    border-radius: 12px;                                            /* + arredondado sutil */
+    cursor: pointer;
+    margin: clamp(9rem, 3.5vw, 2.2rem) auto 0;                    /* empurra um pouco mais pra baixo */
+    transition: transform .12s ease, box-shadow .16s ease, background-color .16s ease;
+    box-shadow: 0 10px 24px rgba(153, 4, 16, .18);                  /* leve sombra elegante */
+  }
+  
+  .confirm-btn:hover {
+    background-color: #b30000;
+    transform: translateY(-1px);
+    box-shadow: 0 14px 34px rgba(153, 4, 16, .22);
+  }
+  
+  .confirm-btn:active {
+    transform: translateY(0);
+  }
+  
+  /* Foco acessível */
+  .confirm-btn:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 3px #fff,
+      0 0 0 6px rgba(153, 4, 16, .35);
+  }
+  
+  /* =========================
+     Responsividade (mantido)
+     ========================= */
+  @media (max-width: 600px) {
+    .agendamento-header h1 {
+      font-size: 2rem;
+    }
+    .agendamento-body h2 {
+      font-size: 1.5rem;
+    }
+  }
+  
