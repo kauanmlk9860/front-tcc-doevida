@@ -1,0 +1,578 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+.hospital-detalhes-container {
+  min-height: 100vh;
+  background: #f8f9fa;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Header Premium */
+.header-detalhes-premium {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(135deg, #990410 0%, #7a0308 100%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.header-bg-detalhes {
+  position: relative;
+  overflow: hidden;
+}
+
+.header-bg-detalhes::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.header-content-detalhes {
+  width: 100%;
+  padding: 16px 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.header-left-detalhes {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-voltar-detalhes {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  padding: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-voltar-detalhes:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateX(-3px) scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.header-brand-detalhes {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-logo-container-detalhes {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-logo-detalhes {
+  width: 48px;
+  height: 48px;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  z-index: 2;
+  position: relative;
+}
+
+.logo-glow-detalhes {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: logoGlowDetalhes 3s ease-in-out infinite;
+}
+
+@keyframes logoGlowDetalhes {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.brand-title-detalhes {
+  color: white;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.8px;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Main Content */
+.main-detalhes {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Imagem do Hospital */
+.hospital-image-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  border-bottom: 4px solid #990410;
+}
+
+.hospital-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.hospital-image-container:hover .hospital-image {
+  transform: scale(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+}
+
+/* Seção de Informações */
+.hospital-info-section {
+  background: white;
+  padding: 40px;
+  margin: -30px 40px 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
+
+.hospital-header-info {
+  margin-bottom: 40px;
+}
+
+.hospital-nome-detalhes {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 20px 0;
+  letter-spacing: -1px;
+}
+
+.hospital-contato-basico {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.info-item-basico {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  color: #6c757d;
+}
+
+.info-item-basico svg {
+  color: #990410;
+  flex-shrink: 0;
+}
+
+/* Botões de Ação */
+.acoes-principais {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-acao-principal {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-acao-principal.maps {
+  background: linear-gradient(135deg, #990410 0%, #7a0308 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(153, 4, 16, 0.3);
+}
+
+.btn-acao-principal.maps:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(153, 4, 16, 0.4);
+}
+
+.btn-acao-principal.ligar {
+  background: white;
+  color: #990410;
+  border: 2px solid #990410;
+}
+
+.btn-acao-principal.ligar:hover {
+  background: #990410;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(153, 4, 16, 0.3);
+}
+
+/* Grid de Cards de Informação */
+.info-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.info-card {
+  background: #f8f9fa;
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+}
+
+.info-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border-color: #990410;
+}
+
+.info-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.info-card-header svg {
+  color: #990410;
+  flex-shrink: 0;
+}
+
+.info-card-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.info-card-content {
+  color: #495057;
+}
+
+.horario-destaque {
+  font-size: 24px;
+  font-weight: 700;
+  color: #990410;
+  margin: 0 0 8px 0;
+}
+
+.dias-funcionamento {
+  font-size: 16px;
+  color: #6c757d;
+  margin: 0;
+}
+
+/* Lista de Informações Adicionais */
+.lista-info-adicional {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lista-info-adicional li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: #495057;
+}
+
+.lista-info-adicional li svg {
+  color: #28a745;
+  flex-shrink: 0;
+}
+
+/* Tipos Sanguíneos */
+.tipos-sangue-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.tipo-sangue-badge {
+  background: linear-gradient(135deg, #990410 0%, #7a0308 100%);
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 18px;
+  box-shadow: 0 4px 12px rgba(153, 4, 16, 0.2);
+  transition: all 0.3s ease;
+}
+
+.tipo-sangue-badge:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 16px rgba(153, 4, 16, 0.3);
+}
+
+/* Convênios */
+.convenios-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.convenio-badge {
+  background: white;
+  color: #990410;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 2px solid #990410;
+  transition: all 0.3s ease;
+}
+
+.convenio-badge:hover {
+  background: #990410;
+  color: white;
+  transform: scale(1.05);
+}
+
+/* Descrição */
+.descricao-section {
+  background: #f8f9fa;
+  padding: 30px;
+  border-radius: 16px;
+  border-left: 4px solid #990410;
+}
+
+.descricao-section h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+}
+
+.descricao-section p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #495057;
+  margin: 0;
+}
+
+/* Loading */
+.loading-detalhes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 20px;
+}
+
+.loading-spinner-detalhes {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #990410;
+  border-radius: 50%;
+  animation: spinDetalhes 1s linear infinite;
+}
+
+@keyframes spinDetalhes {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-detalhes p {
+  font-size: 18px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* Error */
+.error-detalhes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 20px;
+  padding: 40px;
+}
+
+.error-detalhes h2 {
+  font-size: 28px;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.btn-voltar-error {
+  background: linear-gradient(135deg, #990410 0%, #7a0308 100%);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-voltar-error:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(153, 4, 16, 0.4);
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .header-content-detalhes {
+    padding: 16px 30px;
+  }
+
+  .hospital-info-section {
+    margin: -30px 30px 30px;
+    padding: 30px;
+  }
+
+  .hospital-nome-detalhes {
+    font-size: 30px;
+  }
+
+  .info-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content-detalhes {
+    padding: 16px 20px;
+  }
+
+  .header-logo-detalhes {
+    width: 44px;
+    height: 44px;
+  }
+
+  .brand-title-detalhes {
+    font-size: 22px;
+  }
+
+  .hospital-image-container {
+    height: 300px;
+  }
+
+  .hospital-info-section {
+    margin: -30px 20px 20px;
+    padding: 24px;
+  }
+
+  .hospital-nome-detalhes {
+    font-size: 26px;
+  }
+
+  .acoes-principais {
+    flex-direction: column;
+  }
+
+  .btn-acao-principal {
+    min-width: 100%;
+  }
+
+  .info-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tipos-sangue-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .tipo-sangue-badge {
+    padding: 10px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-left-detalhes {
+    gap: 12px;
+  }
+
+  .header-logo-detalhes {
+    width: 40px;
+    height: 40px;
+  }
+
+  .brand-title-detalhes {
+    font-size: 18px;
+  }
+
+  .hospital-image-container {
+    height: 250px;
+  }
+
+  .hospital-info-section {
+    margin: -20px 16px 16px;
+    padding: 20px;
+  }
+
+  .hospital-nome-detalhes {
+    font-size: 22px;
+  }
+
+  .info-item-basico {
+    font-size: 14px;
+  }
+
+  .btn-acao-principal {
+    font-size: 14px;
+    padding: 14px 20px;
+  }
+
+  .tipos-sangue-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .tipo-sangue-badge {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
