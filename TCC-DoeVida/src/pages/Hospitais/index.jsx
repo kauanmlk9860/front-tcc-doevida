@@ -127,12 +127,10 @@ function Hospitais() {
     }
   }
 
-  // Função para buscar hospitais próximos quando o usuário pesquisar
-  const handleSearch = async (termo) => {
-    setSearchTerm(termo)
-    
-    if (termo.length > 3) {
-      const location = await buscarCoordenadas(termo)
+  // Função para executar a busca de hospitais próximos
+  const executarBusca = async () => {
+    if (searchTerm.length > 3) {
+      const location = await buscarCoordenadas(searchTerm)
       if (location) {
         // Ordenar hospitais por distância
         const hospitaisComDistancia = hospitais.map(hospital => ({
@@ -149,6 +147,13 @@ function Hospitais() {
         hospitaisComDistancia.sort((a, b) => parseFloat(a.distancia) - parseFloat(b.distancia))
         setHospitais(hospitaisComDistancia)
       }
+    }
+  }
+
+  // Handler para Enter key
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      executarBusca()
     }
   }
 
@@ -206,21 +211,35 @@ function Hospitais() {
               </div>
               <input
                 type="text"
-                placeholder="Buscar hospitais por nome ou localização..."
+                placeholder="Digite o local e pressione Enter..."
                 value={searchTerm}
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyPress={handleKeyPress}
                 className="search-input-header"
                 disabled={searchingLocation}
               />
               {searchTerm && (
-                <button 
-                  className="search-clear-header"
-                  onClick={() => setSearchTerm('')}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
+                <>
+                  <button 
+                    className="search-submit-header"
+                    onClick={executarBusca}
+                    disabled={searchingLocation || searchTerm.length < 4}
+                    title="Buscar hospitais próximos"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                  <button 
+                    className="search-clear-header"
+                    onClick={() => setSearchTerm('')}
+                    title="Limpar busca"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </>
               )}
             </div>
           </div>
