@@ -740,6 +740,7 @@
   animation-fill-mode: both;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .hospital-card-premium::before {

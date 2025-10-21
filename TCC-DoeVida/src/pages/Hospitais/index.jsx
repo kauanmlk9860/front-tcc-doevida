@@ -163,9 +163,12 @@ function Hospitais() {
   )
 
   const handleRota = (hospital) => {
-  
     const endereco = encodeURIComponent(hospital.endereco)
     window.open(`https://www.google.com/maps/search/${endereco}`, '_blank')
+  }
+
+  const handleVerDetalhes = (hospitalId) => {
+    navigate(`/hospital/${hospitalId}`)
   }
 
   const handleVoltar = () => {
@@ -391,7 +394,12 @@ function Hospitais() {
               ) : (
                 <div className="hospitais-list-premium">
                   {hospitaisFiltrados.map((hospital, index) => (
-                    <div key={hospital.id} className="hospital-card-premium" style={{animationDelay: `${index * 0.1}s`}}>
+                    <div 
+                      key={hospital.id} 
+                      className="hospital-card-premium" 
+                      style={{animationDelay: `${index * 0.1}s`}}
+                      onClick={() => handleVerDetalhes(hospital.id)}
+                    >
                       <div className="hospital-card-content">
                         <div className="hospital-icon-premium">
                           <div className="icon-bg">
@@ -438,7 +446,10 @@ function Hospitais() {
                       
                       <button 
                         className="btn-rota-premium"
-                        onClick={() => handleRota(hospital)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleRota(hospital)
+                        }}
                       >
                         <span>Rota</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
