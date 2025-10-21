@@ -106,7 +106,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 8px auto 0;
-  padding: 0 52px; /* espaço p/ setas laterais */
+  padding: 20px 60px; /* ↑ mais alto; mais espaço nas laterais */
   box-sizing: border-box;
   backdrop-filter: saturate(120%) blur(0px);
 }
@@ -114,10 +114,11 @@
   display: flex;
   gap: 16px;
   overflow-x: auto;
+  overflow-y: visible;        /* evita cortar sombra/hover */
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
-  padding-bottom: 8px;
-  scrollbar-width: none;           /* Firefox */
+  padding: 6px 0 18px;        /* respiro vertical extra */
+  scrollbar-width: none;      /* Firefox */
 }
 .agd-hosp-track::-webkit-scrollbar{ display:none; } /* Chrome/Safari */
 
@@ -153,7 +154,7 @@
 /* ====== cards de hospital ====== */
 .agd-hosp-card{
   position: relative;
-  display:block;
+  display: block;
   text-align: center;
   border-radius: 18px;
   border:1.5px solid rgba(229,231,235,.8);
@@ -163,9 +164,11 @@
   padding: 12px;
   transition: transform .18s ease, box-shadow .22s ease, border-color .18s ease, background .18s ease;
   cursor: pointer;
+  margin-block: 4px;         /* respiro vertical dentro do trilho */
+  will-change: transform;
 }
 .agd-hosp-card:hover{
-  transform: translateY(-4px);
+  transform: translateY(-3px); /* levemente menor para não “saltar” pra fora */
   box-shadow: 0 16px 36px rgba(2,6,23,.1);
   background: #fff;
 }
@@ -428,7 +431,7 @@
    RESPONSIVO
    ========================================================= */
 @media (max-width: 640px){
-  .agd-carousel{ padding: 0 40px; }
+  .agd-carousel{ padding: 20px 44px; }
   .agd-hosp-card--slide{ flex-basis: 260px; }
   .agd-carousel-nav{ width: 36px; height: 36px; }
   .agd-grid--lg .agd-day{ height: 56px; }
