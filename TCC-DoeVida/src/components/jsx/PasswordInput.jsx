@@ -1,5 +1,5 @@
 import { useState, forwardRef } from 'react';
-import './PasswordInput.css';
+import '../style/PasswordInput.css';
 
 const PasswordInput = forwardRef(({ 
   placeholder = "Senha", 

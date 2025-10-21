@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
-import FormattedInput from '../../components/FormattedInput'
-import PhotoUpload from '../../components/PhotoUpload'
-import PasswordInput from '../../components/PasswordInput'
-import { InputIcons } from '../../components/InputIcons'
+import FormattedInput from '../../components/jsx/FormattedInput'
+import PhotoUpload from '../../components/jsx/PhotoUpload'
+import PasswordInput from '../../components/jsx/PasswordInput'
+import { InputIcons } from '../../components/jsx/InputIcons'
 
 function Cadastro() {
   const navigate = useNavigate()
@@ -90,32 +90,31 @@ function Cadastro() {
     if (erro) return setError(erro)
     setLoading(true)
 
-    // Preparar foto de perfil
-    let fotoPerfilData = null;
-    if (photoUploadRef.current?.hasFile) {
-      const file = photoUploadRef.current.file;
-      // Converter para base64 para envio
-      fotoPerfilData = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.readAsDataURL(file);
-      });
-    }
-
-    const dadosUsuario = {
-      nome: nomeRef.current.value.trim(),
-      email: emailRef.current.value.trim(),
-      senha: senhaRef.current.value,
-      cpf: cpfRef.current?.value?.replace(/\D/g, '') || null,
-      cep: cepRef.current?.value?.replace(/\D/g, '') || null,
-      numero: numeroRef.current?.value?.replace(/\D/g, '') || null,
-      data_nascimento: dataNascimentoRef.current?.value || null,
-      foto_perfil: fotoPerfilData || null,
-      id_sexo: Number(idSexo),
-      id_tipo_sanguineo: Number(idTipoSanguineo)
-    }
-
     try {
+      // Preparar foto de perfil
+      let fotoPerfilData = null;
+      if (photoUploadRef.current?.hasFile) {
+        try {
+          fotoPerfilData = await photoUploadRef.current.getBase64();
+        } catch (error) {
+          setError(error.message);
+          return;
+        }
+      }
+
+      const dadosUsuario = {
+        nome: nomeRef.current.value.trim(),
+        email: emailRef.current.value.trim(),
+        senha: senhaRef.current.value,
+        cpf: cpfRef.current?.value?.replace(/\D/g, '') || null,
+        cep: cepRef.current?.value?.replace(/\D/g, '') || null,
+        numero: numeroRef.current?.value?.replace(/\D/g, '') || null,
+        data_nascimento: dataNascimentoRef.current?.value || null,
+        foto_perfil: fotoPerfilData || null,
+        id_sexo: Number(idSexo),
+        id_tipo_sanguineo: Number(idTipoSanguineo)
+      }
+
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida'}/usuario`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

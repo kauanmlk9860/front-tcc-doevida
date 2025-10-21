@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthService from '../services/auth.js';
+import AuthService from '../../services/auth.js';
 
 /**
  * Componente para proteger rotas que requerem autenticação

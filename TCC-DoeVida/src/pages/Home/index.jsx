@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "./style.css";
 import logoBranca from "../../assets/Logo_Branca.png";
 import { useNavigate } from "react-router-dom";
-import AuthService from "../../services/auth.js";
-import LogoutModal from "../../components/LogoutModal";
+import LogoutModal from "../../components/jsx/LogoutModal";
+import { useUser } from "../../contexts/UserContext";
 
 import icHospital from "../../assets/icons/hospital.png";
 import icBancoSangue from "../../assets/icons/banco-sangue.png";
@@ -17,7 +17,7 @@ function useNumberFormatter(locale = "pt-BR") {
   return useMemo(() => new Intl.NumberFormat(locale), [locale]);
 }
 
-/** CountUp simples */
+/** CountUp simples */  
 function CountUp({ end = 12340, duration = 1800, prefix = "+", className }) {
   const [value, setValue] = useState(0);
   const startRef = useRef(null);
@@ -57,8 +57,7 @@ function CountUp({ end = 12340, duration = 1800, prefix = "+", className }) {
 
 function Home() {
   const navigate = useNavigate();
-  const [usuario, setUsuario] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, isLoggedIn, logout, loading } = useUser();
   const [showModal, setShowModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -68,24 +67,14 @@ function Home() {
     `?autoplay=1&mute=1&loop=1&playlist=${YT_ID}` +
     `&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3`;
 
-  useEffect(() => {
-    const loggedIn = AuthService.isLoggedIn();
-    setIsLoggedIn(loggedIn);
-
-    if (loggedIn) {
-      const userData = AuthService.getUsuario();
-      setUsuario(userData);
-    }
-  }, []);
+  // Remover useEffect pois o contexto já gerencia o estado
 
   const handleLogoutClick = () => {
     setShowLogoutModal(true);
   };
 
   const handleLogoutConfirm = () => {
-    AuthService.logout();
-    setIsLoggedIn(false);
-    setUsuario(null);
+    logout();
     setShowLogoutModal(false);
     navigate("/");
   };

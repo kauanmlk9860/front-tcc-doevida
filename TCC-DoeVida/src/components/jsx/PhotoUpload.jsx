@@ -1,12 +1,12 @@
 import { useState, forwardRef, useImperativeHandle } from 'react';
-import './PhotoUpload.css';
+import '../style/PhotoUpload.css';
 
 const PhotoUpload = forwardRef(({ 
   placeholder = "Clique para adicionar foto",
   className = "",
   disabled = false,
   accept = "image/*",
-  maxSize = 5 * 1024 * 1024, // 5MB
+  maxSize = 1 * 1024 * 1024, // 1MB
   onFileChange,
   ...props 
 }, ref) => {
@@ -30,6 +30,30 @@ const PhotoUpload = forwardRef(({
     },
     get hasFile() {
       return !!selectedFile;
+    },
+    getBase64: () => {
+      return new Promise((resolve, reject) => {
+        if (!selectedFile) {
+          resolve(null);
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const base64 = e.target.result;
+          
+          // Validar tamanho do base64 (máximo ~200KB para ser seguro)
+          const maxBase64Size = 200 * 1024; // 200KB
+          if (base64.length > maxBase64Size) {
+            reject(new Error('Imagem muito grande mesmo após compressão. Tente uma imagem menor.'));
+            return;
+          }
+          
+          resolve(base64);
+        };
+        reader.onerror = () => reject(new Error('Erro ao processar imagem'));
+        reader.readAsDataURL(selectedFile);
+      });
     }
   }));
 
@@ -48,7 +72,44 @@ const PhotoUpload = forwardRef(({
     return null;
   };
 
-  const handleFileSelect = (file) => {
+  const compressImage = (file, maxWidth = 800, maxHeight = 600, quality = 0.8) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      img.onload = () => {
+        // Calcular novas dimensões mantendo proporção
+        let { width, height } = img;
+        
+        if (width > height) {
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = (width * maxHeight) / height;
+            height = maxHeight;
+          }
+        }
+
+        // Configurar canvas
+        canvas.width = width;
+        canvas.height = height;
+
+        // Desenhar imagem redimensionada
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Converter para blob comprimido
+        canvas.toBlob(resolve, 'image/jpeg', quality);
+      };
+
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleFileSelect = async (file) => {
     setError('');
     
     const validationError = validateFile(file);
@@ -57,18 +118,38 @@ const PhotoUpload = forwardRef(({
       return;
     }
 
-    setSelectedFile(file);
+    try {
+      // Comprimir imagem
+      const compressedFile = await compressImage(file);
+      
+      // Verificar se a compressão foi bem-sucedida
+      if (!compressedFile) {
+        setError('Erro ao processar a imagem');
+        return;
+      }
 
-    // Criar preview da imagem
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setPreview(e.target.result);
-    };
-    reader.readAsDataURL(file);
+      // Criar um novo File object com o blob comprimido
+      const finalFile = new File([compressedFile], file.name, {
+        type: 'image/jpeg',
+        lastModified: Date.now()
+      });
 
-    // Notificar componente pai
-    if (onFileChange) {
-      onFileChange(file);
+      setSelectedFile(finalFile);
+
+      // Criar preview da imagem
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreview(e.target.result);
+      };
+      reader.readAsDataURL(finalFile);
+
+      // Notificar componente pai
+      if (onFileChange) {
+        onFileChange(finalFile);
+      }
+    } catch (error) {
+      setError('Erro ao processar a imagem');
+      console.error('Erro na compressão:', error);
     }
   };
 
@@ -159,7 +240,7 @@ const PhotoUpload = forwardRef(({
                 Arraste uma imagem ou clique para selecionar
               </p>
               <p className="upload-formats">
-                PNG, JPG, JPEG até {(maxSize / (1024 * 1024)).toFixed(1)}MB
+                PNG, JPG, JPEG até {(maxSize / (1024 * 1024)).toFixed(1)}MB (otimizada automaticamente)
               </p>
             </div>
           </div>

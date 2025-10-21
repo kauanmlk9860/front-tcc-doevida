@@ -2,10 +2,10 @@ import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
-import FormattedInput from '../../components/FormattedInput'
-import PhotoUpload from '../../components/PhotoUpload'
-import PasswordInput from '../../components/PasswordInput'
-import { InputIcons } from '../../components/InputIcons'
+import FormattedInput from '../../components/jsx/FormattedInput'
+import PhotoUpload from '../../components/jsx/PhotoUpload'
+import PasswordInput from '../../components/jsx/PasswordInput'
+import { InputIcons } from '../../components/jsx/InputIcons'
 
 function Hospital_cadastro() {
   const navigate = useNavigate()
@@ -109,37 +109,35 @@ function Hospital_cadastro() {
 
     setLoading(true)
 
-    // Preparar foto do hospital
-    let fotoHospitalData = null;
-    if (photoUploadRef.current?.hasFile) {
-      const file = photoUploadRef.current.file;
-      // Converter para base64 para envio
-      fotoHospitalData = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.readAsDataURL(file);
-      });
-    }
-
-    const dadosHospital = {
-      nome: nomeRef.current.value.trim(),
-      email: emailRef.current.value.trim(),
-      senha: senhaRef.current.value,
-      cnpj: cnpjRef.current.value.replace(/\D/g, ''),
-      cep: cepRef.current.value.replace(/\D/g, ''),
-      telefone: telefoneRef.current.value.replace(/\D/g, ''),
-      capacidade_maxima: Number(capacidadeRef.current.value),
-      convenios: conveniosRef.current.value.trim(),
-      crm: crmRef.current.value.trim(),
-      horario_abertura: aberturaRef.current.value,
-      horario_fechamento: fechamentoRef.current.value,
-      foto: fotoHospitalData || 'https://via.placeholder.com/600x400?text=Hospital'
-    }
-
     try {
-      const url = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida'}/hospital`
+      // Preparar foto do hospital
+      let fotoHospitalData = null;
+      if (photoUploadRef.current?.hasFile) {
+        try {
+          fotoHospitalData = await photoUploadRef.current.getBase64();
+        } catch (error) {
+          setError(error.message);
+          setLoading(false);
+          return;
+        }
+      }
 
-      const response = await fetch(url, {
+      const dadosHospital = {
+        nome: nomeRef.current.value.trim(),
+        email: emailRef.current.value.trim(),
+        senha: senhaRef.current.value,
+        cnpj: cnpjRef.current.value.replace(/\D/g, ''),
+        cep: cepRef.current.value.replace(/\D/g, ''),
+        telefone: telefoneRef.current.value.replace(/\D/g, ''),
+        capacidade_maxima: Number(capacidadeRef.current.value),
+        convenios: conveniosRef.current.value.trim(),
+        crm: crmRef.current.value.trim(),
+        horario_abertura: aberturaRef.current.value,
+        horario_fechamento: fechamentoRef.current.value,
+        foto: fotoHospitalData || 'https://via.placeholder.com/600x400?text=Hospital'
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida'}/hospital`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dadosHospital)
@@ -150,7 +148,7 @@ function Hospital_cadastro() {
 
       if (okDaApi) {
         setSuccess(resultado.message || 'Hospital criado com sucesso! Redirecionando para login...')
-        setTimeout(() => navigate('/login'), 2000)
+        setTimeout(() => navigate('/hospital-login'), 2000)
       } else {
         setError(resultado.message || `Erro ${response.status}: ${response.statusText}`)
       }
@@ -173,130 +171,167 @@ function Hospital_cadastro() {
       <img className="cadastro__logo" src={logoBranca} alt="DoeVida" />
       <h1 className="cadastro__title">Sou Hospital</h1>
 
-      {/* ✅ ativa o grid de 2 colunas do CSS novo */}
-      <form className="cadastro__form form-grid" autoComplete="off" onSubmit={(e) => e.preventDefault()}>
+      <form className="cadastro__form" autoComplete="off" onSubmit={(e) => e.preventDefault()}>
+        <div className="form-grid">
+          <div className="field">
+            <span>Nome do Hospital *</span>
+            <FormattedInput
+              ref={nomeRef}
+              placeholder="Digite o nome do hospital"
+              icon={<InputIcons.Hospital />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+              maxLength={70}
+            />
+          </div>
 
-        <FormattedInput
-          ref={nomeRef}
-          placeholder="Nome do Hospital *"
-          icon={<InputIcons.Hospital />}
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          maxLength={70}
-        />
+          <div className="field">
+            <span>E-mail *</span>
+            <FormattedInput
+              ref={emailRef}
+              type="email"
+              placeholder="Digite o e-mail"
+              icon={<InputIcons.Email />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+              maxLength={100}
+            />
+          </div>
 
-        <FormattedInput
-          ref={emailRef}
-          type="email"
-          placeholder="Digite o E-mail *"
-          icon={<InputIcons.Email />}
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          maxLength={100}
-        />
+          <div className="field">
+            <span>Senha *</span>
+            <PasswordInput
+              ref={senhaRef}
+              placeholder="Digite a senha"
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+              minLength={6}
+              maxLength={255}
+            />
+          </div>
 
-        <PasswordInput
-          ref={senhaRef}
-          placeholder="Digite a Senha *"
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          minLength={6}
-          maxLength={255}
-        />
+          <div className="field">
+            <span>Confirmar Senha *</span>
+            <PasswordInput
+              ref={confirmarSenhaRef}
+              placeholder="Confirme a senha"
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+              minLength={6}
+              maxLength={255}
+            />
+          </div>
 
-        <PasswordInput
-          ref={confirmarSenhaRef}
-          placeholder="Confirme a Senha *"
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          minLength={6}
-          maxLength={255}
-        />
+          <div className="field">
+            <span>CNPJ *</span>
+            <FormattedInput
+              ref={cnpjRef}
+              formatType="cnpj"
+              placeholder="00.000.000/0000-00"
+              icon={<InputIcons.Building />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+              maxLength={20}
+            />
+          </div>
 
-        <FormattedInput
-          ref={cnpjRef}
-          formatType="cnpj"
-          placeholder="CNPJ *"
-          icon={<InputIcons.Building />}
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          maxLength={20}
-        />
+          <div className="field">
+            <span>CEP *</span>
+            <FormattedInput
+              ref={cepRef}
+              formatType="cep"
+              placeholder="00000-000"
+              icon={<InputIcons.Location />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+              maxLength={10}
+            />
+          </div>
 
-        <FormattedInput
-          ref={cepRef}
-          formatType="cep"
-          placeholder="CEP *"
-          icon={<InputIcons.Location />}
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          maxLength={10}
-        />
+          <div className="field">
+            <span>Telefone *</span>
+            <FormattedInput
+              ref={telefoneRef}
+              formatType="phone"
+              placeholder="(00) 00000-0000"
+              icon={<InputIcons.Phone />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+              maxLength={20}
+            />
+          </div>
 
-        <FormattedInput
-          ref={telefoneRef}
-          formatType="phone"
-          placeholder="Telefone *"
-          icon={<InputIcons.Phone />}
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          maxLength={20}
-        />
+          <div className="field">
+            <span>Capacidade Máxima (Doadores) *</span>
+            <FormattedInput
+              ref={capacidadeRef}
+              type="number"
+              placeholder="Ex: 10"
+              icon={<InputIcons.Capacity />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+              min={1}
+            />
+          </div>
 
-        <FormattedInput
-          ref={capacidadeRef}
-          type="number"
-          placeholder="Capacidade Máxima (Doadores) *"
-          icon={<InputIcons.Capacity />}
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          min={1}
-        />
+          <div className="field">
+            <span>Convênios Aceitos *</span>
+            <FormattedInput
+              ref={conveniosRef}
+              placeholder="Ex: SUS, Unimed, Amil"
+              icon={<InputIcons.Insurance />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+              maxLength={255}
+            />
+          </div>
 
-        <FormattedInput
-          ref={conveniosRef}
-          placeholder="Convênios Aceitos *"
-          icon={<InputIcons.Insurance />}
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          maxLength={255}
-        />
+          <div className="field">
+            <span>CRM (Link) *</span>
+            <FormattedInput
+              ref={crmRef}
+              placeholder="Cole o link do CRM"
+              icon={<InputIcons.Link />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+              maxLength={255}
+            />
+          </div>
 
-        <FormattedInput
-          ref={crmRef}
-          placeholder="CRM (Link) *"
-          icon={<InputIcons.Link />}
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          maxLength={255}
-        />
+          <div className="field">
+            <span>Horário de Abertura *</span>
+            <FormattedInput
+              ref={aberturaRef}
+              type="time"
+              placeholder="Horário de Abertura"
+              icon={<InputIcons.Clock />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+              step="900"
+            />
+          </div>
 
-        <FormattedInput
-          ref={aberturaRef}
-          type="time"
-          placeholder="Horário de Abertura *"
-          icon={<InputIcons.Clock />}
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          step="900"
-        />
+          <div className="field">
+            <span>Horário de Fechamento *</span>
+            <FormattedInput
+              ref={fechamentoRef}
+              type="time"
+              placeholder="Horário de Fechamento"
+              icon={<InputIcons.Clock />}
+              onKeyPress={handleKeyPress}
+              disabled={loading}
+              step="900"
+            />
+          </div>
 
-        <FormattedInput
-          ref={fechamentoRef}
-          type="time"
-          placeholder="Horário de Fechamento *"
-          icon={<InputIcons.Clock />}
-          onKeyPress={handleKeyPress}
-          disabled={loading}
-          step="900"
-        />
-
-        <div style={{ gridColumn: '1 / -1' }}>
-          <PhotoUpload
-            ref={photoUploadRef}
-            placeholder="Adicione foto do hospital (opcional)"
-            disabled={loading}
-          />
+          <div className="field field--full">
+            <span>Foto do Hospital</span>
+            <PhotoUpload
+              ref={photoUploadRef}
+              placeholder="Adicione foto do hospital (opcional)"
+              disabled={loading}
+            />
+          </div>
         </div>
 
         {error && (

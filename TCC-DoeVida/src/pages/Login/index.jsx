@@ -2,11 +2,12 @@ import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
-import AuthService from '../../services/auth.js'
-import PasswordInput from '../../components/PasswordInput'
+import PasswordInput from '../../components/jsx/PasswordInput'
+import { useUser } from '../../contexts/UserContext'
 
 export default function Login() {
   const navigate = useNavigate()
+  const { login } = useUser()
   const emailRef = useRef()
   const senhaRef = useRef()
   const [loading, setLoading] = useState(false)
@@ -36,7 +37,7 @@ export default function Login() {
     setError('')
 
     try {
-      const result = await AuthService.login(email, senha)
+      const result = await login(email, senha)
       
       if (result.success) {
         // Login bem-sucedido, redireciona para home
