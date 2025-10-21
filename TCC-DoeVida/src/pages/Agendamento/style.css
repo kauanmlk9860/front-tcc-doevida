@@ -436,3 +436,22 @@
   .agd-carousel-nav{ width: 36px; height: 36px; }
   .agd-grid--lg .agd-day{ height: 56px; }
 }
+
+/* Datas passadas: visual desativado (NOVO) */
+.agd-day.past{
+  opacity: .4;
+  cursor: not-allowed;
+  background: #f8fafc;
+  box-shadow: inset 0 0 0 1px #e5e7eb;
+}
+
+/* Desativa hover de dias passados (NOVO) */
+.agd-day.past:hover{
+  transform: none;
+}
+
+/* Mensagem de erro já existe (.agd-error), então só garantimos espaçamento (opcional) */
+.agd-times + .agd-error,
+.agd-calendar + .agd-error{
+  margin-top: 10px;
+}

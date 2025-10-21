@@ -44,6 +44,21 @@ function parseTimeOn(dateBase, timeStr) {
   return d;
 }
 
+/* ===== helpers de data ===== */
+function startOfDay(d) {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+}
+function isSameDay(a, b) {
+  return a && b && a.toDateString() === b.toDateString();
+}
+function isPastCalendarDay(d) {
+  if (!d) return false;
+  const today0 = startOfDay(new Date());
+  return startOfDay(d) < today0;
+}
+
 async function cepToEndereco(cep) {
   try {
     const clean = String(cep || "").replace(/\D/g, "");
@@ -153,8 +168,16 @@ export default function Agendamento() {
   /* ---------- horários pelo hospital ---------- */
   useEffect(() => {
     if (!selectedHospital || !selectedDate) return;
+
     setLoadingTimes(true);
     setSelectedTime("");
+
+    // BLOQUEIO: não gerar horários para datas passadas
+    if (isPastCalendarDay(selectedDate)) {
+      setTimes([]);
+      setLoadingTimes(false);
+      return;
+    }
 
     const ha = selectedHospital?.horario_abertura || selectedHospital?.horarioAbertura || "08:00:00";
     const hf = selectedHospital?.horario_fechamento || selectedHospital?.horarioFechamento || "18:00:00";
@@ -194,22 +217,38 @@ export default function Agendamento() {
   function confirm() {
     if (!selectedHospital) return alert("Selecione um hospital.");
     if (!selectedDate) return alert("Selecione uma data.");
+    if (isPastCalendarDay(selectedDate)) {
+      return alert("A data selecionada já passou. Escolha outra data.");
+    }
     if (!selectedTime) return alert("Selecione um horário.");
-    navigate("/protocolo-agendamento", {
-      state: {
-        hospital: selectedHospital,
-        data: selectedDate?.toISOString(),
-        horario: selectedTime,
+
+    const dataISO = selectedDate?.toISOString();
+    const payload = {
+      hospital: {
+        id: selectedHospital.id ?? null,
+        nome: selectedHospital.nome || selectedHospital.nomeHospital,
+        cep: selectedHospital.cep || null,
+        endereco: selectedHospital._enderecoViaCep || null,
+        fotoUrl: selectedHospital.fotoUrl || selectedHospital.foto || null,
       },
-    });
+      data: dataISO,
+      horario: selectedTime,
+    };
+
+    try {
+      localStorage.setItem("ultimo_agendamento", JSON.stringify(payload));
+    } catch (e) {
+      console.warn("Não foi possível persistir ultimo_agendamento:", e);
+    }
+
+    navigate("/protocolo-agendamento", { state: payload });
   }
+
+  const today = new Date();
 
   return (
     <div className="agd-container">
       <h1 className="agd-title">Agendar Doação</h1>
-      {/* <p className="agd-sublead">
-        Escolha um hospital próximo, selecione uma data e horário — rapidinho você agenda sua doação. ❤️
-      </p> */}
 
       {/* HOSPITAIS - CARROSSEL */}
       <section className="agd-section">
@@ -302,14 +341,20 @@ export default function Agendamento() {
           <div className="agd-grid agd-grid--lg">
             {days.map((d, idx) => {
               if (!d) return <div key={idx} className="agd-day empty" />;
-              const isToday = new Date().toDateString() === d.toDateString();
-              const isSelected = selectedDate && selectedDate.toDateString() === d.toDateString();
+              const isToday = isSameDay(d, today);
+              const dayIsPast = isPastCalendarDay(d);
+              const isSelected = selectedDate && isSameDay(selectedDate, d);
+
               return (
                 <button
                   key={idx}
-                  className={`agd-day ${isSelected ? "selected" : ""} ${isToday ? "today" : ""}`}
-                  onClick={() => setSelectedDate(d)}
                   type="button"
+                  className={`agd-day ${isSelected ? "selected" : ""} ${isToday ? "today" : ""} ${dayIsPast ? "past" : ""}`}
+                  onClick={() => {
+                    // BLOQUEIA clique em datas passadas
+                    if (!dayIsPast) setSelectedDate(d);
+                  }}
+                  disabled={dayIsPast}
                 >
                   {d.getDate()}
                 </button>
@@ -326,14 +371,18 @@ export default function Agendamento() {
           {loadingTimes && <span className="agd-chip">carregando...</span>}
         </div>
 
-        {loadingTimes ? (
+        {selectedDate && isPastCalendarDay(selectedDate) ? (
+          <div className="agd-error" style={{ maxWidth: 820 }}>
+            A data selecionada já passou. Selecione outra data para visualizar horários disponíveis.
+          </div>
+        ) : loadingTimes ? (
           <div className="agd-times-skeleton" />
         ) : (
           <div className="agd-times">
             {times.map((t) => {
-              const isToday = selectedDate && selectedDate.toDateString() === new Date().toDateString();
+              const isTodaySel = selectedDate && isSameDay(selectedDate, today);
               let disabled = false;
-              if (isToday) {
+              if (isTodaySel) {
                 const [hh, mm] = t.split(":").map(Number);
                 const now = new Date();
                 const slot = new Date();
