@@ -333,49 +333,15 @@ function Home() {
             aria-modal="true"
             aria-labelledby="user-modal-title"
           >
-            <h2 id="user-modal-title">Informações do Usuário</h2>
-            
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-              <img
-                src={user?.foto_perfil || "/placeholder-profile.png"}
-                alt="Foto de perfil"
-                style={{
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                  marginRight: '20px',
-                  border: '3px solid #e74c3c'
-                }}
-              />
-              <div>
-                <h3 style={{ margin: '0 0 5px 0', color: '#2c3e50' }}>{user?.nome || "Usuário"}</h3>
-                <p style={{ margin: '0', color: '#7f8c8d' }}>{user?.email}</p>
-              </div>
-            </div>
-
-            <div style={{ textAlign: 'left', marginBottom: '20px' }}>
-              {user?.cpf && (
-                <p><strong>CPF:</strong> {user.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}</p>
-              )}
-              {user?.cep && (
-                <p><strong>CEP:</strong> {user.cep.replace(/(\d{5})(\d{3})/, '$1-$2')}</p>
-              )}
-              {user?.numero && (
-                <p><strong>Telefone:</strong> {user.numero.length === 11 ? 
-                  user.numero.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3') :
-                  user.numero.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3')
-                }</p>
-              )}
-              {user?.data_nascimento && (
-                <p><strong>Data de Nascimento:</strong> {new Date(user.data_nascimento).toLocaleDateString('pt-BR')}</p>
-              )}
-              {user?.tipo_sanguineo && (
-                <p><strong>Tipo Sanguíneo:</strong> {user.tipo_sanguineo}</p>
-              )}
-              {user?.sexo && (
-                <p><strong>Sexo:</strong> {user.sexo}</p>
-              )}
+            <div style={{ textAlign: 'center', padding: '20px' }}>
+              <h2 style={{ 
+                margin: '0', 
+                color: '#2c3e50', 
+                fontSize: '24px',
+                fontWeight: '600'
+              }}>
+                Olá, {user?.nome || "Usuário"}!
+              </h2>
             </div>
 
             <button
