@@ -1,14 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
 :root {
   --brand: #990410;
   --brand-dark: #7a0308;
   --text: #000;
-  --surface: #f6f8fa;
+  --surface: #ffffff;
   --pad-x: 3.5rem;
   --pad-x-mobile: 1.5rem;
   --gap-large: 2rem;
   --transition-fast: 0.3s ease-in-out;
   --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.15);
   --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Garantir fundo branco profissional */
+body {
+  background-color: #ffffff !important;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.main {
+  background-color: #ffffff;
+  min-height: 100vh;
+  position: relative;
+  background-image: 
+    radial-gradient(circle at 80% 20%, rgba(153,4,16,0.02) 0%, transparent 50%),
+    radial-gradient(circle at 20% 80%, rgba(153,4,16,0.015) 0%, transparent 50%),
+    radial-gradient(circle at 60% 60%, rgba(153,4,16,0.01) 0%, transparent 40%);
+  background-size: 800px 800px, 600px 600px, 400px 400px;
+  background-position: 0 0, 100px 100px, 200px 200px;
+  background-attachment: fixed;
+}
+
+/* Padrão geométrico de fundo */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(153,4,16,0.03) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(153,4,16,0.02) 0%, transparent 50%),
+    linear-gradient(45deg, transparent 49%, rgba(153,4,16,0.01) 50%, transparent 51%),
+    linear-gradient(-45deg, transparent 49%, rgba(153,4,16,0.01) 50%, transparent 51%);
+  background-size: 400px 400px, 600px 600px, 60px 60px, 60px 60px;
+  background-position: 0 0, 200px 200px, 0 0, 30px 30px;
+  z-index: 0;
+  pointer-events: none;
+  animation: pattern-drift 40s linear infinite;
+}
+
+/* Elementos decorativos flutuantes */
+body::after {
+  content: "";
+  position: fixed;
+  top: 15%;
+  right: 8%;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(153,4,16,0.04) 0%, rgba(153,4,16,0.02) 40%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(20px);
+  z-index: 0;
+  animation: float-gentle 25s ease-in-out infinite;
+  pointer-events: none;
 }
 
 /* Util */
@@ -30,10 +88,20 @@
   justify-content: space-between;
   align-items: center;
   padding: 2rem var(--pad-x);
-  background: #fff;
-  box-shadow: var(--shadow-sm);
+  background: 
+    linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.98) 100%),
+    radial-gradient(circle at 20% 20%, rgba(153,4,16,0.02) 0%, transparent 50%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 
+    0 8px 32px rgba(153,4,16,0.08),
+    0 4px 16px rgba(0,0,0,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  border-bottom: 1px solid rgba(153,4,16,0.08);
   flex-wrap: wrap;
   gap: 1rem;
+  position: relative;
+  z-index: 10;
 }
 
 .logo-container {
@@ -54,11 +122,13 @@
 }
 
 .logo-text {
+  font-family: 'Poppins', sans-serif;
   font-size: 2.4rem;
   font-weight: 800;
   color: var(--text);
   line-height: 1;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .nav-buttons {
@@ -115,9 +185,11 @@
 .hero-title {
   margin: 0 0 1.5rem 0;
   color: var(--text);
+  font-family: 'Poppins', sans-serif;
   font-weight: 900;
   font-size: clamp(3rem, 7vw, 6rem);
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .btn-cta {
@@ -126,6 +198,7 @@
   border: none;
   border-radius: 16px;
   padding: 1.5rem 2rem;
+  font-family: 'Poppins', sans-serif;
   font-size: clamp(1.5rem, 1.5vw + 1rem, 2rem);
   font-weight: 800;
   cursor: pointer;
@@ -179,7 +252,7 @@
 .impact-card {
   background: var(--brand);
   color: #ffffff;
-  border-radius: 0 80px 80px 0;
+  border-radius: 40px;
   padding: 2rem 3rem;
   display: flex;
   align-items: center;
@@ -198,11 +271,14 @@
 }
 
 .impact-number {
+  font-family: 'Poppins', sans-serif;
   font-weight: 900;
   font-size: clamp(2.8rem, 5vw, 4rem);
+  letter-spacing: -0.02em;
 }
 
 .impact-label {
+  font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: clamp(1.5rem, 3vw, 2rem);
 }
@@ -314,6 +390,7 @@
   }
 
   .logo-text {
+    font-family: 'Poppins', sans-serif;
     font-size: 2rem;
   }
 
@@ -388,6 +465,7 @@
   }
 
   .logo-text {
+    font-family: 'Poppins', sans-serif;
     font-size: 1.6rem;
   }
 
@@ -457,5 +535,153 @@
 
 .footer-link.highlight {
   color: var(--brand);
-  font-weight: 600;
+  font-size: 1.3rem;
+  background-color: transparent;
+  border: none;
+  font-weight: 700;
+}
+
+
+/* ==== USER INFO NO HEADER ==== */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(153, 4, 16, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-info:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(153, 4, 16, 0.2);
+}
+
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid var(--brand);
+  object-fit: cover;
+  background: #f5f5f5;
+  box-shadow: 0 0 8px rgba(153, 4, 16, 0.25);
+  transition: transform 0.3s ease;
+}
+
+.user-avatar:hover {
+  transform: scale(1.08);
+}
+
+.user-name {
+  color: var(--brand);
+  font-weight: 700;
+  font-size: 1.4rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(153, 4, 16, 0.25);
+}
+
+/* ===== MODAL DE CONTATO ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 2.5rem 3rem;
+  border-radius: 20px;
+  box-shadow: var(--shadow-md);
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  animation: slideUp 0.35s ease forwards;
+}
+
+.modal-content h2 {
+  font-size: 1.8rem;
+  color: var(--brand);
+  margin-bottom: 1.5rem;
+}
+
+.modal-content p {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0.5rem 0;
+}
+
+.btn-close-modal {
+  margin-top: 2rem;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.btn-close-modal:hover {
+  background: var(--brand-dark);
+}
+
+/* Animações suaves */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Botão link no footer */
+.footer-link.btn-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  color: var(--text);
+  padding: 0;
+  transition: opacity 0.2s ease;
+}
+
+.footer-link.btn-link:hover {
+  opacity: 0.7;
+}
+
+/* Keyframes para fundos e elementos decorativos */
+@keyframes pattern-drift {
+  0%   { background-position: 0 0, 200px 200px, 0 0, 30px 30px; }
+  25%  { background-position: 100px 50px, 300px 250px, 15px 15px, 45px 45px; }
+  50%  { background-position: 200px 100px, 400px 300px, 30px 30px, 60px 60px; }
+  75%  { background-position: 100px 150px, 300px 350px, 15px 45px, 45px 75px; }
+  100% { background-position: 0 0, 200px 200px, 0 0, 30px 30px; }
+}
+
+@keyframes float-gentle {
+  0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 0.4; }
+  33%  { transform: translate3d(-30px, -20px, 0) scale(1.1); opacity: 0.6; }
+  66%  { transform: translate3d(20px, -40px, 0) scale(0.9); opacity: 0.3; }
+  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.4; }
 }

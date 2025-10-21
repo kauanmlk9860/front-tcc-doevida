@@ -5,6 +5,7 @@ import "./style.css";
 import logoBranca from "../../assets/Logo_Branca.png";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../../services/auth.js";
+import LogoutModal from "../../components/jsx/LogoutModal";
 
 import icHospital from "../../assets/icons/hospital.png";
 import icBancoSangue from "../../assets/icons/banco-sangue.png";
@@ -16,7 +17,7 @@ function useNumberFormatter(locale = "pt-BR") {
   return useMemo(() => new Intl.NumberFormat(locale), [locale]);
 }
 
-/** CountUp simples */
+/** CountUp simples */  
 function CountUp({ end = 12340, duration = 1800, prefix = "+", className }) {
   const [value, setValue] = useState(0);
   const startRef = useRef(null);
@@ -24,8 +25,8 @@ function CountUp({ end = 12340, duration = 1800, prefix = "+", className }) {
   const fmt = useNumberFormatter();
   const reduced = useRef(
     typeof window !== "undefined" &&
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
 
   useEffect(() => {
@@ -58,8 +59,9 @@ function Home() {
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // YouTube embed
   const YT_ID = "97Sx0KiExZM";
   const EMBED_URL =
     `https://www.youtube.com/embed/${YT_ID}` +
@@ -76,16 +78,24 @@ function Home() {
     }
   }, []);
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = () => {
     AuthService.logout();
     setIsLoggedIn(false);
     setUsuario(null);
+    setShowLogoutModal(false);
     navigate("/");
   };
 
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
+  };
+
   const handleNavigation = (path) => {
-    // Permite acesso livre a home, saiba-mais e login
-    if (!isLoggedIn && !["/login", "/saiba-mais", "/home"].includes(path)) {
+    if (!isLoggedIn && !["/login", "/hospital-login", "/saiba-mais", "/home"].includes(path)) {
       navigate("/login");
     } else {
       navigate(path);
@@ -98,36 +108,42 @@ function Home() {
       <header className="header" role="banner">
         <div className="logo-container">
           <div className="logo-icon">
-            <img
-              src={logoBranca || "/placeholder.svg"}
-              alt="Logo DoeVida"
-              className="logo-img"
-            />
+            <img src={logoBranca} alt="Logo DoeVida" className="logo-img" />
           </div>
           <h1 className="logo-text">DOEVIDA</h1>
         </div>
 
         <nav className="nav-buttons" aria-label="Ações principais">
           {isLoggedIn ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-              <span style={{ color: "white", fontSize: "14px" }}>
-                Olá, {usuario?.nome || "Usuário"}!
-              </span>
-              <button className="btn-donor" onClick={handleLogout} type="button">
+            <div className="user-info">
+              <img
+                src={usuario?.fotoPerfil || "/placeholder-profile.png"}
+                alt="Foto de perfil"
+                className="user-avatar"
+              />
+              <span className="user-name">Olá, {usuario?.nome || "Usuário"}!</span>
+              <button className="btn-donor" onClick={handleLogoutClick} type="button">
                 Sair
               </button>
             </div>
           ) : (
             <>
+              {/* ✅ Corrigido: hospital → hospital-login */}
               <button
-                className="btn-donor"
-                onClick={() => handleNavigation("/login")}
+                className="btn-hospital"
+                onClick={() => handleNavigation("/hospital-login")}
                 type="button"
               >
-                Sou Doador
-              </button>
-              <button className="btn-hospital" type="button">
                 Sou Hospital
+              </button>
+
+              {/* ✅ Corrigido: doador → login */}
+              <button
+                className="btn-donor"
+                type="button"
+                onClick={() => handleNavigation("/login")}
+              >
+                Sou Doador
               </button>
             </>
           )}
@@ -152,7 +168,10 @@ function Home() {
           </div>
 
           <div className="hero-media">
-            <div className="media-iframe-wrap" aria-label="Pessoas doando sangue em um hemocentro">
+            <div
+              className="media-iframe-wrap"
+              aria-label="Pessoas doando sangue em um hemocentro"
+            >
               <iframe
                 className="media-iframe"
                 src={EMBED_URL}
@@ -172,7 +191,11 @@ function Home() {
           </h3>
 
           <div className="actions-layout">
-            <div className="impact-card" role="status" aria-label="Vidas salvas este ano">
+            <div
+              className="impact-card"
+              role="status"
+              aria-label="Vidas salvas este ano"
+            >
               <div className="impact-text">
                 <CountUp end={12340} duration={1800} prefix="+" className="impact-number" />
                 <span className="impact-label">
@@ -186,57 +209,37 @@ function Home() {
             <div className="square-cards-grid">
               <article
                 className="feature-card squareSpecificity"
-                role="button"
-                tabIndex={0}
-                aria-label="Hospitais"
                 onClick={() => handleNavigation("/hospitais")}
-                style={{ cursor: "pointer" }}
               >
-                <img src={icHospital || "/placeholder.svg"} alt="" className="feature-emoji big" />
+                <img src={icHospital} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">Hospitais</h4>
               </article>
 
               <article
                 className="feature-card squareSpecificity"
-                role="button"
-                tabIndex={0}
-                aria-label="Banco de Sangue"
                 onClick={() => handleNavigation("/banco-sangue")}
-                style={{ cursor: "pointer" }}
               >
-                <img src={icBancoSangue || "/placeholder.svg"} alt="" className="feature-emoji big" />
+                <img src={icBancoSangue} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">
-                  Banco de
-                  <br />
-                  Sangue
+                  Banco de <br /> Sangue
                 </h4>
               </article>
 
               <article
                 className="feature-card squareSpecificity"
-                role="button"
-                tabIndex={0}
-                aria-label="Histórico"
                 onClick={() => handleNavigation("/historico")}
-                style={{ cursor: "pointer" }}
               >
-                <img src={icHistorico || "/placeholder.svg"} alt="" className="feature-emoji big" />
+                <img src={icHistorico} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">Histórico</h4>
               </article>
 
               <article
                 className="feature-card squareSpecificity"
-                role="button"
-                tabIndex={0}
-                aria-label="Registrar Doação"
                 onClick={() => handleNavigation("/registrar-doacao")}
-                style={{ cursor: "pointer" }}
               >
-                <img src={icRegistrar || "/placeholder.svg"} alt="" className="feature-emoji big" />
+                <img src={icRegistrar} alt="" className="feature-emoji big" />
                 <h4 className="feature-title-only bigger">
-                  Registrar
-                  <br />
-                  Doação
+                  Registrar <br /> Doação
                 </h4>
               </article>
             </div>
@@ -267,12 +270,62 @@ function Home() {
             <a href="#" className="footer-link">
               Termos de Uso
             </a>
-            <a href="#" className="footer-link">
+            <button
+              type="button"
+              className="footer-link btn-link"
+              onClick={() => setShowModal(true)}
+            >
               Contato
-            </a>
+            </button>
           </div>
         </div>
       </footer>
+
+      {/* MODAL DE CONTATO */}
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+          >
+            <h2 id="modal-title">Contatos dos Responsáveis</h2>
+            <p>
+              <strong>Gabriel Soares: </strong> gabriellssoares2016@gmail.com.br
+            </p>
+            <p>
+              <strong>Daniel Torres: </strong> victor.hugo@doevida.com.br
+            </p>
+            <p>
+              <strong>Kauan Rodrigues: </strong> kauan.rodrigues@doevida.com.br
+            </p>
+            <p>
+              <strong>Rafaella Toscano: </strong> rafaella.toscano@doevida.com.br
+            </p>
+            <p>
+              <strong>Victor Hugo: </strong> victor.hugo@doevida.com.br
+            </p>
+
+            <button
+              type="button"
+              className="btn-close-modal"
+              onClick={() => setShowModal(false)}
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE LOGOUT */}
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={handleLogoutCancel}
+        onConfirm={handleLogoutConfirm}
+        userName={usuario?.nome}
+      />
     </>
   );
 }

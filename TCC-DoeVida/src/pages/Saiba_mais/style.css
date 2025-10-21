@@ -6,12 +6,37 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #ffffff;
+  font-family: 'Arial', sans-serif;
+  background: #ffffff;
+  position: relative;
   overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 80% 20%, rgba(153,4,16,0.02) 0%, transparent 50%),
+    radial-gradient(circle at 20% 80%, rgba(153,4,16,0.015) 0%, transparent 50%);
+  background-size: 800px 800px, 600px 600px;
+  background-position: 0 0, 100px 100px;
+  background-attachment: fixed;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(45deg, transparent 49%, rgba(153,4,16,0.01) 50%, transparent 51%);
+  background-size: 60px 60px;
+  z-index: 0;
+  pointer-events: none;
+  animation: pattern-drift 40s linear infinite;
+}
+
+@keyframes pattern-drift {
+  0%   { background-position: 0 0; }
+  50%  { background-position: 30px 30px; }
+  100% { background-position: 0 0; }
 }
 
 .app {
@@ -297,5 +322,44 @@ body {
   .circle-1,
   .circle-4 {
     transform: scale(1.1);
+  }
+}
+
+/* ================= BOTÃO DE FECHAR (X) ================= */
+.btn-close {
+  position: relative;
+  top: 20px;
+  left: 20px;
+  background: #ffffff;
+  color: #7a0308;
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.btn-close:hover {
+  background-color: #f4b8c5;
+  transform: scale(1.1);
+}
+
+/* Ajuste para telas pequenas */
+@media (max-width: 480px) {
+  .btn-close {
+    top: 10px;
+    left: 10px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.6rem;
   }
 }

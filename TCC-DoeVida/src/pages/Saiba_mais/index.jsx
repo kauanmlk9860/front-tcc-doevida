@@ -22,6 +22,10 @@ function SaibaMais() {
     }
   };
 
+  const handleVoltarClick = () => {
+    navigate(-1); // volta para a página anterior
+  };
+
   return (
     <div className="app">
       {/* Decorative Circles */}
@@ -49,6 +53,11 @@ function SaibaMais() {
         </nav>
       </header>
 
+      {/* Botão X (voltar) */}
+      <button className="btn-close" onClick={handleVoltarClick}>
+        ×
+      </button>
+      
       {/* Main Content */}
       <main className="main-content">
         <h2 className="hero-title">Saiba Mais</h2>
