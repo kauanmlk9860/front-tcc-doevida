@@ -6,6 +6,7 @@ import FormattedInput from '../../components/jsx/FormattedInput'
 import PhotoUpload from '../../components/jsx/PhotoUpload'
 import PasswordInput from '../../components/jsx/PasswordInput'
 import { InputIcons } from '../../components/jsx/InputIcons'
+import { criarUsuario as criarUsuarioAPI } from '../../api/usuario/usuario'
 
 function Cadastro() {
   const navigate = useNavigate()
@@ -75,11 +76,26 @@ function Cadastro() {
     const confirmarSenha = confirmarSenhaRef.current?.value
 
     if (!nome) return 'Nome é obrigatório'
+    if (nome.length > 100) return 'Nome deve ter no máximo 100 caracteres'
+    
     if (!email || !email.includes('@')) return 'E-mail deve ser válido'
+    if (email.length > 100) return 'E-mail deve ter no máximo 100 caracteres'
+    
     if (!senha || senha.length < 6) return 'Senha deve ter pelo menos 6 caracteres'
+    if (senha.length > 255) return 'Senha deve ter no máximo 255 caracteres'
+    
     if (senha !== confirmarSenha) return 'Senhas não coincidem'
-    if (!idSexo) return 'Selecione seu sexo'
-    if (!idTipoSanguineo) return 'Selecione seu tipo sanguíneo'
+    
+    if (!idSexo || isNaN(Number(idSexo))) return 'Selecione seu sexo'
+    if (!idTipoSanguineo || isNaN(Number(idTipoSanguineo))) return 'Selecione seu tipo sanguíneo'
+    
+    // Validar IDs dentro do range esperado
+    const sexoNum = Number(idSexo)
+    const tipoNum = Number(idTipoSanguineo)
+    
+    if (sexoNum < 1 || sexoNum > 3) return 'Sexo selecionado é inválido'
+    if (tipoNum < 1 || tipoNum > 8) return 'Tipo sanguíneo selecionado é inválido'
+    
     return null
   }
 
@@ -96,39 +112,76 @@ function Cadastro() {
       if (photoUploadRef.current?.hasFile) {
         try {
           fotoPerfilData = await photoUploadRef.current.getBase64();
+          
+          // Verificar se o base64 não está muito grande (máximo ~200KB)
+          if (fotoPerfilData && fotoPerfilData.length > 200000) {
+            setError('Foto muito grande. Tente uma imagem menor.');
+            setLoading(false);
+            return;
+          }
         } catch (error) {
           setError(error.message);
+          setLoading(false);
           return;
         }
       }
 
+      // Preparar dados do usuário com todos os campos que o backend pode esperar
       const dadosUsuario = {
         nome: nomeRef.current.value.trim(),
         email: emailRef.current.value.trim(),
         senha: senhaRef.current.value,
-        cpf: cpfRef.current?.value?.replace(/\D/g, '') || null,
-        cep: cepRef.current?.value?.replace(/\D/g, '') || null,
-        numero: numeroRef.current?.value?.replace(/\D/g, '') || null,
-        data_nascimento: dataNascimentoRef.current?.value || null,
-        foto_perfil: fotoPerfilData || null,
         id_sexo: Number(idSexo),
         id_tipo_sanguineo: Number(idTipoSanguineo)
       }
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida'}/usuario`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dadosUsuario)
+      // Adicionar campos opcionais (usar null para vazios, como esperado pelo backend)
+      const cpfLimpo = cpfRef.current?.value?.replace(/\D/g, '')
+      const cpf = (cpfLimpo && cpfLimpo.length > 0) ? cpfLimpo : null
+      
+      const cepLimpo = cepRef.current?.value?.replace(/\D/g, '')
+      const cep = (cepLimpo && cepLimpo.length > 0) ? cepLimpo : null
+      
+      const numeroLimpo = numeroRef.current?.value?.replace(/\D/g, '')
+      const numero = (numeroLimpo && numeroLimpo.length > 0) ? numeroLimpo : null
+      
+      const dataNascimento = dataNascimentoRef.current?.value || null
+
+      // Incluir todos os campos como esperado pelo backend (null para vazios)
+      dadosUsuario.cpf = cpf
+      dadosUsuario.cep = cep  
+      dadosUsuario.numero = numero
+      dadosUsuario.data_nascimento = dataNascimento
+      dadosUsuario.foto_perfil = fotoPerfilData || null
+
+      // Debug: mostrar dados que serão enviados
+      console.log('Dados do usuário COMPLETOS:', dadosUsuario)
+      console.log('Tamanho de cada campo:', {
+        nome: dadosUsuario.nome?.length || 0,
+        email: dadosUsuario.email?.length || 0,
+        senha: dadosUsuario.senha?.length || 0,
+        cpf: dadosUsuario.cpf?.length || 0,
+        cep: dadosUsuario.cep?.length || 0,
+        numero: dadosUsuario.numero?.length || 0,
+        data_nascimento: dadosUsuario.data_nascimento?.length || 0,
+        foto_perfil: dadosUsuario.foto_perfil?.length || 0,
+        id_sexo: dadosUsuario.id_sexo,
+        id_tipo_sanguineo: dadosUsuario.id_tipo_sanguineo
       })
 
-      const resultado = await response.json()
-      if (response.ok && resultado.status) {
-        setSuccess('Conta criada com sucesso! Redirecionando...')
+      console.log('Usando API para criar usuário...')
+      
+      const resultado = await criarUsuarioAPI(dadosUsuario)
+      console.log('Resultado da API:', resultado)
+      
+      if (resultado.success) {
+        setSuccess(resultado.message || 'Conta criada com sucesso! Redirecionando...')
         setTimeout(() => navigate('/login'), 2000)
       } else {
         setError(resultado.message || 'Erro ao criar conta.')
       }
-    } catch {
+    } catch (error) {
+      console.error('Erro na requisição:', error)
       setError('Erro de conexão. Verifique o backend.')
     } finally {
       setLoading(false)
@@ -136,6 +189,68 @@ function Cadastro() {
   }
 
   const handleKeyPress = (e) => e.key === 'Enter' && !loading && criarUsuario()
+
+  const testarDados = () => {
+    const erro = validarFormulario()
+    if (erro) {
+      alert(`Erro de validação: ${erro}`)
+      return
+    }
+
+    const dadosParaTeste = {
+      nome: nomeRef.current.value.trim(),
+      email: emailRef.current.value.trim(),
+      senha: senhaRef.current.value,
+      id_sexo: Number(idSexo),
+      id_tipo_sanguineo: Number(idTipoSanguineo),
+      cpf: cpfRef.current?.value?.replace(/\D/g, '') || 'vazio',
+      cep: cepRef.current?.value?.replace(/\D/g, '') || 'vazio',
+      numero: numeroRef.current?.value?.replace(/\D/g, '') || 'vazio',
+      data_nascimento: dataNascimentoRef.current?.value || 'vazio',
+      foto_perfil: photoUploadRef.current?.hasFile ? 'tem foto' : 'sem foto'
+    }
+
+    console.log('TESTE - Dados que seriam enviados:', dadosParaTeste)
+    alert('Dados válidos! Verifique o console para detalhes.')
+  }
+
+  const testarMinimo = async () => {
+    const erro = validarFormulario()
+    if (erro) {
+      alert(`Erro de validação: ${erro}`)
+      return
+    }
+
+    setLoading(true)
+    try {
+      // Testar apenas com campos obrigatórios
+      const dadosMinimos = {
+        nome: nomeRef.current.value.trim(),
+        email: emailRef.current.value.trim(),
+        senha: senhaRef.current.value,
+        id_sexo: Number(idSexo),
+        id_tipo_sanguineo: Number(idTipoSanguineo)
+      }
+
+      console.log('TESTE MÍNIMO - Enviando apenas campos obrigatórios:', dadosMinimos)
+      
+      const resultado = await criarUsuarioAPI(dadosMinimos)
+      console.log('TESTE MÍNIMO - Resultado:', resultado)
+      
+      if (resultado.success) {
+        alert('✅ SUCESSO com dados mínimos!')
+        setSuccess('Teste com dados mínimos funcionou!')
+      } else {
+        alert('❌ ERRO mesmo com dados mínimos: ' + resultado.message)
+        setError('Erro no teste mínimo: ' + resultado.message)
+      }
+    } catch (error) {
+      console.error('Erro no teste mínimo:', error)
+      alert('❌ ERRO no teste mínimo: ' + error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   if (loadingData) {
     return (
@@ -163,6 +278,7 @@ function Cadastro() {
               icon={<InputIcons.User />}
               onKeyPress={handleKeyPress}
               disabled={loading}
+              maxLength={100}
             />
           </div>
 
@@ -175,6 +291,7 @@ function Cadastro() {
               icon={<InputIcons.Email />}
               onKeyPress={handleKeyPress}
               disabled={loading}
+              maxLength={100}
             />
           </div>
 
@@ -185,6 +302,7 @@ function Cadastro() {
               placeholder="Digite sua senha"
               onKeyPress={handleKeyPress}
               disabled={loading}
+              maxLength={255}
             />
           </div>
 
@@ -195,6 +313,7 @@ function Cadastro() {
               placeholder="Confirme sua senha"
               onKeyPress={handleKeyPress}
               disabled={loading}
+              maxLength={255}
             />
           </div>
 
@@ -288,6 +407,14 @@ function Cadastro() {
       <div className="cadastro__actions">
         <button className="btn btn--primary" type="button" onClick={criarUsuario} disabled={loading}>
           {loading ? 'Criando Conta...' : 'Criar Conta'}
+        </button>
+
+        <button className="btn btn--secondary" type="button" onClick={testarDados} disabled={loading} style={{marginTop: '10px', backgroundColor: '#f39c12', color: 'white'}}>
+          🔍 Testar Dados (Debug)
+        </button>
+
+        <button className="btn btn--secondary" type="button" onClick={testarMinimo} disabled={loading} style={{marginTop: '5px', backgroundColor: '#e67e22', color: 'white'}}>
+          ⚡ Teste Mínimo (Só Obrigatórios)
         </button>
 
         <button className="btn btn--link" type="button" onClick={() => navigate('/login')} disabled={loading}>
