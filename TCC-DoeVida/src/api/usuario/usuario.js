@@ -39,7 +39,20 @@ function buildUpdatePayload(data) {
 export async function criarUsuario(data) {
   try {
     const payload = buildCreatePayload(data);
-    console.log('Payload para criação:', payload);
+    console.log('=== DEBUG CRIAÇÃO USUÁRIO ===');
+    console.log('Dados recebidos:', data);
+    console.log('Payload final:', payload);
+    console.log('Tamanhos dos campos:', {
+      nome: payload.nome?.length || 0,
+      email: payload.email?.length || 0,
+      senha: payload.senha?.length || 0,
+      cpf: payload.cpf?.length || 0,
+      cep: payload.cep?.length || 0,
+      numero: payload.numero?.length || 0,
+      data_nascimento: payload.data_nascimento?.length || 0,
+      foto_perfil: payload.foto_perfil?.length || 0,
+    });
+    console.log('=== FIM DEBUG ===');
     
     const res = await http.post('/usuario', payload);
     
@@ -50,6 +63,7 @@ export async function criarUsuario(data) {
     };
   } catch (error) {
     console.error('Erro ao criar usuário:', error);
+    console.error('Resposta do erro:', error.response?.data);
     return {
       success: false,
       message: error.response?.data?.message || 'Erro ao criar usuário'
