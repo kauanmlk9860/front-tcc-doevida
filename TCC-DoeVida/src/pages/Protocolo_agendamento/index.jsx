@@ -11,15 +11,47 @@ function usePtBrFormatters() {
   return { fmtData };
 }
 
+/** Tenta extrair o objeto de usuário real, mesmo que venha embrulhado no payload do login */
 function getUsuarioAtual() {
   try {
     const raw = localStorage.getItem("usuario");
     if (!raw) return null;
     const u = JSON.parse(raw);
-    return u && typeof u === "object" ? u : null;
+
+    // Em muitos backends o usuário vem dentro de outra chave (ex.: { usuario: {...} } ou { user: {...} })
+    const obj =
+      u?.usuario ||
+      u?.user ||
+      u?.data?.usuario ||
+      u?.data?.user ||
+      u;
+
+    return obj && typeof obj === "object" ? obj : null;
   } catch {
     return null;
   }
+}
+
+/** Composição robusta do nome do usuário */
+function getNomeUsuario(usuario) {
+  if (!usuario) return null;
+
+  // Candidatos comuns
+  const candidatos = [
+    usuario.nome,
+    usuario.nomeUsuario,
+    usuario.nome_completo,
+    usuario.nomeCompleto,
+    usuario.fullName,
+    // monta a partir de first/last, mas só se existir algo
+    [usuario.firstName, usuario.lastName].filter(Boolean).join(" ").trim(),
+    // alguns bancos usam "sobrenome"
+    [usuario.nome, usuario.sobrenome].filter(Boolean).join(" ").trim(),
+  ];
+
+  // Retorna o primeiro string não-vazia
+  const escolhido = candidatos.find((v) => typeof v === "string" && v.trim().length > 0);
+  return escolhido || null;
 }
 
 /** Tenta obter o agendamento: 1) via state, 2) via localStorage */
@@ -51,16 +83,12 @@ export default function Protocolo_agendamento() {
   const agendamento = useAgendamentoFromStateOrStorage();
 
   // Deriva campos de usuario de forma tolerante
-  const nomeUsuario =
-    usuario?.nome ||
-    usuario?.nomeCompleto ||
-    usuario?.fullName ||
-    usuario?.firstName && usuario?.lastName ? `${usuario.firstName} ${usuario.lastName}` : "Usuário";
+  const nomeUsuario = getNomeUsuario(usuario) ?? "Usuário";
 
   const cpfUsuario =
-    usuario?.cpf ||
-    usuario?.documento ||
-    usuario?.documentoCpf ||
+    (typeof usuario?.cpf === "string" && usuario.cpf) ||
+    (typeof usuario?.documento === "string" && usuario.documento) ||
+    (typeof usuario?.documentoCpf === "string" && usuario.documentoCpf) ||
     "";
 
   // Deriva campos do agendamento/hospital
