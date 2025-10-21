@@ -113,13 +113,13 @@ function Hospital_cadastro() {
       // Preparar foto do hospital
       let fotoHospitalData = null;
       if (photoUploadRef.current?.hasFile) {
-        const file = photoUploadRef.current.file;
-        // Converter para base64 para envio
-        fotoHospitalData = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target.result);
-          reader.readAsDataURL(file);
-        });
+        try {
+          fotoHospitalData = await photoUploadRef.current.getBase64();
+        } catch (error) {
+          setError(error.message);
+          setLoading(false);
+          return;
+        }
       }
 
       const dadosHospital = {
