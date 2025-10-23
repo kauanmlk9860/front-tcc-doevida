@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { listarHospitais } from '../../api/usuario/hospital'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
 
@@ -11,74 +12,72 @@ function Hospitais() {
   const [showHospitaisModal, setShowHospitaisModal] = useState(false)
   const [userLocation, setUserLocation] = useState(null)
   const [searchingLocation, setSearchingLocation] = useState(false)
+  const [selectedHospital, setSelectedHospital] = useState(null)
+  const [mapCenter, setMapCenter] = useState({ lat: -23.5505, lng: -46.6333 }) // São Paulo padrão
+  const mapRef = useRef(null)
 
-  // Dados mockados dos hospitais (você pode substituir por uma API real)
-  const hospitaisMock = [
-    {
-      id: 1,
-      nome: 'Hospital Regional',
-      endereco: 'Av. Principal, 711 - São Paulo',
-      telefone: '(11) 3373-2050',
-      lat: -23.5505,
-      lng: -46.6333
-    },
-    {
-      id: 2,
-      nome: 'Hospital Regional',
-      endereco: 'Av. Principal, 711 - São Paulo',
-      telefone: '(11) 3373-2050',
-      lat: -23.5505,
-      lng: -46.6333
-    },
-    {
-      id: 3,
-      nome: 'Hospital Regional',
-      endereco: 'Av. Principal, 711 - São Paulo',
-      telefone: '(11) 3373-2050',
-      lat: -23.5505,
-      lng: -46.6333
-    },
-    {
-      id: 4,
-      nome: 'Hospital Regional',
-      endereco: 'Av. Principal, 711 - São Paulo',
-      telefone: '(11) 3373-2050',
-      lat: -23.5505,
-      lng: -46.6333
-    },
-    {
-      id: 5,
-      nome: 'Hospital Regional',
-      endereco: 'Av. Principal, 711 - São Paulo',
-      telefone: '(11) 3373-2050',
-      lat: -23.5505,
-      lng: -46.6333
-    },
-    {
-      id: 6,
-      nome: 'Hospital Regional',
-      endereco: 'Av. Principal, 711 - São Paulo',
-      telefone: '(11) 3373-2050',
-      lat: -23.5505,
-      lng: -46.6333
-    }
-  ]
-
+  // Carregar hospitais da API
   useEffect(() => {
-    // Simular carregamento dos dados
-    setTimeout(() => {
-      setHospitais(hospitaisMock)
-      setLoading(false)
-    }, 1000)
+    const carregarHospitais = async () => {
+      setLoading(true)
+      try {
+        const response = await listarHospitais()
+        
+        if (response.success && response.data) {
+          // Processar dados da API
+          let hospitaisData = []
+          
+          // Verificar se é array direto ou objeto com propriedade
+          if (Array.isArray(response.data)) {
+            hospitaisData = response.data
+          } else if (response.data.hospitais && Array.isArray(response.data.hospitais)) {
+            hospitaisData = response.data.hospitais
+          } else if (response.data.items && Array.isArray(response.data.items)) {
+            hospitaisData = response.data.items
+          }
+
+          // Mapear dados para formato esperado
+          const hospitaisFormatados = hospitaisData.map(h => ({
+            id: h.id,
+            nome: h.nome || 'Hospital',
+            endereco: formatarEndereco(h),
+            telefone: formatarTelefone(h.telefone),
+            email: h.email,
+            cnpj: h.cnpj,
+            lat: h.latitude || h.lat || null,
+            lng: h.longitude || h.lng || null,
+            capacidade_maxima: h.capacidade_maxima,
+            convenios: h.convenios,
+            horario_abertura: h.horario_abertura,
+            horario_fechamento: h.horario_fechamento,
+            foto: h.foto
+          }))
+
+          setHospitais(hospitaisFormatados)
+        } else {
+          console.error('Erro ao carregar hospitais:', response.message)
+          setHospitais([])
+        }
+      } catch (error) {
+        console.error('Erro ao buscar hospitais:', error)
+        setHospitais([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    carregarHospitais()
 
     // Tentar obter localização do usuário
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setUserLocation({
+          const location = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
-          })
+          }
+          setUserLocation(location)
+          setMapCenter(location)
         },
         (error) => {
           console.log('Erro ao obter localização:', error)
@@ -86,6 +85,30 @@ function Hospitais() {
       )
     }
   }, [])
+
+  // Função auxiliar para formatar endereço
+  const formatarEndereco = (hospital) => {
+    const partes = []
+    if (hospital.logradouro) partes.push(hospital.logradouro)
+    if (hospital.numero) partes.push(hospital.numero)
+    if (hospital.bairro) partes.push(hospital.bairro)
+    if (hospital.cidade) partes.push(hospital.cidade)
+    if (hospital.estado) partes.push(hospital.estado)
+    if (hospital.cep) partes.push(`CEP: ${hospital.cep}`)
+    return partes.join(', ') || hospital.endereco || 'Endereço não informado'
+  }
+
+  // Função auxiliar para formatar telefone
+  const formatarTelefone = (telefone) => {
+    if (!telefone) return 'Não informado'
+    const cleaned = telefone.replace(/\D/g, '')
+    if (cleaned.length === 11) {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`
+    } else if (cleaned.length === 10) {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`
+    }
+    return telefone
+  }
 
   // Função para calcular distância entre dois pontos (Fórmula de Haversine)
   const calcularDistancia = (lat1, lon1, lat2, lon2) => {
@@ -132,19 +155,31 @@ function Hospitais() {
     if (searchTerm.length > 3) {
       const location = await buscarCoordenadas(searchTerm)
       if (location) {
-        // Ordenar hospitais por distância
-        const hospitaisComDistancia = hospitais.map(hospital => ({
-          ...hospital,
-          distancia: calcularDistancia(
-            location.lat,
-            location.lng,
-            hospital.lat,
-            hospital.lng
-          )
-        }))
+        setMapCenter(location)
         
-        // Ordenar por distância
-        hospitaisComDistancia.sort((a, b) => parseFloat(a.distancia) - parseFloat(b.distancia))
+        // Ordenar hospitais por distância
+        const hospitaisComDistancia = hospitais.map(hospital => {
+          if (hospital.lat && hospital.lng) {
+            return {
+              ...hospital,
+              distancia: calcularDistancia(
+                location.lat,
+                location.lng,
+                hospital.lat,
+                hospital.lng
+              )
+            }
+          }
+          return hospital
+        })
+        
+        // Ordenar por distância (hospitais sem coordenadas vão para o final)
+        hospitaisComDistancia.sort((a, b) => {
+          if (!a.distancia) return 1
+          if (!b.distancia) return -1
+          return parseFloat(a.distancia) - parseFloat(b.distancia)
+        })
+        
         setHospitais(hospitaisComDistancia)
       }
     }
@@ -163,8 +198,26 @@ function Hospitais() {
   )
 
   const handleRota = (hospital) => {
-    const endereco = encodeURIComponent(hospital.endereco)
-    window.open(`https://www.google.com/maps/search/${endereco}`, '_blank')
+    if (hospital.lat && hospital.lng) {
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${hospital.lat},${hospital.lng}`, '_blank')
+    } else {
+      const endereco = encodeURIComponent(hospital.endereco)
+      window.open(`https://www.google.com/maps/search/${endereco}`, '_blank')
+    }
+  }
+
+  const handleVerNoMapa = (hospital) => {
+    if (hospital.lat && hospital.lng) {
+      setSelectedHospital(hospital)
+      setMapCenter({ lat: hospital.lat, lng: hospital.lng })
+      setShowHospitaisModal(false)
+      
+      // Atualizar URL do iframe do mapa
+      if (mapRef.current) {
+        const mapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${hospital.lat},${hospital.lng}&zoom=15`
+        mapRef.current.src = mapUrl
+      }
+    }
   }
 
   const handleVerDetalhes = (hospitalId) => {
@@ -280,7 +333,8 @@ function Hospitais() {
       {/* Mapa em Tela Cheia */}
       <div className="mapa-fullscreen">
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58509.294445838135!2d-46.693419999999994!3d-23.5505199!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce5a2b2ed7f3a1%3A0xab35da2f5ca62674!2sS%C3%A3o%20Paulo%2C%20SP!5e0!3m2!1spt!2sbr!4v1635000000000!5m2!1spt!2sbr"
+          ref={mapRef}
+          src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${mapCenter.lat},${mapCenter.lng}&zoom=13`}
           width="100%"
           height="100%"
           style={{ border: 0 }}
@@ -289,6 +343,53 @@ function Hospitais() {
           referrerPolicy="no-referrer-when-downgrade"
           title="Mapa dos Hospitais"
         />
+        
+        {/* Card flutuante do hospital selecionado */}
+        {selectedHospital && (
+          <div className="hospital-info-card">
+            <button 
+              className="btn-close-info-card"
+              onClick={() => setSelectedHospital(null)}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            <h3>{selectedHospital.nome}</h3>
+            <div className="info-card-details">
+              <div className="info-card-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" strokeWidth="2"/>
+                  <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+                <span>{selectedHospital.endereco}</span>
+              </div>
+              <div className="info-card-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+                <span>{selectedHospital.telefone}</span>
+              </div>
+            </div>
+            <div className="info-card-actions">
+              <button 
+                className="btn-info-card-action"
+                onClick={() => handleRota(selectedHospital)}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Como Chegar
+              </button>
+              <button 
+                className="btn-info-card-action btn-secondary"
+                onClick={() => handleVerDetalhes(selectedHospital.id)}
+              >
+                Ver Detalhes
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Modal Lateral de Hospitais */}
@@ -444,18 +545,34 @@ function Hospitais() {
                         </div>
                       </div>
                       
-                      <button 
-                        className="btn-rota-premium"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleRota(hospital)
-                        }}
-                      >
-                        <span>Rota</span>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </button>
+                      <div className="hospital-card-actions">
+                        <button 
+                          className="btn-ver-mapa-premium"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleVerNoMapa(hospital)
+                          }}
+                          disabled={!hospital.lat || !hospital.lng}
+                          title={hospital.lat && hospital.lng ? "Ver no mapa" : "Coordenadas não disponíveis"}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" strokeWidth="2"/>
+                            <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2"/>
+                          </svg>
+                        </button>
+                        <button 
+                          className="btn-rota-premium"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleRota(hospital)
+                          }}
+                        >
+                          <span>Rota</span>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>

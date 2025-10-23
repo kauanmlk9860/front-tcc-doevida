@@ -867,21 +867,54 @@
   flex-shrink: 0;
 }
 
+.hospital-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-ver-mapa-premium {
+  background: rgba(153, 4, 16, 0.1);
+  color: #990410;
+  border: 2px solid #990410;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.btn-ver-mapa-premium:hover:not(:disabled) {
+  background: #990410;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(153, 4, 16, 0.4);
+}
+
+.btn-ver-mapa-premium:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: #ccc;
+  color: #999;
+}
+
 .btn-rota-premium {
   background: linear-gradient(135deg, #990410 0%, #7a0308 100%);
   color: white;
   border: none;
   padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 100%;
-  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(153, 4, 16, 0.3);
 }
 
@@ -892,6 +925,121 @@
 
 .btn-rota-premium:active {
   transform: translateY(0);
+}
+
+/* Card flutuante de informações do hospital no mapa */
+.hospital-info-card {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+  z-index: 1000;
+  animation: slideUpFade 0.4s ease-out;
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.hospital-info-card h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #000;
+}
+
+.btn-close-info-card {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(153, 4, 16, 0.1);
+  border: none;
+  color: #990410;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-close-info-card:hover {
+  background: #990410;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.info-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.info-card-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.info-card-item svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #990410;
+}
+
+.info-card-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-info-card-action {
+  flex: 1;
+  background: linear-gradient(135deg, #990410 0%, #7a0308 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-info-card-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(153, 4, 16, 0.4);
+}
+
+.btn-info-card-action.btn-secondary {
+  background: white;
+  color: #990410;
+  border: 2px solid #990410;
+}
+
+.btn-info-card-action.btn-secondary:hover {
+  background: rgba(153, 4, 16, 0.1);
 }
 
 /* Responsividade Premium */
