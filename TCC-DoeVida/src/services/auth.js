@@ -104,7 +104,10 @@ class AuthService {
       if (ok && token) {
         const usuario = response?.data?.usuario || null;
         const role = deriveRoleFrom(usuario, token);
-        const usuarioPersist = role ? { ...usuario, role } : usuario;
+        const prevRaw = localStorage.getItem(STORAGE_KEYS.user);
+        const prevUser = prevRaw ? JSON.parse(prevRaw) : null;
+        const merged = { ...(prevUser || {}), ...(usuario || {}) };
+        const usuarioPersist = role ? { ...merged, role } : merged;
 
         this.setSession(token, usuarioPersist);
 
@@ -171,12 +174,20 @@ class AuthService {
       if (response?.data?.usuario) {
         const token = this.getToken();
         const role = deriveRoleFrom(response.data.usuario, token);
-        const usuario = role ? { ...response.data.usuario, role } : response.data.usuario;
+        const prevRaw = localStorage.getItem(STORAGE_KEYS.user);
+        const prevUser = prevRaw ? JSON.parse(prevRaw) : null;
+        const merged = { ...(prevUser || {}), ...(response.data.usuario || {}) };
+        const usuario = role ? { ...merged, role } : merged;
         localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(usuario));
+        return {
+          success: response?.data?.status || false,
+          data: usuario,
+          message: response?.data?.message,
+        };
       }
       return {
         success: response?.data?.status || false,
-        data: response?.data?.usuario,
+        data: this.getUsuario(),
         message: response?.data?.message,
       };
     } catch (error) {

@@ -55,12 +55,49 @@ function CountUp({ end = 12340, duration = 1800, prefix = "+", className }) {
   );
 }
 
+function formatDateBR(value) {
+  if (!value) return "";
+  const str = String(value).trim();
+  // YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ
+  const isoDate = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoDate) {
+    const [, y, mo, d] = isoDate;
+    return `${d}/${mo}/${y}`;
+  }
+  // DD/MM/YYYY already
+  const brDate = str.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (brDate) return str;
+  // Timestamp number
+  if (!isNaN(Number(str))) {
+    const dt = new Date(Number(str));
+    if (!isNaN(dt)) {
+      const dd = String(dt.getDate()).padStart(2, "0");
+      const mm = String(dt.getMonth() + 1).padStart(2, "0");
+      const yyyy = dt.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    }
+  }
+  // Fallback try Date parsing
+  const dt = new Date(str);
+  if (isNaN(dt)) return "";
+  const dd = String(dt.getDate()).padStart(2, "0");
+  const mm = String(dt.getMonth() + 1).padStart(2, "0");
+  const yyyy = dt.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
 function Home() {
   const navigate = useNavigate();
   const { user, isLoggedIn, logout, loading } = useUser();
   const [showModal, setShowModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(() => localStorage.getItem('termsAccepted') === 'true');
+  const [privacyAccepted, setPrivacyAccepted] = useState(() => localStorage.getItem('privacyAccepted') === 'true');
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreePrivacy, setAgreePrivacy] = useState(false);
 
   const YT_ID = "97Sx0KiExZM";
   const EMBED_URL =
@@ -85,9 +122,16 @@ function Home() {
   const handleNavigation = (path) => {
     if (!isLoggedIn && !["/login", "/hospital-login", "/saiba-mais", "/home"].includes(path)) {
       navigate("/login");
-    } else {
-      navigate(path);
+      return;
     }
+    const bypass = ["/login", "/hospital-login", "/saiba-mais", "/home"];
+    if (!(termsAccepted && privacyAccepted) && !bypass.includes(path)) {
+      // Abrir o próximo modal necessário
+      if (!termsAccepted) { setAgreeTerms(false); setShowTermsModal(true); }
+      else if (!privacyAccepted) { setAgreePrivacy(false); setShowPrivacyModal(true); }
+      return;
+    }
+    navigate(path);
   };
 
   if (loading) {
@@ -123,9 +167,6 @@ function Home() {
                 <span className="user-name">Olá, {user?.nome || "Usuário"}!</span>
                 {/* e-mail removido do cabeçalho */}
               </div>
-              <button className="btn-donor" onClick={handleLogoutClick} type="button">
-                Sair
-              </button>
             </div>
           ) : (
             <>
@@ -263,12 +304,12 @@ function Home() {
           </button>
 
           <div className="footer-link-group">
-            <a href="#" className="footer-link">
+            <button type="button" className="footer-link btn-link" onClick={() => { setAgreePrivacy(false); setShowPrivacyModal(true); }}>
               Política de Privacidade
-            </a>
-            <a href="#" className="footer-link">
+            </button>
+            <button type="button" className="footer-link btn-link" onClick={() => { setAgreeTerms(false); setShowTermsModal(true); }}>
               Termos de Uso
-            </a>
+            </button>
             <button
               type="button"
               className="footer-link btn-link"
@@ -290,21 +331,22 @@ function Home() {
             aria-modal="true"
             aria-labelledby="modal-title"
           >
-            <h2 id="modal-title">Contatos dos Responsáveis</h2>
+            <h2 id="modal-title">Fale Conosco</h2>
+            <p>Estamos aqui para ajudar. Entre em contato pelos canais abaixo:</p>
             <p>
-              <strong>Gabriel Soares: </strong> gabriellssoares2016@gmail.com.br
+              <strong>E-mail de Suporte:</strong> suporte@doevida.com.br
             </p>
             <p>
-              <strong>Daniel Torres: </strong> victor.hugo@doevida.com.br
+              <strong>Telefone/WhatsApp:</strong> (11) 4002-8922
             </p>
             <p>
-              <strong>Kauan Rodrigues: </strong> kauan.rodrigues@doevida.com.br
+              <strong>Horário de Atendimento:</strong> Seg a Sex, 09h às 18h (exceto feriados)
             </p>
             <p>
-              <strong>Rafaella Toscano: </strong> rafaella.toscano@doevida.com.br
+              <strong>Endereço:</strong> Av. Doe Vida, 123 - São Paulo/SP, 01234-567
             </p>
             <p>
-              <strong>Victor Hugo: </strong> victor.hugo@doevida.com.br
+              Para dúvidas gerais sobre doação, consulte também a seção "Saiba Mais".
             </p>
 
             <button
@@ -314,6 +356,173 @@ function Home() {
             >
               Fechar
             </button>
+          </div>
+        </div>
+      )}
+
+      {showPrivacyModal && (
+        <div className="legal-modal-overlay" onClick={() => setShowPrivacyModal(false)}>
+          <div className="legal-modal-container" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+            <div className="legal-modal-header">
+              <div className="legal-header-icon" aria-hidden>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z" stroke="#fff" strokeWidth="2" fill="none"/>
+                </svg>
+              </div>
+              <div className="legal-header-content">
+                <h2 id="privacy-title" className="legal-modal-title">Política de Privacidade</h2>
+                <p className="legal-modal-subtitle">Como coletamos, usamos e protegemos seus dados. Última atualização: 2025</p>
+              </div>
+              <button type="button" className="btn-close-legal-modal" aria-label="Fechar" onClick={() => setShowPrivacyModal(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <div className="legal-modal-content">
+              <section className="legal-section">
+                <h3 className="legal-section-title">Dados que Coletamos</h3>
+                <p className="legal-text">Coletamos dados necessários para operar a plataforma e oferecer uma experiência segura e personalizada.</p>
+                <ul className="legal-list">
+                  <li><strong>Cadastro:</strong> nome, e-mail, senha e informações de perfil.</li>
+                  <li><strong>Uso e navegação:</strong> páginas acessadas, dispositivo, data/horário e IP.</li>
+                  <li><strong>Dados voluntários:</strong> informações fornecidas por você (ex.: histórico de doações).</li>
+                </ul>
+              </section>
+
+              <section className="legal-section">
+                <h3 className="legal-section-title">Como Utilizamos</h3>
+                <ul className="legal-list">
+                  <li>Entregar, manter e melhorar os serviços.</li>
+                  <li>Comunicar agendamentos, alterações e avisos importantes.</li>
+                  <li>Garantir segurança, prevenção a fraudes e cumprimento de obrigações legais.</li>
+                </ul>
+              </section>
+
+              <section className="legal-section">
+                <h3 className="legal-section-title">Compartilhamento</h3>
+                <ul className="legal-list">
+                  <li>Com hospitais e parceiros, quando necessário e com base legal.</li>
+                  <li>Com fornecedores de tecnologia essenciais para operar a plataforma.</li>
+                  <li>Quando exigido por lei ou para proteger direitos.</li>
+                </ul>
+              </section>
+
+              <section className="legal-section">
+                <h3 className="legal-section-title">Seus Direitos</h3>
+                <ul className="legal-list">
+                  <li>Acessar, corrigir e excluir dados pessoais.</li>
+                  <li>Revogar consentimentos e limitar tratamentos, quando aplicável.</li>
+                  <li>Solicitar portabilidade e informações sobre o uso de dados.</li>
+                </ul>
+              </section>
+
+              <section className="legal-section">
+                <h3 className="legal-section-title">Segurança e Retenção</h3>
+                <p className="legal-text">Aplicamos medidas técnicas e organizacionais para proteger seus dados. Mantemos as informações pelo período necessário às finalidades informadas e conforme exigências legais.</p>
+              </section>
+
+              <section className="legal-section">
+                <h3 className="legal-section-title">Contato de Privacidade (DPO)</h3>
+                <p className="legal-text">privacidade@doevida.com.br</p>
+              </section>
+            </div>
+
+            <div className="legal-modal-footer">
+              <label className="legal-checkbox-container">
+                <input type="checkbox" className="legal-checkbox" checked={agreePrivacy} onChange={(e) => setAgreePrivacy(e.target.checked)} />
+                <span className="legal-checkbox-label">Li e aceito a Política de Privacidade</span>
+              </label>
+              <div className="legal-modal-actions">
+                <button type="button" className="btn-legal-action secondary" onClick={() => setShowPrivacyModal(false)}>Cancelar</button>
+                <button type="button" className="btn-legal-action primary" disabled={!agreePrivacy} onClick={() => {
+                  localStorage.setItem('privacyAccepted', 'true');
+                  setPrivacyAccepted(true);
+                  setShowPrivacyModal(false);
+                }}>Aceitar e continuar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showTermsModal && (
+        <div className="legal-modal-overlay" onClick={() => setShowTermsModal(false)}>
+          <div className="legal-modal-container" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="terms-title">
+            <div className="legal-modal-header">
+              <div className="legal-header-icon" aria-hidden>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 4h16v16H4z" stroke="#fff" strokeWidth="2" fill="none"/>
+                </svg>
+              </div>
+              <div className="legal-header-content">
+                <h2 id="terms-title" className="legal-modal-title">Termos de Uso</h2>
+                <p className="legal-modal-subtitle">Condições para uso da plataforma DoeVida. Última atualização: 2025</p>
+              </div>
+              <button type="button" className="btn-close-legal-modal" aria-label="Fechar" onClick={() => setShowTermsModal(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <div className="legal-modal-content">
+              <section className="legal-section">
+                <h3 className="legal-section-title">Acesso e Conta</h3>
+                <ul className="legal-list">
+                  <li>Guarde suas credenciais com segurança e não compartilhe senhas.</li>
+                  <li>Forneça informações verdadeiras, completas e atualizadas.</li>
+                </ul>
+              </section>
+
+              <section className="legal-section">
+                <h3 className="legal-section-title">Uso da Plataforma</h3>
+                <ul className="legal-list">
+                  <li>Não utilize a plataforma para fins ilícitos ou que violem direitos de terceiros.</li>
+                  <li>Poderemos suspender contas em caso de violação destes Termos.</li>
+                </ul>
+              </section>
+
+              <section className="legal-section">
+                <h3 className="legal-section-title">Conteúdo e Propriedade</h3>
+                <ul className="legal-list">
+                  <li>Marcas, nomes e conteúdos pertencem aos respectivos titulares.</li>
+                  <li>Reprodução sem autorização é proibida.</li>
+                </ul>
+              </section>
+
+              <section className="legal-section">
+                <h3 className="legal-section-title">Limitação de Responsabilidade</h3>
+                <p className="legal-text">Empregamos esforços para manter a disponibilidade e qualidade dos serviços, sem garantia de funcionamento ininterrupto.</p>
+              </section>
+
+              <section className="legal-section">
+                <h3 className="legal-section-title">Alterações</h3>
+                <p className="legal-text">Os Termos podem ser atualizados periodicamente. O uso contínuo implica concordância com as versões atualizadas.</p>
+              </section>
+
+              <section className="legal-section">
+                <h3 className="legal-section-title">Contato</h3>
+                <p className="legal-text">termos@doevida.com.br</p>
+              </section>
+            </div>
+
+            <div className="legal-modal-footer">
+              <label className="legal-checkbox-container">
+                <input type="checkbox" className="legal-checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} />
+                <span className="legal-checkbox-label">Li e aceito os Termos de Uso</span>
+              </label>
+              <div className="legal-modal-actions">
+                <button type="button" className="btn-legal-action secondary" onClick={() => setShowTermsModal(false)}>Cancelar</button>
+                <button type="button" className="btn-legal-action primary" disabled={!agreeTerms} onClick={() => {
+                  localStorage.setItem('termsAccepted', 'true');
+                  setTermsAccepted(true);
+                  setShowTermsModal(false);
+                  if (!privacyAccepted) { setAgreePrivacy(false); setShowPrivacyModal(true); }
+                }}>Aceitar e continuar</button>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -375,21 +584,6 @@ function Home() {
                 </div>
               )}
 
-              {user?.cpf && (
-                <div className="user-modal-info-card">
-                  <div className="user-modal-info-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#990410" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <circle cx="12" cy="7" r="4" stroke="#990410" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <div className="user-modal-info-content">
-                    <span className="user-modal-info-label">CPF</span>
-                    <span className="user-modal-info-value">{user.cpf}</span>
-                  </div>
-                </div>
-              )}
-
               {user?.telefone && (
                 <div className="user-modal-info-card">
                   <div className="user-modal-info-icon">
@@ -400,21 +594,6 @@ function Home() {
                   <div className="user-modal-info-content">
                     <span className="user-modal-info-label">Telefone</span>
                     <span className="user-modal-info-value">{user.telefone}</span>
-                  </div>
-                </div>
-              )}
-
-              {user?.data_nascimento && (
-                <div className="user-modal-info-card">
-                  <div className="user-modal-info-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="3" y="4" width="18" height="18" rx="2" stroke="#990410" strokeWidth="2"/>
-                      <path d="M16 2v4M8 2v4M3 10h18" stroke="#990410" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                  </div>
-                  <div className="user-modal-info-content">
-                    <span className="user-modal-info-label">Data de Nascimento</span>
-                    <span className="user-modal-info-value">{new Date(user.data_nascimento).toLocaleDateString('pt-BR')}</span>
                   </div>
                 </div>
               )}

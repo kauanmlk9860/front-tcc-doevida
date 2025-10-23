@@ -7,6 +7,7 @@ import PhotoUpload from '../../components/jsx/PhotoUpload'
 import PasswordInput from '../../components/jsx/PasswordInput'
 import { InputIcons } from '../../components/jsx/InputIcons'
 import { criarUsuario as criarUsuarioAPI } from '../../api/usuario/usuario'
+import AuthService from '../../services/auth.js'
 
 function Cadastro() {
   const navigate = useNavigate()
@@ -141,6 +142,10 @@ function Cadastro() {
       const resultado = await criarUsuarioAPI(dadosUsuario)
       
       if (resultado.success) {
+        try {
+          const usuarioCriado = resultado.data || dadosUsuario
+          AuthService.setSession(null, usuarioCriado)
+        } catch {}
         setSuccess('Conta criada com sucesso! Redirecionando...')
         setTimeout(() => navigate('/login'), 2000)
       } else {
