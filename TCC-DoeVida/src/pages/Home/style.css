@@ -250,7 +250,7 @@ body::after {
 }
 
 .impact-card {
-  background: var(--brand);
+  background: #990410;
   color: #ffffff;
   border-radius: 40px;
   padding: 2rem 3rem;

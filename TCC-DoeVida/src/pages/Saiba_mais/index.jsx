@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
 import logoBranca from "../../assets/Logo_Branca.png";
@@ -8,10 +8,31 @@ import AuthService from "../../services/auth.js";
 function SaibaMais() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const loggedIn = AuthService.isLoggedIn();
     setIsLoggedIn(loggedIn);
+    
+    // Animação de entrada
+    setTimeout(() => setIsVisible(true), 100);
+
+    // Intersection Observer para animações ao scroll
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
   }, []);
 
   const handleDoadorClick = () => {
@@ -34,6 +55,14 @@ function SaibaMais() {
         <div className="circle circle-2"></div>
         <div className="circle circle-3"></div>
         <div className="circle circle-4"></div>
+        <div className="circle circle-5"></div>
+        <div className="circle circle-6"></div>
+        <div className="circle circle-7"></div>
+        <div className="circle circle-8"></div>
+        <div className="circle circle-9"></div>
+        <div className="circle circle-10"></div>
+        <div className="circle circle-11"></div>
+        <div className="circle circle-12"></div>
       </div>
 
       {/* Header */}
@@ -59,11 +88,13 @@ function SaibaMais() {
       </button>
       
       {/* Main Content */}
-      <main className="main-content">
-        <h2 className="hero-title">Saiba Mais</h2>
+      <main className={`main-content ${isVisible ? 'visible' : ''}`}>
+        <h2 className="hero-title animate-on-scroll">Saiba Mais</h2>
 
         <div className="content-wrapper">
-          <div className="illustration-container">
+          {/* Ilustração com efeitos */}
+          <div className="illustration-container animate-on-scroll">
+            <div className="illustration-glow"></div>
             <img
               src={pessoas}
               alt="Ilustração de duas pessoas doando sangue"
@@ -71,14 +102,27 @@ function SaibaMais() {
             />
           </div>
 
-          <p className="description-text">
-            <strong>
-              O projeto DOEVIDA nasceu da vontade de transformar solidariedade em impacto real.
-            </strong>{" "}
-            Percebemos que muitas pessoas têm o desejo de doar sangue, mas nem sempre sabem como,
-            quando ou onde. Foi assim que criamos essa iniciativa para aproximar doadores e
-            hemocentros, tornando o processo mais acessível, humano e eficiente.
-          </p>
+          {/* Texto principal */}
+          <div className="text-content animate-on-scroll">
+            <p className="description-text">
+              O projeto DOEVIDA nasceu da vontade de transformar solidariedade em impacto real. 
+              Percebemos que muitas pessoas têm o desejo de doar sangue, mas nem sempre sabem como, 
+              quando ou onde. Foi assim que criamos essa iniciativa para aproximar doadores e 
+              hemocentros, tornando o processo mais acessível, humano e eficiente.
+            </p>
+            
+            <p className="description-text">
+              Mais do que uma plataforma, somos uma ponte entre quem quer ajudar e quem precisa. 
+              Acreditamos que cada gota conta, e que juntos podemos salvar milhares de vidas.
+            </p>
+          </div>
+
+          {/* Frase de Efeito */}
+          <div className="quote-section animate-on-scroll">
+            <blockquote className="quote-text">
+              "Uma atitude salva até quatro vidas, seja você essa atitude."
+            </blockquote>
+          </div>
         </div>
       </main>
     </div>
