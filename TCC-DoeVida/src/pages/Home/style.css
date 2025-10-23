@@ -963,3 +963,356 @@ body::after {
     width: 100%;
   }
 }
+
+/* ================= MODAIS LEGAIS (TERMOS E PRIVACIDADE) ================= */
+.legal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: fadeIn 0.3s ease-out;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.legal-modal-container {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 
+    0 25px 70px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(153, 4, 16, 0.1);
+  animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+/* Header do Modal Legal */
+.legal-modal-header {
+  background: linear-gradient(135deg, #990410 0%, #7a0308 100%);
+  padding: 24px 32px;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.1);
+}
+
+.legal-header-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  backdrop-filter: blur(10px);
+}
+
+.legal-header-content {
+  flex: 1;
+}
+
+.legal-modal-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 4px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.legal-modal-subtitle {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  font-weight: 500;
+}
+
+.btn-close-legal-modal {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.btn-close-legal-modal:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+/* Conteúdo do Modal */
+.legal-modal-content {
+  padding: 32px;
+  overflow-y: auto;
+  flex: 1;
+  background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%);
+}
+
+.legal-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.legal-modal-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.legal-modal-content::-webkit-scrollbar-thumb {
+  background: #990410;
+  border-radius: 10px;
+}
+
+.legal-modal-content::-webkit-scrollbar-thumb:hover {
+  background: #7a0308;
+}
+
+/* Seções */
+.legal-section {
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(153, 4, 16, 0.1);
+}
+
+.legal-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.legal-section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #990410;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legal-section-title::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(to bottom, #990410, #e85d75);
+  border-radius: 2px;
+}
+
+.legal-subsection-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #333;
+  margin: 16px 0 8px 0;
+}
+
+.legal-text {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #444;
+  margin: 0 0 12px 0;
+  text-align: justify;
+}
+
+.legal-text:last-child {
+  margin-bottom: 0;
+}
+
+.legal-highlight {
+  background: linear-gradient(135deg, rgba(153, 4, 16, 0.05) 0%, rgba(153, 4, 16, 0.02) 100%);
+  padding: 12px 16px;
+  border-left: 4px solid #990410;
+  border-radius: 4px;
+  margin: 16px 0;
+}
+
+.legal-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+
+.legal-list li {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #444;
+  padding: 8px 0 8px 32px;
+  position: relative;
+}
+
+.legal-list li::before {
+  content: '•';
+  position: absolute;
+  left: 12px;
+  color: #990410;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.legal-list li strong {
+  color: #990410;
+  font-weight: 600;
+}
+
+/* Footer do Modal */
+.legal-modal-footer {
+  padding: 24px 32px;
+  background: linear-gradient(to top, #f8f8f8 0%, #ffffff 100%);
+  border-top: 1px solid rgba(153, 4, 16, 0.1);
+  border-radius: 0 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.legal-checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px 16px;
+  background: white;
+  border: 2px solid rgba(153, 4, 16, 0.2);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.legal-checkbox-container:hover {
+  border-color: #990410;
+  background: rgba(153, 4, 16, 0.02);
+}
+
+.legal-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #990410;
+}
+
+.legal-checkbox-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+}
+
+.legal-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-legal-action {
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  border: none;
+  min-width: 140px;
+}
+
+.btn-legal-action.primary {
+  background: linear-gradient(135deg, #990410 0%, #7a0308 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(153, 4, 16, 0.3);
+}
+
+.btn-legal-action.primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(153, 4, 16, 0.4);
+}
+
+.btn-legal-action.primary:disabled {
+  background: linear-gradient(135deg, #ccc 0%, #999 100%);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-legal-action.secondary {
+  background: white;
+  color: #990410;
+  border: 2px solid #990410;
+}
+
+.btn-legal-action.secondary:hover {
+  background: rgba(153, 4, 16, 0.05);
+  transform: translateY(-2px);
+}
+
+/* Responsividade dos Modais Legais */
+@media (max-width: 768px) {
+  .legal-modal-container {
+    max-width: 95%;
+    border-radius: 16px;
+  }
+
+  .legal-modal-header {
+    padding: 20px;
+    flex-wrap: wrap;
+  }
+
+  .legal-header-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .legal-modal-title {
+    font-size: 1.4rem;
+  }
+
+  .legal-modal-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .legal-modal-content {
+    padding: 20px;
+  }
+
+  .legal-section-title {
+    font-size: 1.1rem;
+  }
+
+  .legal-text,
+  .legal-list li {
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  .legal-modal-footer {
+    padding: 20px;
+  }
+
+  .legal-modal-actions {
+    flex-direction: column;
+  }
+
+  .btn-legal-action {
+    width: 100%;
+  }
+}
