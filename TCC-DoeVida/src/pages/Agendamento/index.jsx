@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import "./style.css";
 import http from "../../services/http.js";
 import { useNavigate } from "react-router-dom";
+import logoBranca from "../../assets/Logo_Branca.png";
 
 /* ---------- utils ---------- */
 function MonthLabel({ date }) {
@@ -246,171 +247,202 @@ export default function Agendamento() {
 
   const today = new Date();
 
+  const handleVoltar = () => {
+    navigate("/home");
+  };
+
   return (
-    <div className="agd-container">
-      <h1 className="agd-title">Agendar Doação</h1>
-
-      {/* HOSPITAIS - CARROSSEL */}
-      <section className="agd-section">
-        <div className="agd-section-header">
-          <h3>Local</h3>
-          <span className="agd-help">Selecione o hospital</span>
-        </div>
-
-        {loadingHosp ? (
-          <div className="agd-skeleton-row" />
-        ) : errorHosp ? (
-          <div className="agd-error">{errorHosp}</div>
-        ) : hospitais.length === 0 ? (
-          <div className="agd-error">Nenhum hospital cadastrado.</div>
-        ) : (
-          <div className="agd-carousel">
-            <button
-              type="button"
-              className="agd-carousel-nav agd-carousel-prev"
-              onClick={() => scrollByAmount(-1)}
-              disabled={!canPrev}
-              aria-label="Anterior"
-            >
-              ‹
+    <>
+      {/* ====== CABEÇALHO IGUAL AO BANCO DE SANGUE ====== */}
+      <header className="banco-header-premium">
+        <div className="header-bg-banco"></div>
+        <div className="header-content-banco">
+          <div className="header-left-banco">
+            <button className="btn-voltar-banco" onClick={handleVoltar} aria-label="Voltar">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M19 12H5m7-7l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
 
-            <div
-              className="agd-hosp-track"
-              ref={trackRef}
-              onScroll={handleScroll}
-            >
-              {hospitais.map((h) => {
-                const nome = h?.nome || h?.nomeHospital || "Hospital";
-                const foto = h?.fotoUrl || h?.foto || null;
-                const endereco = h?._enderecoViaCep || "Endereço não disponível";
-                const ativo = selectedHospital?.id
-                  ? selectedHospital.id === h.id
-                  : (selectedHospital?.nome || selectedHospital?.nomeHospital) === nome;
+            <div className="header-brand-banco">
+              <div className="brand-logo-container-banco">
+                <img src={logoBranca} alt="DoeVida" className="header-logo-banco" />
+                <div className="logo-glow-banco"></div>
+              </div>
+              <h1 className="brand-title-banco">Agendamento</h1>
+            </div>
+          </div>
+
+          {/* (Opcional) espaço à direita para manter o mesmo respiro do layout */}
+          <div className="header-stats-banco" aria-hidden="true" />
+        </div>
+      </header>
+
+      {/* ====== CONTEÚDO DA PÁGINA ====== */}
+      <div className="agd-container">
+        <h1 className="agd-title">Agendar Doação</h1>
+
+        {/* HOSPITAIS - CARROSSEL */}
+        <section className="agd-section">
+          <div className="agd-section-header">
+            <h3>Local</h3>
+            <span className="agd-help">Selecione o hospital</span>
+          </div>
+
+          {loadingHosp ? (
+            <div className="agd-skeleton-row" />
+          ) : errorHosp ? (
+            <div className="agd-error">{errorHosp}</div>
+          ) : hospitais.length === 0 ? (
+            <div className="agd-error">Nenhum hospital cadastrado.</div>
+          ) : (
+            <div className="agd-carousel">
+              <button
+                type="button"
+                className="agd-carousel-nav agd-carousel-prev"
+                onClick={() => scrollByAmount(-1)}
+                disabled={!canPrev}
+                aria-label="Anterior"
+              >
+                ‹
+              </button>
+
+              <div
+                className="agd-hosp-track"
+                ref={trackRef}
+                onScroll={handleScroll}
+              >
+                {hospitais.map((h) => {
+                  const nome = h?.nome || h?.nomeHospital || "Hospital";
+                  const foto = h?.fotoUrl || h?.foto || null;
+                  const endereco = h?._enderecoViaCep || "Endereço não disponível";
+                  const ativo = selectedHospital?.id
+                    ? selectedHospital.id === h.id
+                    : (selectedHospital?.nome || selectedHospital?.nomeHospital) === nome;
+
+                  return (
+                    <button
+                      key={h.id ?? nome}
+                      type="button"
+                      className={"agd-hosp-card agd-hosp-card--slide" + (ativo ? " is-active" : "")}
+                      onClick={() => setSelectedHospital(h)}
+                      title={nome}
+                    >
+                      <div
+                        className={"agd-thumb " + (!foto ? "agd-thumb--placeholder" : "")}
+                        style={foto ? { backgroundImage: `url(${foto})` } : {}}
+                      />
+                      <div className="agd-hosp-meta">
+                        <div className="agd-hosp-name" title={nome}>{nome}</div>
+                        <div className="agd-hosp-addr">{endereco}</div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                className="agd-carousel-nav agd-carousel-next"
+                onClick={() => scrollByAmount(1)}
+                disabled={!canNext}
+                aria-label="Próximo"
+              >
+                ›
+              </button>
+            </div>
+          )}
+        </section>
+
+        {/* CALENDÁRIO */}
+        <section className="agd-section">
+          <h3 className="agd-subtitle">Data</h3>
+          <div className="agd-calendar agd-calendar--wide">
+            <div className="agd-cal-header">
+              <button className="agd-nav" onClick={prevMonth} aria-label="Mês anterior">‹</button>
+              <MonthLabel date={viewDate} />
+              <button className="agd-nav" onClick={nextMonth} aria-label="Próximo mês">›</button>
+            </div>
+
+            <div className="agd-week">
+              {weekDays.map((d) => (
+                <div key={d} className="agd-weekday">{d}</div>
+              ))}
+            </div>
+
+            <div className="agd-grid agd-grid--lg">
+              {days.map((d, idx) => {
+                if (!d) return <div key={idx} className="agd-day empty" />;
+                const isToday = isSameDay(d, today);
+                const dayIsPast = isPastCalendarDay(d);
+                const isSelected = selectedDate && isSameDay(selectedDate, d);
 
                 return (
                   <button
-                    key={h.id ?? nome}
+                    key={idx}
                     type="button"
-                    className={"agd-hosp-card agd-hosp-card--slide" + (ativo ? " is-active" : "")}
-                    onClick={() => setSelectedHospital(h)}
-                    title={nome}
+                    className={`agd-day ${isSelected ? "selected" : ""} ${isToday ? "today" : ""} ${dayIsPast ? "past" : ""}`}
+                    onClick={() => {
+                      if (!dayIsPast) setSelectedDate(d); // bloqueia datas passadas
+                    }}
+                    disabled={dayIsPast}
                   >
-                    <div
-                      className={"agd-thumb " + (!foto ? "agd-thumb--placeholder" : "")}
-                      style={foto ? { backgroundImage: `url(${foto})` } : {}}
-                    />
-                    <div className="agd-hosp-meta">
-                      <div className="agd-hosp-name" title={nome}>{nome}</div>
-                      <div className="agd-hosp-addr">{endereco}</div>
-                    </div>
+                    {d.getDate()}
                   </button>
                 );
               })}
             </div>
-
-            <button
-              type="button"
-              className="agd-carousel-nav agd-carousel-next"
-              onClick={() => scrollByAmount(1)}
-              disabled={!canNext}
-              aria-label="Próximo"
-            >
-              ›
-            </button>
           </div>
-        )}
-      </section>
+        </section>
 
-      {/* CALENDÁRIO */}
-      <section className="agd-section">
-        <h3 className="agd-subtitle">Data</h3>
-        <div className="agd-calendar agd-calendar--wide">
-          <div className="agd-cal-header">
-            <button className="agd-nav" onClick={prevMonth} aria-label="Mês anterior">‹</button>
-            <MonthLabel date={viewDate} />
-            <button className="agd-nav" onClick={nextMonth} aria-label="Próximo mês">›</button>
+        {/* HORÁRIOS */}
+        <section className="agd-section">
+          <div className="agd-times-header">
+            <h4>Horários {selectedHospital ? `· ${selectedHospital.nome || selectedHospital.nomeHospital}` : ""}</h4>
+            {loadingTimes && <span className="agd-chip">carregando...</span>}
           </div>
 
-          <div className="agd-week">
-            {weekDays.map((d) => (
-              <div key={d} className="agd-weekday">{d}</div>
-            ))}
-          </div>
+          {selectedDate && isPastCalendarDay(selectedDate) ? (
+            <div className="agd-error" style={{ maxWidth: 820 }}>
+              A data selecionada já passou. Selecione outra data para visualizar horários disponíveis.
+            </div>
+          ) : loadingTimes ? (
+            <div className="agd-times-skeleton" />
+          ) : (
+            <div className="agd-times">
+              {times.map((t) => {
+                const isTodaySel = selectedDate && isSameDay(selectedDate, today);
+                let disabled = false;
+                if (isTodaySel) {
+                  const [hh, mm] = t.split(":").map(Number);
+                  const now = new Date();
+                  const slot = new Date();
+                  slot.setHours(hh, mm, 0, 0);
+                  disabled = slot <= now;
+                }
+                return (
+                  <button
+                    type="button"
+                    key={t}
+                    disabled={disabled}
+                    className={"agd-time " + (selectedTime === t ? "is-selected" : "")}
+                    onClick={() => setSelectedTime(t)}
+                  >
+                    {t}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </section>
 
-          <div className="agd-grid agd-grid--lg">
-            {days.map((d, idx) => {
-              if (!d) return <div key={idx} className="agd-day empty" />;
-              const isToday = isSameDay(d, today);
-              const dayIsPast = isPastCalendarDay(d);
-              const isSelected = selectedDate && isSameDay(selectedDate, d);
-
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  className={`agd-day ${isSelected ? "selected" : ""} ${isToday ? "today" : ""} ${dayIsPast ? "past" : ""}`}
-                  onClick={() => {
-                    // BLOQUEIA clique em datas passadas
-                    if (!dayIsPast) setSelectedDate(d);
-                  }}
-                  disabled={dayIsPast}
-                >
-                  {d.getDate()}
-                </button>
-              );
-            })}
-          </div>
+        {/* CTA */}
+        <div className="agd-cta">
+          <button className="agd-confirm" type="button" onClick={confirm}>
+            Confirmar Agendamento
+          </button>
         </div>
-      </section>
-
-      {/* HORÁRIOS */}
-      <section className="agd-section">
-        <div className="agd-times-header">
-          <h4>Horários {selectedHospital ? `· ${selectedHospital.nome || selectedHospital.nomeHospital}` : ""}</h4>
-          {loadingTimes && <span className="agd-chip">carregando...</span>}
-        </div>
-
-        {selectedDate && isPastCalendarDay(selectedDate) ? (
-          <div className="agd-error" style={{ maxWidth: 820 }}>
-            A data selecionada já passou. Selecione outra data para visualizar horários disponíveis.
-          </div>
-        ) : loadingTimes ? (
-          <div className="agd-times-skeleton" />
-        ) : (
-          <div className="agd-times">
-            {times.map((t) => {
-              const isTodaySel = selectedDate && isSameDay(selectedDate, today);
-              let disabled = false;
-              if (isTodaySel) {
-                const [hh, mm] = t.split(":").map(Number);
-                const now = new Date();
-                const slot = new Date();
-                slot.setHours(hh, mm, 0, 0);
-                disabled = slot <= now;
-              }
-              return (
-                <button
-                  type="button"
-                  key={t}
-                  disabled={disabled}
-                  className={"agd-time " + (selectedTime === t ? "is-selected" : "")}
-                  onClick={() => setSelectedTime(t)}
-                >
-                  {t}
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      {/* CTA */}
-      <div className="agd-cta">
-        <button className="agd-confirm" type="button" onClick={confirm}>
-          Confirmar Agendamento
-        </button>
       </div>
-    </div>
+    </>
   );
 }
