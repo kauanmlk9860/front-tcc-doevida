@@ -27,13 +27,13 @@ function SplashScreen({ onLoadingComplete }) {
         setTimeout(() => {
           setIsExploding(true);
           
-          // Completa a animação após a explosão
+          // Completa a animação após a explosão (tempo maior para ver as gotinhas)
           setTimeout(() => {
             setIsComplete(true);
             if (onLoadingComplete) {
               onLoadingComplete();
             }
-          }, 1200);
+          }, 4000); // 4 segundos para ver a explosão completa
         }, 300);
       } else {
         setProgress(currentProgress);
@@ -49,7 +49,7 @@ function SplashScreen({ onLoadingComplete }) {
         {/* Gotinha de sangue gordinha que enche */}
         <div className={`blood-drop-container ${isExploding ? 'exploding' : ''}`}>
           <svg 
-            className="blood-drop" 
+            className={`blood-drop ${isExploding ? 'exploding' : ''}`} 
             viewBox="0 0 240 300" 
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -112,22 +112,64 @@ function SplashScreen({ onLoadingComplete }) {
             <span className="percentage">{Math.round(progress)}%</span>
           </div>
           
-          {/* Partículas da explosão - MUITAS MUITAS partículas */}
+          {/* Partículas da explosão - MUITAS GOTINHAS DE SANGUE */}
           {isExploding && (
-            <div className="explosion-particles">
-              {[...Array(120)].map((_, i) => (
-                <div 
-                  key={i} 
-                  className="particle"
-                  style={{
-                    '--angle': `${(i * 360) / 120}deg`,
-                    '--delay': `${(i % 30) * 0.015}s`,
-                    '--distance': `${120 + (i % 8) * 25}px`,
-                    '--size': `${6 + (i % 3) * 2}px`
-                  }}
-                />
-              ))}
-            </div>
+            <>
+              {/* Flash de explosão */}
+              <div className="explosion-flash"></div>
+              
+              <div className="explosion-particles">
+                {[...Array(400)].map((_, i) => {
+                  // Distribuição uniforme em 360 graus
+                  const angle = (i * 360) / 400;
+                  const randomAngleOffset = (Math.random() - 0.5) * 25;
+                  const finalAngle = angle + randomAngleOffset;
+                  
+                  // Distância aleatória para cada partícula
+                  const distance = 60 + Math.random() * 320; // 60-380px
+                  
+                  // Tamanho aleatório
+                  const size = 8 + Math.random() * 16; // 8-24px (maiores!)
+                  
+                  // Delay aleatório para efeito cascata mais longo
+                  const delay = Math.random() * 0.5;
+                  
+                  // Rotação aleatória
+                  const rotation = Math.random() * 1080; // 0-1080 graus (3 voltas!)
+                  
+                  return (
+                    <div 
+                      key={i} 
+                      className="particle-drop"
+                      style={{
+                        '--angle': `${finalAngle}deg`,
+                        '--delay': `${delay}s`,
+                        '--distance': `${distance}px`,
+                        '--size': `${size}px`,
+                        '--rotation': `${rotation}deg`
+                      }}
+                    >
+                      {/* SVG da gotinha pequena */}
+                      <svg viewBox="0 0 24 30" xmlns="http://www.w3.org/2000/svg">
+                        <path 
+                          d="M12,3 C12,3 5,9 5,17 C5,22 8,27 12,27 C16,27 19,22 19,17 C19,9 12,3 12,3 Z" 
+                          fill="url(#particleGradient)"
+                          stroke="#990410"
+                          strokeWidth="1"
+                        />
+                        <defs>
+                          <linearGradient id="particleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#ff1744" />
+                            <stop offset="50%" stopColor="#d32f2f" />
+                            <stop offset="100%" stopColor="#990410" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
       </div>
