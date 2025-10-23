@@ -2,6 +2,7 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../style/AnimatedRoutes.css";
 
+import SplashScreen from "../SplashScreen";
 import Home from "../../pages/Home";
 import Login from "../../pages/Login";
 import Cadastro from "../../pages/Cadastro";
@@ -19,6 +20,7 @@ import BancoSangue from "../../pages/BancoSangue";
 const AnimatedRoutes = () => {
   const location = useLocation();
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsAnimating(true);
@@ -29,9 +31,15 @@ const AnimatedRoutes = () => {
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+  };
+
   return (
-    <div className={`app-container ${isAnimating ? 'page-changing' : 'page-stable'}`}>
-      <Routes location={location} key={location.pathname}>
+    <>
+      {/* Renderiza o conteúdo primeiro */}
+      <div className={`app-container ${isAnimating ? 'page-changing' : 'page-stable'}`}>
+        <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
@@ -49,6 +57,10 @@ const AnimatedRoutes = () => {
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </div>
+    
+    {/* Splash screen como overlay sobre o conteúdo */}
+    {isLoading && <SplashScreen onLoadingComplete={handleLoadingComplete} />}
+    </>
   );
 };
 
