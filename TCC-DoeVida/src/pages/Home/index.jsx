@@ -94,10 +94,6 @@ function Home() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(() => localStorage.getItem('termsAccepted') === 'true');
-  const [privacyAccepted, setPrivacyAccepted] = useState(() => localStorage.getItem('privacyAccepted') === 'true');
-  const [agreeTerms, setAgreeTerms] = useState(false);
-  const [agreePrivacy, setAgreePrivacy] = useState(false);
 
   const YT_ID = "97Sx0KiExZM";
   const EMBED_URL =
@@ -122,16 +118,9 @@ function Home() {
   const handleNavigation = (path) => {
     if (!isLoggedIn && !["/login", "/hospital-login", "/saiba-mais", "/home"].includes(path)) {
       navigate("/login");
-      return;
+    } else {
+      navigate(path);
     }
-    const bypass = ["/login", "/hospital-login", "/saiba-mais", "/home"];
-    if (!(termsAccepted && privacyAccepted) && !bypass.includes(path)) {
-      // Abrir o próximo modal necessário
-      if (!termsAccepted) { setAgreeTerms(false); setShowTermsModal(true); }
-      else if (!privacyAccepted) { setAgreePrivacy(false); setShowPrivacyModal(true); }
-      return;
-    }
-    navigate(path);
   };
 
   if (loading) {
@@ -304,10 +293,10 @@ function Home() {
           </button>
 
           <div className="footer-link-group">
-            <button type="button" className="footer-link btn-link" onClick={() => { setAgreePrivacy(false); setShowPrivacyModal(true); }}>
+            <button type="button" className="footer-link btn-link" onClick={() => setShowPrivacyModal(true)}>
               Política de Privacidade
             </button>
-            <button type="button" className="footer-link btn-link" onClick={() => { setAgreeTerms(false); setShowTermsModal(true); }}>
+            <button type="button" className="footer-link btn-link" onClick={() => setShowTermsModal(true)}>
               Termos de Uso
             </button>
             <button
@@ -430,17 +419,8 @@ function Home() {
             </div>
 
             <div className="legal-modal-footer">
-              <label className="legal-checkbox-container">
-                <input type="checkbox" className="legal-checkbox" checked={agreePrivacy} onChange={(e) => setAgreePrivacy(e.target.checked)} />
-                <span className="legal-checkbox-label">Li e aceito a Política de Privacidade</span>
-              </label>
               <div className="legal-modal-actions">
-                <button type="button" className="btn-legal-action secondary" onClick={() => setShowPrivacyModal(false)}>Cancelar</button>
-                <button type="button" className="btn-legal-action primary" disabled={!agreePrivacy} onClick={() => {
-                  localStorage.setItem('privacyAccepted', 'true');
-                  setPrivacyAccepted(true);
-                  setShowPrivacyModal(false);
-                }}>Aceitar e continuar</button>
+                <button type="button" className="btn-legal-action secondary" onClick={() => setShowPrivacyModal(false)}>Fechar</button>
               </div>
             </div>
           </div>
@@ -509,18 +489,8 @@ function Home() {
             </div>
 
             <div className="legal-modal-footer">
-              <label className="legal-checkbox-container">
-                <input type="checkbox" className="legal-checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} />
-                <span className="legal-checkbox-label">Li e aceito os Termos de Uso</span>
-              </label>
               <div className="legal-modal-actions">
-                <button type="button" className="btn-legal-action secondary" onClick={() => setShowTermsModal(false)}>Cancelar</button>
-                <button type="button" className="btn-legal-action primary" disabled={!agreeTerms} onClick={() => {
-                  localStorage.setItem('termsAccepted', 'true');
-                  setTermsAccepted(true);
-                  setShowTermsModal(false);
-                  if (!privacyAccepted) { setAgreePrivacy(false); setShowPrivacyModal(true); }
-                }}>Aceitar e continuar</button>
+                <button type="button" className="btn-legal-action secondary" onClick={() => setShowTermsModal(false)}>Fechar</button>
               </div>
             </div>
           </div>
