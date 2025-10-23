@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import "./style.css";
 import http from "../../services/http.js";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
+import { criarAgendamento, verificarDisponibilidade } from "../../api/agendamento/agendamento.js";
 import logoBranca from "../../assets/Logo_Branca.png";
 
 /* ---------- utils ---------- */
@@ -80,6 +82,7 @@ async function cepToEndereco(cep) {
 
 export default function Agendamento() {
   const navigate = useNavigate();
+  const { user, isLoggedIn } = useUser();
   const [hospitais, setHospitais] = useState([]);
   const [loadingHosp, setLoadingHosp] = useState(true);
   const [errorHosp, setErrorHosp] = useState("");
@@ -90,11 +93,23 @@ export default function Agendamento() {
   const [selectedTime, setSelectedTime] = useState("");
   const [times, setTimes] = useState([]);
   const [loadingTimes, setLoadingTimes] = useState(false);
+  
+  // Estados para salvamento na API
+  const [loadingConfirm, setLoadingConfirm] = useState(false);
+  const [errorConfirm, setErrorConfirm] = useState("");
 
   // carrossel
   const trackRef = useRef(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
+
+  /* ---------- verificar autenticação ---------- */
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
+  }, [isLoggedIn, navigate]);
 
   /* ---------- carregar hospitais ---------- */
   useEffect(() => {
@@ -215,34 +230,71 @@ export default function Agendamento() {
   }
 
   /* ---------- confirmar ---------- */
-  function confirm() {
+  async function confirm() {
+    // Validações básicas
     if (!selectedHospital) return alert("Selecione um hospital.");
     if (!selectedDate) return alert("Selecione uma data.");
     if (isPastCalendarDay(selectedDate)) {
       return alert("A data selecionada já passou. Escolha outra data.");
     }
     if (!selectedTime) return alert("Selecione um horário.");
-
-    const dataISO = selectedDate?.toISOString();
-    const payload = {
-      hospital: {
-        id: selectedHospital.id ?? null,
-        nome: selectedHospital.nome || selectedHospital.nomeHospital,
-        cep: selectedHospital.cep || null,
-        endereco: selectedHospital._enderecoViaCep || null,
-        fotoUrl: selectedHospital.fotoUrl || selectedHospital.foto || null,
-      },
-      data: dataISO,
-      horario: selectedTime,
-    };
-
-    try {
-      localStorage.setItem("ultimo_agendamento", JSON.stringify(payload));
-    } catch (e) {
-      console.warn("Não foi possível persistir ultimo_agendamento:", e);
+    if (!user?.id) {
+      return alert("Usuário não identificado. Faça login novamente.");
     }
 
-    navigate("/protocolo-agendamento", { state: payload });
+    setLoadingConfirm(true);
+    setErrorConfirm("");
+
+    try {
+      // Preparar dados para a API
+      const dataAgendamento = selectedDate.toISOString().split('T')[0]; // YYYY-MM-DD
+      const horaAgendamento = selectedTime + ":00"; // HH:MM:SS
+      
+      const dadosAgendamento = {
+        id_usuario: user.id,
+        id_hospital: selectedHospital.id,
+        data: dataAgendamento,
+        hora: horaAgendamento,
+        status: 'Agendado'
+      };
+
+      // Salvar na API
+      const resultado = await criarAgendamento(dadosAgendamento);
+      
+      if (resultado.success) {
+        // Preparar payload para o protocolo (mantendo compatibilidade)
+        const dataISO = selectedDate?.toISOString();
+        const payload = {
+          agendamento_id: resultado.data?.id, // ID do agendamento criado
+          hospital: {
+            id: selectedHospital.id ?? null,
+            nome: selectedHospital.nome || selectedHospital.nomeHospital,
+            cep: selectedHospital.cep || null,
+            endereco: selectedHospital._enderecoViaCep || null,
+            fotoUrl: selectedHospital.fotoUrl || selectedHospital.foto || null,
+          },
+          data: dataISO,
+          horario: selectedTime,
+        };
+
+        // Salvar no localStorage como backup
+        try {
+          localStorage.setItem("ultimo_agendamento", JSON.stringify(payload));
+        } catch (e) {
+          console.warn("Não foi possível persistir ultimo_agendamento:", e);
+        }
+
+        // Navegar para o protocolo
+        navigate("/protocolo-agendamento", { state: payload });
+      } else {
+        setErrorConfirm(resultado.message || 'Erro ao criar agendamento');
+      }
+    } catch (error) {
+      console.error('Erro ao confirmar agendamento:', error);
+      setErrorConfirm('Erro de conexão. Verifique se o servidor está rodando.');
+    } finally {
+      setLoadingConfirm(false);
+    }
   }
 
   const today = new Date();
@@ -438,8 +490,18 @@ export default function Agendamento() {
 
         {/* CTA */}
         <div className="agd-cta">
-          <button className="agd-confirm" type="button" onClick={confirm}>
-            Confirmar Agendamento
+          {errorConfirm && (
+            <div className="agd-error" style={{ marginBottom: '16px', maxWidth: '820px' }}>
+              {errorConfirm}
+            </div>
+          )}
+          <button 
+            className="agd-confirm" 
+            type="button" 
+            onClick={confirm}
+            disabled={loadingConfirm}
+          >
+            {loadingConfirm ? 'Salvando Agendamento...' : 'Confirmar Agendamento'}
           </button>
         </div>
       </div>

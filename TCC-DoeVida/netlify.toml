@@ -1,0 +1,19 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[context.production.environment]
+  VITE_API_URL = "http://localhost:8080/v1/doevida"
+  VITE_NODE_ENV = "production"
+
+[context.deploy-preview.environment]
+  VITE_API_URL = "http://localhost:8080/v1/doevida"
+  VITE_NODE_ENV = "development"

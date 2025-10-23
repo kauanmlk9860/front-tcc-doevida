@@ -122,6 +122,9 @@ export default function Protocolo_agendamento() {
     <div className="agendamento-container">
       <div className="agendamento-header">
         <h1>Protocolo de Agendamento</h1>
+        {agendamento?.agendamento_id && (
+          <p><strong>Protocolo:</strong> #{agendamento.agendamento_id}</p>
+        )}
         <p><strong>Nome:</strong> {nomeUsuario}</p>
         {cpfUsuario && <p><strong>CPF:</strong> {cpfUsuario}</p>}
         <p><strong>Data da doação:</strong> {dataDoacao} {horaDoacao && `às ${horaDoacao}`}</p>
