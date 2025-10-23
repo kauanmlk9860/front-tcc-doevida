@@ -249,7 +249,7 @@ function Hospitais() {
                 <img src={logoBranca} alt="DoeVida" className="header-logo" />
                 <div className="logo-glow"></div>
               </div>
-              <h1 className="brand-title">DoeVida</h1>
+              <h1 className="brand-title">Hospitais</h1>
             </div>
           </div>
 

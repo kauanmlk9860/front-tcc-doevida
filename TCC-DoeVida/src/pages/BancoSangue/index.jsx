@@ -238,7 +238,7 @@ function BancoSangue() {
                 </div>
                 <h3>Sua doação salva vidas!</h3>
                 <p>Uma única doação pode salvar até 4 vidas. Veja os tipos urgentes e agende sua doação hoje mesmo.</p>
-                <button className="btn-agendar-doacao" onClick={() => navigate('/hospitais')}>
+                <button className="btn-agendar-doacao" onClick={() => navigate('/agendamento')}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
                     <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="2"/>
