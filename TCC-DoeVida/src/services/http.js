@@ -40,15 +40,9 @@ function clearSessionAndRedirect() {
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem(STORAGE_KEYS.token);
 
-  // Se token inválido/expirado: limpa e redireciona
-  if (token && !isTokenValid(token)) {
-    clearSessionAndRedirect();
-    // ainda assim retornamos config; a navegação vai ocorrer
-  }
-
-  const freshToken = localStorage.getItem(STORAGE_KEYS.token);
-  if (freshToken) {
-    config.headers.Authorization = `Bearer ${freshToken}`;
+  // Apenas adicionar token se válido (não redirecionar em cadastro/login)
+  if (token && isTokenValid(token)) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
 
   if (!config.headers['Content-Type']) {
@@ -65,8 +59,11 @@ http.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error?.response?.status;
+    const currentPath = window.location.pathname;
 
-    if ((status === 401 || status === 403) && !isRedirecting) {
+    // Só redirecionar se não estiver em páginas de auth e for erro de autenticação
+    if ((status === 401 || status === 403) && !isRedirecting && 
+        !currentPath.includes('/login') && !currentPath.includes('/cadastro')) {
       isRedirecting = true;
       localStorage.removeItem(STORAGE_KEYS.token);
       localStorage.removeItem(STORAGE_KEYS.user);

@@ -108,149 +108,53 @@ function Cadastro() {
 
     try {
       // Preparar foto de perfil
-      let fotoPerfilData = null;
+      let fotoPerfilData = null
       if (photoUploadRef.current?.hasFile) {
         try {
-          fotoPerfilData = await photoUploadRef.current.getBase64();
-          
-          // Verificar se o base64 não está muito grande (máximo ~200KB)
-          if (fotoPerfilData && fotoPerfilData.length > 200000) {
-            setError('Foto muito grande. Tente uma imagem menor.');
-            setLoading(false);
-            return;
+          fotoPerfilData = await photoUploadRef.current.getBase64()
+          if (fotoPerfilData && fotoPerfilData.length > 500000) {
+            setError('Foto muito grande. Tente uma imagem menor.')
+            setLoading(false)
+            return
           }
         } catch (error) {
-          setError(error.message);
-          setLoading(false);
-          return;
+          setError('Erro ao processar foto: ' + error.message)
+          setLoading(false)
+          return
         }
       }
 
-      // Preparar dados do usuário com todos os campos que o backend pode esperar
+      // Preparar dados do usuário
       const dadosUsuario = {
         nome: nomeRef.current.value.trim(),
         email: emailRef.current.value.trim(),
         senha: senhaRef.current.value,
         id_sexo: Number(idSexo),
-        id_tipo_sanguineo: Number(idTipoSanguineo)
+        id_tipo_sanguineo: Number(idTipoSanguineo),
+        cpf: cpfRef.current?.value?.replace(/\D/g, '') || null,
+        cep: cepRef.current?.value?.replace(/\D/g, '') || null,
+        numero: numeroRef.current?.value?.replace(/\D/g, '') || null,
+        data_nascimento: dataNascimentoRef.current?.value || null,
+        foto_perfil: fotoPerfilData
       }
-
-      // Adicionar campos opcionais (usar null para vazios, como esperado pelo backend)
-      const cpfLimpo = cpfRef.current?.value?.replace(/\D/g, '')
-      const cpf = (cpfLimpo && cpfLimpo.length > 0) ? cpfLimpo : null
-      
-      const cepLimpo = cepRef.current?.value?.replace(/\D/g, '')
-      const cep = (cepLimpo && cepLimpo.length > 0) ? cepLimpo : null
-      
-      const numeroLimpo = numeroRef.current?.value?.replace(/\D/g, '')
-      const numero = (numeroLimpo && numeroLimpo.length > 0) ? numeroLimpo : null
-      
-      const dataNascimento = dataNascimentoRef.current?.value || null
-
-      // Incluir todos os campos como esperado pelo backend (null para vazios)
-      dadosUsuario.cpf = cpf
-      dadosUsuario.cep = cep  
-      dadosUsuario.numero = numero
-      dadosUsuario.data_nascimento = dataNascimento
-      dadosUsuario.foto_perfil = fotoPerfilData || null
-
-      // Debug: mostrar dados que serão enviados
-      console.log('Dados do usuário COMPLETOS:', dadosUsuario)
-      console.log('Tamanho de cada campo:', {
-        nome: dadosUsuario.nome?.length || 0,
-        email: dadosUsuario.email?.length || 0,
-        senha: dadosUsuario.senha?.length || 0,
-        cpf: dadosUsuario.cpf?.length || 0,
-        cep: dadosUsuario.cep?.length || 0,
-        numero: dadosUsuario.numero?.length || 0,
-        data_nascimento: dadosUsuario.data_nascimento?.length || 0,
-        foto_perfil: dadosUsuario.foto_perfil?.length || 0,
-        id_sexo: dadosUsuario.id_sexo,
-        id_tipo_sanguineo: dadosUsuario.id_tipo_sanguineo
-      })
-
-      console.log('Usando API para criar usuário...')
       
       const resultado = await criarUsuarioAPI(dadosUsuario)
-      console.log('Resultado da API:', resultado)
       
       if (resultado.success) {
-        setSuccess(resultado.message || 'Conta criada com sucesso! Redirecionando...')
+        setSuccess('Conta criada com sucesso! Redirecionando...')
         setTimeout(() => navigate('/login'), 2000)
       } else {
         setError(resultado.message || 'Erro ao criar conta.')
       }
     } catch (error) {
       console.error('Erro na requisição:', error)
-      setError('Erro de conexão. Verifique o backend.')
+      setError('Erro de conexão. Verifique se o servidor está rodando.')
     } finally {
       setLoading(false)
     }
   }
 
   const handleKeyPress = (e) => e.key === 'Enter' && !loading && criarUsuario()
-
-  const testarDados = () => {
-    const erro = validarFormulario()
-    if (erro) {
-      alert(`Erro de validação: ${erro}`)
-      return
-    }
-
-    const dadosParaTeste = {
-      nome: nomeRef.current.value.trim(),
-      email: emailRef.current.value.trim(),
-      senha: senhaRef.current.value,
-      id_sexo: Number(idSexo),
-      id_tipo_sanguineo: Number(idTipoSanguineo),
-      cpf: cpfRef.current?.value?.replace(/\D/g, '') || 'vazio',
-      cep: cepRef.current?.value?.replace(/\D/g, '') || 'vazio',
-      numero: numeroRef.current?.value?.replace(/\D/g, '') || 'vazio',
-      data_nascimento: dataNascimentoRef.current?.value || 'vazio',
-      foto_perfil: photoUploadRef.current?.hasFile ? 'tem foto' : 'sem foto'
-    }
-
-    console.log('TESTE - Dados que seriam enviados:', dadosParaTeste)
-    alert('Dados válidos! Verifique o console para detalhes.')
-  }
-
-  const testarMinimo = async () => {
-    const erro = validarFormulario()
-    if (erro) {
-      alert(`Erro de validação: ${erro}`)
-      return
-    }
-
-    setLoading(true)
-    try {
-      // Testar apenas com campos obrigatórios
-      const dadosMinimos = {
-        nome: nomeRef.current.value.trim(),
-        email: emailRef.current.value.trim(),
-        senha: senhaRef.current.value,
-        id_sexo: Number(idSexo),
-        id_tipo_sanguineo: Number(idTipoSanguineo)
-      }
-
-      console.log('TESTE MÍNIMO - Enviando apenas campos obrigatórios:', dadosMinimos)
-      
-      const resultado = await criarUsuarioAPI(dadosMinimos)
-      console.log('TESTE MÍNIMO - Resultado:', resultado)
-      
-      if (resultado.success) {
-        alert('✅ SUCESSO com dados mínimos!')
-        setSuccess('Teste com dados mínimos funcionou!')
-      } else {
-        alert('❌ ERRO mesmo com dados mínimos: ' + resultado.message)
-        setError('Erro no teste mínimo: ' + resultado.message)
-      }
-    } catch (error) {
-      console.error('Erro no teste mínimo:', error)
-      alert('❌ ERRO no teste mínimo: ' + error.message)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   if (loadingData) {
     return (
@@ -408,15 +312,6 @@ function Cadastro() {
         <button className="btn btn--primary" type="button" onClick={criarUsuario} disabled={loading}>
           {loading ? 'Criando Conta...' : 'Criar Conta'}
         </button>
-
-        <button className="btn btn--secondary" type="button" onClick={testarDados} disabled={loading} style={{marginTop: '10px', backgroundColor: '#f39c12', color: 'white'}}>
-          🔍 Testar Dados (Debug)
-        </button>
-
-        <button className="btn btn--secondary" type="button" onClick={testarMinimo} disabled={loading} style={{marginTop: '5px', backgroundColor: '#e67e22', color: 'white'}}>
-          ⚡ Teste Mínimo (Só Obrigatórios)
-        </button>
-
         <button className="btn btn--link" type="button" onClick={() => navigate('/login')} disabled={loading}>
           Já tem uma conta?
         </button>

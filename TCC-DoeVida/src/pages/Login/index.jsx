@@ -23,6 +23,11 @@ export default function Login() {
       return
     }
 
+    if (!email.includes('@') || !email.includes('.')) {
+      setError('Por favor, digite um e-mail válido')
+      return
+    }
+
     if (!senha) {
       setError('Por favor, digite sua senha')
       return
@@ -40,14 +45,13 @@ export default function Login() {
       const result = await login(email, senha)
       
       if (result.success) {
-        // Login bem-sucedido, redireciona para home
         navigate('/home')
       } else {
-        setError(result.message || 'Erro ao fazer login')
+        setError(result.message || 'E-mail ou senha incorretos')
       }
     } catch (error) {
       console.error('Erro no login:', error)
-      setError('Erro inesperado. Tente novamente.')
+      setError('Erro de conexão. Verifique se o servidor está rodando.')
     } finally {
       setLoading(false)
     }
