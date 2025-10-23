@@ -355,7 +355,7 @@ body::after {
   flex-shrink: 0;
 }
 
-/* ======= RESPONSIVIDADE APRIMORADA ======= */
+/* ======= RESPONSIVIDADE ======= */
 
 /* Telas grandes */
 @media (max-width: 1400px) {
@@ -541,7 +541,6 @@ body::after {
   font-weight: 700;
 }
 
-
 /* ==== USER INFO NO HEADER ==== */
 .user-info {
   display: flex;
@@ -574,12 +573,24 @@ body::after {
   transform: scale(1.08);
 }
 
+.user-details {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+/* Nome destacado */
 .user-name {
   color: var(--brand);
   font-weight: 700;
   font-size: 1.4rem;
   letter-spacing: 0.5px;
   text-shadow: 0 1px 2px rgba(153, 4, 16, 0.25);
+}
+
+/* Esconde qualquer e-mail por segurança/defensivo */
+.user-email {
+  display: none !important;
 }
 
 /* ===== MODAL DE CONTATO ===== */
@@ -636,23 +647,13 @@ body::after {
 
 /* Animações suaves */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
 /* Botão link no footer */
