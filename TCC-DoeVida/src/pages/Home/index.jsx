@@ -328,7 +328,6 @@ function Home() {
             aria-modal="true"
             aria-labelledby="user-modal-title"
           >
-<<<<<<< HEAD
             {/* Header do Modal */}
             <div className="user-modal-header">
               <div className="user-modal-bg-pattern"></div>
@@ -356,18 +355,6 @@ function Home() {
               </div>
               <h2 id="user-modal-title" className="user-modal-name">
                 {user?.nome || "Usuário"}
-=======
-            <div style={{ textAlign: "center", padding: "20px" }}>
-              <h2
-                style={{
-                  margin: "0",
-                  color: "#2c3e50",
-                  fontSize: "24px",
-                  fontWeight: "600",
-                }}
-              >
-                Olá, {user?.nome || "Usuário"}!
->>>>>>> d187698d91f11bbfd2f9ffe7332fb5016c4630de
               </h2>
               <p className="user-modal-email">{user?.email}</p>
             </div>
