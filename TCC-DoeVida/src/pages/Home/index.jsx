@@ -249,9 +249,17 @@ function Home() {
             </div>
           </div>
 
-          <aside className="critical-alert" role="alert">
+          <aside 
+            className="critical-alert" 
+            role="alert"
+            onClick={() => handleNavigation("/banco-sangue")}
+            style={{ cursor: 'pointer' }}
+          >
             <span className="alert-icon">⚠</span>
             <span>Estoque de sangue O- está em nível crítico!</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginLeft: '8px' }}>
+              <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </aside>
         </section>
       </main>
@@ -323,34 +331,139 @@ function Home() {
         </div>
       )}
 
-      {/* MODAL DE INFORMAÇÕES DO USUÁRIO */}
+      {/* MODAL PREMIUM DE PERFIL DO USUÁRIO */}
       {showUserModal && (
-        <div className="modal-overlay" onClick={() => setShowUserModal(false)}>
+        <div className="user-modal-overlay" onClick={() => setShowUserModal(false)}>
           <div
-            className="modal-content"
+            className="user-modal-premium"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-labelledby="user-modal-title"
           >
-            <div style={{ textAlign: 'center', padding: '20px' }}>
-              <h2 style={{ 
-                margin: '0', 
-                color: '#2c3e50', 
-                fontSize: '24px',
-                fontWeight: '600'
-              }}>
-                Olá, {user?.nome || "Usuário"}!
-              </h2>
+            {/* Header do Modal */}
+            <div className="user-modal-header">
+              <div className="user-modal-bg-pattern"></div>
+              <button
+                type="button"
+                className="btn-close-user-modal"
+                onClick={() => setShowUserModal(false)}
+                aria-label="Fechar modal"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
             </div>
 
-            <button
-              type="button"
-              className="btn-close-modal"
-              onClick={() => setShowUserModal(false)}
-            >
-              Fechar
-            </button>
+            {/* Avatar e Nome */}
+            <div className="user-modal-avatar-section">
+              <div className="user-modal-avatar-container">
+                <img
+                  src={user?.foto_perfil || "/placeholder-profile.png"}
+                  alt="Foto de perfil"
+                  className="user-modal-avatar"
+                />
+                <div className="user-modal-avatar-glow"></div>
+              </div>
+              <h2 id="user-modal-title" className="user-modal-name">
+                {user?.nome || "Usuário"}
+              </h2>
+              <p className="user-modal-email">{user?.email}</p>
+            </div>
+
+            {/* Informações do Usuário */}
+            <div className="user-modal-info-grid">
+              {user?.tipo_sanguineo && (
+                <div className="user-modal-info-card">
+                  <div className="user-modal-info-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#990410"/>
+                    </svg>
+                  </div>
+                  <div className="user-modal-info-content">
+                    <span className="user-modal-info-label">Tipo Sanguíneo</span>
+                    <span className="user-modal-info-value">{user.tipo_sanguineo}</span>
+                  </div>
+                </div>
+              )}
+
+              {user?.cpf && (
+                <div className="user-modal-info-card">
+                  <div className="user-modal-info-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#990410" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="12" cy="7" r="4" stroke="#990410" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div className="user-modal-info-content">
+                    <span className="user-modal-info-label">CPF</span>
+                    <span className="user-modal-info-value">{user.cpf}</span>
+                  </div>
+                </div>
+              )}
+
+              {user?.telefone && (
+                <div className="user-modal-info-card">
+                  <div className="user-modal-info-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="#990410" strokeWidth="2"/>
+                    </svg>
+                  </div>
+                  <div className="user-modal-info-content">
+                    <span className="user-modal-info-label">Telefone</span>
+                    <span className="user-modal-info-value">{user.telefone}</span>
+                  </div>
+                </div>
+              )}
+
+              {user?.data_nascimento && (
+                <div className="user-modal-info-card">
+                  <div className="user-modal-info-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="4" width="18" height="18" rx="2" stroke="#990410" strokeWidth="2"/>
+                      <path d="M16 2v4M8 2v4M3 10h18" stroke="#990410" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                  <div className="user-modal-info-content">
+                    <span className="user-modal-info-label">Data de Nascimento</span>
+                    <span className="user-modal-info-value">{new Date(user.data_nascimento).toLocaleDateString('pt-BR')}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Botões de Ação */}
+            <div className="user-modal-actions">
+              <button
+                type="button"
+                className="btn-user-modal-action primary"
+                onClick={() => {
+                  setShowUserModal(false)
+                  handleNavigation('/perfil')
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span>Editar Perfil</span>
+              </button>
+              <button
+                type="button"
+                className="btn-user-modal-action secondary"
+                onClick={() => {
+                  setShowUserModal(false)
+                  handleLogoutClick()
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span>Sair</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { buscarHospital } from '../../api/usuario/hospital'
 import './style.css'
 import logoBranca from '../../assets/Logo_Branca.png'
 
@@ -8,35 +9,127 @@ function HospitalDetalhes() {
   const { id } = useParams()
   const [hospital, setHospital] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  // Dados mockados do hospital (substituir por API real)
-  const hospitaisMock = {
-    1: {
-      id: 1,
-      nome: 'Banco de Sangue de São Paulo',
-      endereco: 'R. Dr. Tomás Carvalhal, 711 - São Paulo',
-      telefone: '(11) 3373-2050',
-      lat: -23.5505,
-      lng: -46.6333,
-      foto: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&h=400&fit=crop',
-      horarioFuncionamento: '08:00 - 17:00',
-      diasFuncionamento: 'Segunda a sexta',
-      estacionamento: true,
-      acessibilidade: true,
-      tiposSanguineos: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
-      descricao: 'Centro especializado em coleta e armazenamento de sangue, atendendo toda a região metropolitana de São Paulo.',
-      capacidade: '200 doações/dia',
-      convenios: ['SUS', 'Particular', 'Planos de Saúde']
+  // Dados mockados apenas para informações adicionais, sobre e tipos sanguíneos
+  const dadosMockados = {
+    estacionamento: true,
+    acessibilidade: true,
+    tiposSanguineos: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    descricao: 'Centro especializado em coleta e armazenamento de sangue, atendendo toda a região metropolitana. Contamos com equipe qualificada e infraestrutura moderna para garantir a segurança e qualidade do processo de doação.'
+  }
+
+  // Função auxiliar para formatar endereço
+  const formatarEndereco = (hospital) => {
+    const partes = []
+    if (hospital.logradouro) partes.push(hospital.logradouro)
+    if (hospital.numero) partes.push(hospital.numero)
+    if (hospital.bairro) partes.push(hospital.bairro)
+    if (hospital.cidade) partes.push(hospital.cidade)
+    if (hospital.estado) partes.push(hospital.estado)
+    if (hospital.cep) partes.push(`CEP: ${hospital.cep}`)
+    return partes.join(', ') || hospital.endereco || 'Endereço não informado'
+  }
+
+  // Função auxiliar para formatar telefone
+  const formatarTelefone = (telefone) => {
+    if (!telefone) return 'Não informado'
+    const cleaned = telefone.replace(/\D/g, '')
+    if (cleaned.length === 11) {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`
+    } else if (cleaned.length === 10) {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`
     }
+    return telefone
+  }
+
+  // Função auxiliar para formatar horário
+  const formatarHorario = (abertura, fechamento) => {
+    if (!abertura || !fechamento) return 'Não informado'
+    
+    // Se vier no formato ISO (1970-01-01T07:00:00.000Z)
+    const extrairHora = (horario) => {
+      if (horario.includes('T')) {
+        const data = new Date(horario)
+        const horas = data.getUTCHours().toString().padStart(2, '0')
+        const minutos = data.getUTCMinutes().toString().padStart(2, '0')
+        return `${horas}:${minutos}`
+      }
+      return horario
+    }
+    
+    const horaAbertura = extrairHora(abertura)
+    const horaFechamento = extrairHora(fechamento)
+    
+    return `${horaAbertura} - ${horaFechamento}`
+  }
+
+  // Função auxiliar para formatar convênios
+  const formatarConvenios = (convenios) => {
+    if (!convenios) return ['Não informado']
+    // Se for string, dividir por vírgula ou ponto e vírgula
+    if (typeof convenios === 'string') {
+      return convenios.split(/[,;]/).map(c => c.trim()).filter(c => c)
+    }
+    // Se já for array, retornar
+    if (Array.isArray(convenios)) {
+      return convenios
+    }
+    return ['Não informado']
   }
 
   useEffect(() => {
-    // Simular carregamento dos dados
-    setTimeout(() => {
-      const hospitalData = hospitaisMock[id] || hospitaisMock[1]
-      setHospital(hospitalData)
-      setLoading(false)
-    }, 800)
+    const carregarHospital = async () => {
+      if (!id) {
+        setError('ID do hospital não fornecido')
+        setLoading(false)
+        return
+      }
+
+      setLoading(true)
+      setError(null)
+
+      try {
+        const response = await buscarHospital(id)
+        
+        if (response.success && response.data) {
+          const h = response.data
+          
+          // Mapear dados da API
+          const hospitalFormatado = {
+            id: h.id,
+            nome: h.nome || 'Hospital',
+            endereco: formatarEndereco(h),
+            telefone: formatarTelefone(h.telefone),
+            email: h.email,
+            cnpj: h.cnpj,
+            lat: h.latitude || h.lat || null,
+            lng: h.longitude || h.lng || null,
+            foto: h.foto || 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&h=400&fit=crop',
+            horarioFuncionamento: formatarHorario(h.horario_abertura, h.horario_fechamento),
+            diasFuncionamento: 'Segunda a Sexta', // Mockado
+            capacidade: h.capacidade_maxima ? `${h.capacidade_maxima} doações/dia` : 'Não informado',
+            convenios: formatarConvenios(h.convenios),
+            // Dados mockados
+            estacionamento: dadosMockados.estacionamento,
+            acessibilidade: dadosMockados.acessibilidade,
+            tiposSanguineos: dadosMockados.tiposSanguineos,
+            descricao: dadosMockados.descricao
+          }
+
+          setHospital(hospitalFormatado)
+        } else {
+          setError(response.message || 'Hospital não encontrado')
+        }
+      } catch (error) {
+        console.error('Erro ao buscar hospital:', error)
+        setError('Erro ao carregar informações do hospital')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    carregarHospital()
   }, [id])
 
   const handleVoltar = () => {
@@ -45,8 +138,12 @@ function HospitalDetalhes() {
 
   const handleAbrirMaps = () => {
     if (hospital) {
-      const endereco = encodeURIComponent(hospital.endereco)
-      window.open(`https://www.google.com/maps/search/${endereco}`, '_blank')
+      if (hospital.lat && hospital.lng) {
+        window.open(`https://www.google.com/maps/dir/?api=1&destination=${hospital.lat},${hospital.lng}`, '_blank')
+      } else {
+        const endereco = encodeURIComponent(hospital.endereco)
+        window.open(`https://www.google.com/maps/search/${endereco}`, '_blank')
+      }
     }
   }
 
@@ -67,11 +164,12 @@ function HospitalDetalhes() {
     )
   }
 
-  if (!hospital) {
+  if (error || !hospital) {
     return (
       <div className="hospital-detalhes-container">
         <div className="error-detalhes">
-          <h2>Hospital não encontrado</h2>
+          <h2>{error || 'Hospital não encontrado'}</h2>
+          <p>Não foi possível carregar as informações do hospital.</p>
           <button onClick={handleVoltar} className="btn-voltar-error">
             Voltar para Hospitais
           </button>
