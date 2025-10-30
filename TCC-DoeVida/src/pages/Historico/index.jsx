@@ -213,16 +213,34 @@ function Historico() {
 
                     <div className="agendamento-info">
                       <div className="info-item">
-                        <span className="info-label">Local:</span>
-                        <span className="info-value">{agendamento.hospital}</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#990410" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M9 22V12h6v10" stroke="#990410" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                          <span className="info-label">Local</span>
+                          <span className="info-value">{agendamento.hospital}</span>
+                        </div>
                       </div>
                       <div className="info-item">
-                        <span className="info-label">Dia:</span>
-                        <span className="info-value">{formatarData(agendamento.data)}</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="3" y="4" width="18" height="18" rx="2" stroke="#990410" strokeWidth="2"/>
+                          <path d="M16 2v4M8 2v4M3 10h18" stroke="#990410" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                          <span className="info-label">Data</span>
+                          <span className="info-value">{formatarData(agendamento.data)}</span>
+                        </div>
                       </div>
                       <div className="info-item">
-                        <span className="info-label">Horário:</span>
-                        <span className="info-value">{formatarHorario(agendamento.horario)}</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="12" cy="12" r="10" stroke="#990410" strokeWidth="2"/>
+                          <path d="M12 6v6l4 2" stroke="#990410" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                          <span className="info-label">Horário</span>
+                          <span className="info-value">{formatarHorario(agendamento.horario)}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
