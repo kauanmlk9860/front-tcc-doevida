@@ -2,12 +2,9 @@
 .splash-screen {
   position: fixed;
   inset: 0;
-  background: transparent;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: #ffffff;
+  display: grid;
+  place-items: center;
   z-index: 99999;
   overflow: hidden;
   transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
@@ -21,10 +18,10 @@
 
 .splash-content {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  height: 100vh;
 }
 
 /* ================= CONTAINER DA GOTA ================= */

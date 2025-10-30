@@ -13,6 +13,7 @@ function buildCreatePayload(data) {
     foto_perfil: data.foto_perfil || null,
     id_sexo: data.id_sexo || null,
     id_tipo_sanguineo: data.id_tipo_sanguineo || null,
+    telefone: data.telefone || null,
   };
 }
 
@@ -28,6 +29,7 @@ function buildUpdatePayload(data) {
     foto_perfil: data.foto_perfil ?? null,
     id_sexo: data.id_sexo,
     id_tipo_sanguineo: data.id_tipo_sanguineo,
+    telefone: data.telefone || null,
   };
 
   // Se o usuário informou nova senha

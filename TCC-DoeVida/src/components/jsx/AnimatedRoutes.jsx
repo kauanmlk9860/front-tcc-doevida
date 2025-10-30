@@ -16,7 +16,11 @@ import Agendamento from "../../pages/Agendamento";
 import Hospitais from "../../pages/Hospitais";
 import HospitalDetalhes from "../../pages/HospitalDetalhes";
 import BancoSangue from "../../pages/BancoSangue";
+<<<<<<< HEAD
 import Historico from "../../pages/Historico";
+=======
+import Perfil from "../../pages/Perfil";
+>>>>>>> 40e78cd (inicio da tela perfil)
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -55,7 +59,11 @@ const AnimatedRoutes = () => {
         <Route path="/hospitais" element={<Hospitais />} />
         <Route path="/hospital/:id" element={<HospitalDetalhes />} />
         <Route path="/banco-sangue" element={<BancoSangue />} />
+<<<<<<< HEAD
         <Route path="/historico" element={<Historico />} />
+=======
+        <Route path="/perfil" element={<Perfil />} />
+>>>>>>> 40e78cd (inicio da tela perfil)
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </div>
