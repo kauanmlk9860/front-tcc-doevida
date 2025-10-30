@@ -992,6 +992,7 @@ body::after {
     0 0 0 1px rgba(153, 4, 16, 0.1);
   animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
+  margin: auto;
 }
 
 /* Header do Modal Legal */
@@ -1171,6 +1172,56 @@ body::after {
 .legal-list li strong {
   color: #990410;
   font-weight: 600;
+}
+
+/* Card de Contato Sofisticado */
+.legal-contact-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(153, 4, 16, 0.03) 0%, rgba(153, 4, 16, 0.01) 100%);
+  border: 2px solid rgba(153, 4, 16, 0.1);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  margin-top: 12px;
+}
+
+.legal-contact-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(153, 4, 16, 0.15);
+  border-color: rgba(153, 4, 16, 0.3);
+}
+
+.legal-contact-card svg {
+  flex-shrink: 0;
+}
+
+.legal-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.legal-contact-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #990410;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.legal-contact-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.legal-contact-value:hover {
+  color: #990410;
 }
 
 /* Footer do Modal */

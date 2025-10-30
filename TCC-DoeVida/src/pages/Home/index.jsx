@@ -94,6 +94,8 @@ function Home() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
 
   const YT_ID = "97Sx0KiExZM";
   const EMBED_URL =
@@ -414,13 +416,42 @@ function Home() {
 
               <section className="legal-section">
                 <h3 className="legal-section-title">Contato de Privacidade (DPO)</h3>
-                <p className="legal-text">privacidade@doevida.com.br</p>
+                <div className="legal-contact-card">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="#990410" strokeWidth="2"/>
+                    <path d="M22 6l-10 7L2 6" stroke="#990410" strokeWidth="2"/>
+                  </svg>
+                  <div className="legal-contact-info">
+                    <span className="legal-contact-label">E-mail do DPO</span>
+                    <a href="mailto:privacidade@doevida.com.br" className="legal-contact-value">privacidade@doevida.com.br</a>
+                  </div>
+                </div>
               </section>
             </div>
 
             <div className="legal-modal-footer">
+              <label className="legal-checkbox-container">
+                <input 
+                  type="checkbox" 
+                  checked={privacyAccepted}
+                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                  className="legal-checkbox"
+                />
+                <span className="legal-checkbox-label">Li e aceito a Política de Privacidade</span>
+              </label>
               <div className="legal-modal-actions">
                 <button type="button" className="btn-legal-action secondary" onClick={() => setShowPrivacyModal(false)}>Fechar</button>
+                <button 
+                  type="button" 
+                  className="btn-legal-action primary" 
+                  disabled={!privacyAccepted}
+                  onClick={() => {
+                    setShowPrivacyModal(false);
+                    // Aqui você pode salvar a aceitação no backend se necessário
+                  }}
+                >
+                  Aceitar e Continuar
+                </button>
               </div>
             </div>
           </div>
@@ -484,13 +515,42 @@ function Home() {
 
               <section className="legal-section">
                 <h3 className="legal-section-title">Contato</h3>
-                <p className="legal-text">termos@doevida.com.br</p>
+                <div className="legal-contact-card">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="#990410" strokeWidth="2"/>
+                    <path d="M22 6l-10 7L2 6" stroke="#990410" strokeWidth="2"/>
+                  </svg>
+                  <div className="legal-contact-info">
+                    <span className="legal-contact-label">E-mail</span>
+                    <a href="mailto:termos@doevida.com.br" className="legal-contact-value">termos@doevida.com.br</a>
+                  </div>
+                </div>
               </section>
             </div>
 
             <div className="legal-modal-footer">
+              <label className="legal-checkbox-container">
+                <input 
+                  type="checkbox" 
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  className="legal-checkbox"
+                />
+                <span className="legal-checkbox-label">Li e aceito os Termos de Uso</span>
+              </label>
               <div className="legal-modal-actions">
                 <button type="button" className="btn-legal-action secondary" onClick={() => setShowTermsModal(false)}>Fechar</button>
+                <button 
+                  type="button" 
+                  className="btn-legal-action primary" 
+                  disabled={!termsAccepted}
+                  onClick={() => {
+                    setShowTermsModal(false);
+                    // Aqui você pode salvar a aceitação no backend se necessário
+                  }}
+                >
+                  Aceitar e Continuar
+                </button>
               </div>
             </div>
           </div>
