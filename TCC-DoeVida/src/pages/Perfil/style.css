@@ -26,7 +26,7 @@
   z-index: 1000;
   position: relative;
   overflow: hidden;
-  border-radius: 0 0 24px 24px;
+  border-radius: 0;
 }
 
 .header-bg-pattern {
@@ -40,7 +40,7 @@
 }
 
 .header-content-premium {
-  width: 100%;
+  width: 80%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -247,11 +247,11 @@
 
 .blood-drop {
   position: absolute;
-  top: 36px;
-  right: 36px;
+  top: 50px;
+  right: 100px;
   width: 64px;
-  height: 84px;
-  background: radial-gradient(circle at 50% 20%, #b50a16, #990410 60%);
+  height: 94px;
+  background: radial-gradient(circle at 50% 20%, #b50a1579, #990410 60%);
   clip-path: path('M32 0 C52 28 64 44 64 56 C64 73 50 84 32 84 C14 84 0 73 0 56 C0 44 12 28 32 0 Z');
   display: grid;
   place-items: center;
@@ -264,6 +264,91 @@
   font-weight: 800;
   font-size: 1.1rem;
   box-shadow: 0 10px 20px rgba(153,4,16,.25);
+}
+
+/* Menu flutuante */
+.floating-menu {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50px;
+  padding: 10px 20px;
+  display: flex;
+  gap: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 280px;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.floating-menu button {
+  background: none;
+  border: none;
+  color: #000;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 10px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Poppins', sans-serif;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.floating-menu button::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: #990410;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+  border-radius: 3px;
+}
+
+.floating-menu button svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.floating-menu button:hover {
+  color: #990410;
+  transform: translateY(-2px);
+}
+
+.floating-menu button:hover svg {
+  transform: scale(1.1);
+}
+
+.floating-menu button.active {
+  background: #990410;
+  color: white;
+  box-shadow: 0 4px 12px rgba(153, 4, 16, 0.25);
+  font-weight: 500;
+}
+
+.floating-menu button.active::after {
+  width: 70%;
+  background: white;
+}
+
+.floating-menu button.active:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 15px rgba(153, 4, 16, 0.3);
 }
 
 .content {
@@ -349,56 +434,42 @@
 }
 
 .logout-wrapper {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 999;
-  padding: 0;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 28px 28px;
 }
 .logout {
   background: #fff;
   color: var(--brand);
   border: 2px solid var(--brand);
-  border-radius: 50px;
-  padding: 12px 24px;
-  font-weight: 700;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 800;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: all 0.3s ease;
   font-size: 1rem;
-  margin: 0;
-  min-width: 120px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .logout:hover {
-  background: var(--brand);
-  color: #fff;
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 6px 16px rgba(153, 4, 16, 0.25);
+  background: #f5f5f5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-.logout svg {
-  transition: transform 0.3s ease;
+.logout:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.logout:hover svg {
-  transform: translateX(4px);
-  stroke: #fff;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 980px) {
   .content { grid-template-columns: 1fr; }
   .blood-drop { right: 18px; top: 72px; }
-  .logout-wrapper {
-    bottom: 16px;
-    right: 16px;
-  }
-  .logout {
-    padding: 10px 20px;
-    font-size: 0.9rem;
-    min-width: 100px;
-  }
 }
