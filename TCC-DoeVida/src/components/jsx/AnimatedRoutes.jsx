@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../style/AnimatedRoutes.css";
+import ProtectedRoute from "./ProtectedRoute";
 
 import SplashScreen from "../SplashScreen";
 import Home from "../../pages/Home";
@@ -57,7 +58,14 @@ const AnimatedRoutes = () => {
         <Route path="/hospital/:id" element={<HospitalDetalhes />} />
         <Route path="/banco-sangue" element={<BancoSangue />} />
         <Route path="/historico" element={<Historico />} />
-        <Route path="/perfil" element={<Perfil />} />
+        <Route 
+          path="/perfil" 
+          element={
+            <ProtectedRoute>
+              <Perfil />
+            </ProtectedRoute>
+          } 
+        />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </div>

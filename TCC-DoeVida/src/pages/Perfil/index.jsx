@@ -32,24 +32,41 @@ function Perfil() {
     });
   }, [user, isLoggedIn]);
 
-  // Redireciona somente quando carregado e não logado
-  useEffect(() => {
-    if (!loading && !isLoggedIn) {
-      navigate('/login');
-    }
-  }, [loading, isLoggedIn, navigate]);
 
   useEffect(() => {
-    (async () => {
-      const [t, s] = await Promise.all([obterTiposSanguineos(), obterSexos()]);
-      if (t?.data) setTipos(t.data);
-      if (s?.data) setSexos(s.data);
-    })();
+    let isMounted = true;
+    
+    const loadData = async () => {
+      try {
+        const [t, s] = await Promise.all([
+          obterTiposSanguineos().catch(() => ({ data: [] })),
+          obterSexos().catch(() => ({ data: [] }))
+        ]);
+        
+        if (isMounted) {
+          if (t?.data) setTipos(Array.isArray(t.data) ? t.data : []);
+          if (s?.data) setSexos(Array.isArray(s.data) ? s.data : []);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        if (isMounted) {
+          setTipos([]);
+          setSexos([]);
+        }
+      }
+    };
+
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const bloodType = useMemo(() => {
     if (user?.tipo_sanguineo) return user.tipo_sanguineo;
-    const found = tipos?.find(x => x.id === user?.id_tipo_sanguineo);
+    if (!Array.isArray(tipos)) return 'O+';
+    const found = tipos.find(x => x.id === user?.id_tipo_sanguineo);
     return found?.tipo || 'O+'; // fallback
   }, [user, tipos]);
 
@@ -65,10 +82,9 @@ function Perfil() {
     setSaving(false);
   };
 
-  if (loading) {
-    return <div style={{display:'grid',placeItems:'center',minHeight:'50vh'}}>Carregando...</div>;
+  if (loading || !user) {
+    return null; // Não mostra nada enquanto carrega
   }
-  if (!isLoggedIn) return null;
 
   return (
     <div className="page-wrapper">

@@ -1,21 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthService from '../../services/auth.js';
+import AuthService from '../../services/auth';
 
 /**
  * Componente para proteger rotas que requerem autenticação
  */
 function ProtectedRoute({ children }) {
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
-    if (!AuthService.isLoggedIn()) {
-      navigate('/login');
-    }
+    const checkAuth = async () => {
+      const loggedIn = AuthService.isLoggedIn();
+      setIsAuthenticated(loggedIn);
+      
+      if (!loggedIn) {
+        navigate('/login', { replace: true });
+      }
+    };
+
+    checkAuth();
   }, [navigate]);
 
-  // Se não estiver logado, não renderiza nada (será redirecionado)
-  if (!AuthService.isLoggedIn()) {
+  // Mostra loading enquanto verifica autenticação
+  if (isAuthenticated === null) {
+    return <div style={{display: 'grid', placeItems: 'center', minHeight: '50vh'}}>Carregando...</div>;
+  }
+
+  if (!isAuthenticated) {
     return null;
   }
 
