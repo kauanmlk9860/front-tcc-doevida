@@ -3,7 +3,6 @@ import './style.css';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
 import { atualizarUsuario, obterSexos, obterTiposSanguineos } from '../../api/usuario/usuario';
-import LogoutModal from '../../components/jsx/LogoutModal';
 
 // Imagens
 const logoBranca = '/src/assets/Logo_Branca.png';
@@ -19,7 +18,6 @@ function Perfil() {
   const [sexos, setSexos] = useState([]);
   const [saving, setSaving] = useState(false);
   const [donations, setDonations] = useState({ total: 12, ano: 3 }); // mock
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -70,11 +68,8 @@ function Perfil() {
   }, []);
 
   const bloodType = useMemo(() => {
-    if (user?.tipo_sanguineo) return user.tipo_sanguineo;
-    if (!Array.isArray(tipos)) return 'O+';
-    const found = tipos.find(x => x.id === user?.id_tipo_sanguineo);
-    return found?.tipo || 'O+'; // fallback
-  }, [user, tipos]);
+    return user?.tipo_sanguineo_nome || user?.tipo_sanguineo || 'O+';
+  }, [user]);
 
   const handleSave = async () => {
     if (!form?.id) { setEdit(false); return; }
@@ -86,20 +81,6 @@ function Perfil() {
       setEdit(false);
     }
     setSaving(false);
-  };
-
-  const handleLogoutClick = () => {
-    setShowLogoutModal(true);
-  };
-
-  const handleLogoutConfirm = () => {
-    logout();
-    setShowLogoutModal(false);
-    navigate('/');
-  };
-
-  const handleLogoutCancel = () => {
-    setShowLogoutModal(false);
   };
 
   if (loading || !user) {
@@ -158,14 +139,36 @@ function Perfil() {
             </div>
           </div>
 
-          <div className="nav-simple">
-            <button onClick={() => navigate('/home')}>Home</button>
-            <button onClick={() => navigate('/saiba-mais')}>Notícias</button>
-          </div>
+          {/* Navegação removida do cabeçalho */}
         </div>
       </header>
 
-      <div className="blood-drop">{bloodType}</div>
+      <div className="blood-drop" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+        {bloodType || 'O+'}
+      </div>
+
+      {/* Menu Flutuante */}
+      <div className="floating-menu">
+        <button 
+          className={location.pathname === '/home' ? 'active' : ''} 
+          onClick={() => navigate('/home')}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M9 22V12h6v10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Home
+        </button>
+        <button 
+          className={location.pathname === '/saiba-mais' ? 'active' : ''}
+          onClick={() => navigate('/saiba-mais')}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Notícias
+        </button>
+      </div>
 
       <div className="content">
         <section className="card">
@@ -226,23 +229,8 @@ function Perfil() {
       </div>
 
       <div className="logout-wrapper">
-        <button className="logout" onClick={handleLogoutClick}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '8px' }}>
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <polyline points="16,17 21,12 16,7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          Sair
-        </button>
+        <button className="logout" onClick={()=> { logout(); navigate('/login'); }}>⎋ Sair</button>
       </div>
-
-      {/* Modal de Logout */}
-      <LogoutModal
-        isOpen={showLogoutModal}
-        onClose={handleLogoutCancel}
-        onConfirm={handleLogoutConfirm}
-        userName={user?.nome}
-      />
     </div>
   );
 }
