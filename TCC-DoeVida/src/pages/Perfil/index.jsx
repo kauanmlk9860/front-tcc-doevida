@@ -3,6 +3,11 @@ import './style.css';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
 import { atualizarUsuario, obterSexos, obterTiposSanguineos } from '../../api/usuario/usuario';
+import LogoutModal from '../../components/jsx/LogoutModal';
+
+// Imagens
+const logoBranca = '/src/assets/Logo_Branca.png';
+const placeholder = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
 
 function Perfil() {
   const navigate = useNavigate();
@@ -14,6 +19,7 @@ function Perfil() {
   const [sexos, setSexos] = useState([]);
   const [saving, setSaving] = useState(false);
   const [donations, setDonations] = useState({ total: 12, ano: 3 }); // mock
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -82,32 +88,82 @@ function Perfil() {
     setSaving(false);
   };
 
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    logout();
+    setShowLogoutModal(false);
+    navigate('/');
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
+  };
+
   if (loading || !user) {
     return null; // Não mostra nada enquanto carrega
   }
 
   return (
     <div className="page-wrapper">
-      <div className="topbar">
-        <div className="user-brief">
-          <img src={user?.foto_perfil || '/placeholder-profile.png'} alt="Foto" className="user-avatar-lg" />
-          <div className="user-name-stack">
-            <span className="title">Nome</span>
-            <span className="subtitle">{user?.nome || 'Usuário'}</span>
+      {/* Header Premium */}
+      <header className="perfil-header-premium">
+        <div className="header-bg-pattern"></div>
+        <div className="header-content-premium">
+          <div className="header-left-simple">
+            <button 
+              className="btn-voltar-premium"
+              onClick={() => navigate(-1)}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 12H5m7-7l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            
+            <div className="header-brand-simple">
+              <div className="brand-logo-container">
+                <img src={logoBranca} alt="DoeVida" className="header-logo" />
+                <div className="logo-glow"></div>
+              </div>
+              <h1 className="brand-title">Perfil</h1>
+            </div>
+          </div>
+
+          <div className="user-brief">
+            <img
+              src={form.foto_perfil || placeholder}
+              alt={form.nome || 'Usuário'}
+              className="user-avatar-lg"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = placeholder;
+              }}
+            />
+            <div className="user-name-stack">
+              <span className="title">{form.nome || 'Usuário'}</span>
+              <span className="subtitle">{form.email || 'usuario@email.com'}</span>
+            </div>
+          </div>
+
+          <div className="donations">
+            <div className="row">
+              <span className="label">Total de doações</span>
+              <span className="value">{donations.total}</span>
+            </div>
+            <div className="row">
+              <span className="label">Este ano</span>
+              <span className="value">{donations.ano}</span>
+            </div>
+          </div>
+
+          <div className="nav-simple">
+            <button onClick={() => navigate('/home')}>Home</button>
+            <button onClick={() => navigate('/saiba-mais')}>Notícias</button>
           </div>
         </div>
-
-        <div className="donations">
-          <div className="row"><span className="label">Total de Doações:</span><span className="value">{donations.total}</span></div>
-          <div className="row"><span className="label">Doações este ano:</span><span className="value">{donations.ano}</span></div>
-        </div>
-
-        <div className="nav-simple">
-          <button onClick={() => navigate('/home')}>Home</button>
-          <button onClick={() => navigate('/saiba-mais')}>Notícias</button>
-          <span className="chip">Perfil</span>
-        </div>
-      </div>
+      </header>
 
       <div className="blood-drop">{bloodType}</div>
 
@@ -170,8 +226,23 @@ function Perfil() {
       </div>
 
       <div className="logout-wrapper">
-        <button className="logout" onClick={()=> { logout(); navigate('/login'); }}>⎋ Sair</button>
+        <button className="logout" onClick={handleLogoutClick}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '8px' }}>
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <polyline points="16,17 21,12 16,7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Sair
+        </button>
       </div>
+
+      {/* Modal de Logout */}
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={handleLogoutCancel}
+        onConfirm={handleLogoutConfirm}
+        userName={user?.nome}
+      />
     </div>
   );
 }
