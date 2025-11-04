@@ -281,6 +281,35 @@ function Home() {
             </svg>
           </aside>
         </section>
+
+        {/* SEÇÃO DE NOTÍCIAS */}
+        <section className="news-section" aria-labelledby="news-title">
+          <div className="news-container">
+            <div className="news-content">
+              <div className="news-icon-wrapper">
+                <svg className="news-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className="news-text">
+                <h3 id="news-title" className="news-title">Fique por dentro</h3>
+                <p className="news-description">
+                  Acompanhe as últimas notícias sobre doação de sangue, campanhas e histórias inspiradoras
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="btn-news"
+              onClick={() => handleNavigation("/noticias")}
+            >
+              <span className="btn-news-text">Ver Notícias</span>
+              <svg className="btn-news-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </section>
       </main>
 
       {/* FOOTER */}
