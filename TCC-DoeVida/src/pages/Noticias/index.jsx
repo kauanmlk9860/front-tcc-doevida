@@ -16,7 +16,7 @@ function Noticias() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeCategory, setActiveCategory] = useState("saude");
+  const [activeCategory, setActiveCategory] = useState("ultimas");
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -154,7 +154,7 @@ function Noticias() {
   };
 
   useEffect(() => {
-    carregarNoticias("saude", true);
+    carregarNoticias("ultimas", true);
   }, [carregarNoticias]);
 
   // Scroll listener para botão voltar ao topo

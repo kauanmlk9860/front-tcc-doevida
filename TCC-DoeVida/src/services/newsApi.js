@@ -110,35 +110,76 @@ function parseRSStoJSON(xmlText) {
 }
 
 /**
- * Busca notícias do UOL por categoria
- * @param {string} category - Categoria (saude, ciencia, tecnologia, etc)
+ * Busca notícias do UOL por categoria (ou todas se category for 'todas')
+ * @param {string} category - Categoria (saude, ciencia, tecnologia, geral, ultimas, ou 'todas')
  * @returns {Promise} Resposta com as notícias
  */
-export async function buscarNoticias(category = 'saude') {
+export async function buscarNoticias(category = 'todas') {
   try {
-    const feedUrl = UOL_FEEDS[category] || UOL_FEEDS.saude;
-    const url = `${CORS_PROXY}${encodeURIComponent(feedUrl)}`;
+    let allNews = [];
     
-    console.log('🌐 Buscando notícias do UOL:', category);
-    console.log('🔗 Feed URL:', feedUrl);
+    // Se for 'todas', buscar de todos os feeds
+    if (category === 'todas' || category === 'ultimas' || !category) {
+      console.log('🌐 Buscando notícias de TODAS as categorias do UOL');
+      
+      // Buscar de todos os feeds em paralelo
+      const promises = Object.entries(UOL_FEEDS).map(async ([cat, feedUrl]) => {
+        try {
+          const url = `${CORS_PROXY}${encodeURIComponent(feedUrl)}`;
+          console.log(`📡 Buscando feed: ${cat}`);
+          
+          const response = await axios.get(url, { 
+            timeout: 20000,
+            headers: {
+              'Accept': 'application/xml, text/xml, */*',
+            }
+          });
+          
+          const news = parseRSStoJSON(response.data);
+          console.log(`✅ ${cat}: ${news.length} notícias`);
+          
+          // Adicionar categoria às notícias
+          return news.map(n => ({ ...n, category: cat }));
+        } catch (err) {
+          console.error(`❌ Erro ao buscar ${cat}:`, err.message);
+          return [];
+        }
+      });
+      
+      const results = await Promise.all(promises);
+      allNews = results.flat();
+      
+      // Embaralhar para misturar categorias
+      allNews = allNews.sort(() => Math.random() - 0.5);
+      
+    } else {
+      // Buscar apenas da categoria específica
+      const feedUrl = UOL_FEEDS[category] || UOL_FEEDS.geral;
+      const url = `${CORS_PROXY}${encodeURIComponent(feedUrl)}`;
+      
+      console.log('🌐 Buscando notícias do UOL:', category);
+      console.log('🔗 Feed URL:', feedUrl);
 
-    const response = await axios.get(url, { 
-      timeout: 20000,
-      headers: {
-        'Accept': 'application/xml, text/xml, */*',
-      }
-    });
+      const response = await axios.get(url, { 
+        timeout: 20000,
+        headers: {
+          'Accept': 'application/xml, text/xml, */*',
+        }
+      });
+      
+      console.log('✅ RSS recebido com sucesso');
+      
+      allNews = parseRSStoJSON(response.data);
+      allNews = allNews.map(n => ({ ...n, category }));
+    }
     
-    console.log('✅ RSS recebido com sucesso');
-    
-    const news = parseRSStoJSON(response.data);
-    console.log('📰 Notícias parseadas:', news.length);
+    console.log('📰 Total de notícias:', allNews.length);
 
     return {
       success: true,
-      data: news,
+      data: allNews,
       nextPage: null,
-      totalResults: news.length,
+      totalResults: allNews.length,
       currentPage: 1,
       hasMore: false
     };
@@ -158,7 +199,7 @@ export async function buscarNoticias(category = 'saude') {
 }
 
 /**
- * Busca notícias com query específica (mapeia para categorias do UOL)
+ * Busca notícias com query específica (busca em todas as categorias)
  * @param {string} query - Termo de busca
  * @param {number} page - Número da página (não usado no RSS)
  * @returns {Promise} Resposta com as notícias
@@ -168,7 +209,7 @@ export async function buscarNoticiasPorTermo(query, page = 1) {
     console.log('🔍 Buscando notícias por termo:', query);
     
     // Mapear query para categoria do UOL
-    let category = 'geral';
+    let category = 'todas';
     const queryLower = query?.toLowerCase() || '';
     
     if (queryLower.includes('saúde') || queryLower.includes('saude') || queryLower.includes('health') || queryLower.includes('medicine')) {
@@ -177,44 +218,39 @@ export async function buscarNoticiasPorTermo(query, page = 1) {
       category = 'ciencia';
     } else if (queryLower.includes('tecnologia') || queryLower.includes('technology')) {
       category = 'tecnologia';
-    } else if (queryLower === '' || !query) {
-      category = 'ultimas';
+    } else if (queryLower.includes('geral')) {
+      category = 'geral';
     }
     
     console.log('📂 Categoria mapeada:', category);
     
-    const feedUrl = UOL_FEEDS[category] || UOL_FEEDS.geral;
-    const url = `${CORS_PROXY}${encodeURIComponent(feedUrl)}`;
+    // Buscar notícias (todas ou de categoria específica)
+    const result = await buscarNoticias(category);
     
-    console.log('🔗 Feed URL:', feedUrl);
-
-    const response = await axios.get(url, { 
-      timeout: 30000,
-      headers: {
-        'Accept': 'application/xml, text/xml, */*',
-      }
-    });
+    if (!result.success) {
+      return result;
+    }
     
-    console.log('✅ RSS recebido com sucesso');
+    let news = result.data;
     
-    const news = parseRSStoJSON(response.data);
-    console.log('📰 Notícias parseadas:', news.length);
-    
-    // Filtrar por termo de busca se fornecido
-    let filteredNews = news;
-    if (query && query.trim() && !['health', 'medicine', 'science', 'technology'].includes(queryLower)) {
-      filteredNews = news.filter(n => 
+    // Filtrar por termo de busca se fornecido e não for uma categoria
+    if (query && query.trim() && !['health', 'medicine', 'science', 'technology', 'saúde', 'ciência', 'tecnologia', 'geral'].includes(queryLower)) {
+      const filteredNews = news.filter(n => 
         n.title.toLowerCase().includes(queryLower) || 
         n.description.toLowerCase().includes(queryLower)
       );
-      console.log('🔎 Notícias filtradas:', filteredNews.length);
+      console.log('🔎 Notícias filtradas por termo:', filteredNews.length);
+      
+      if (filteredNews.length > 0) {
+        news = filteredNews;
+      }
     }
 
     return {
       success: true,
-      data: filteredNews.length > 0 ? filteredNews : news,
+      data: news,
       nextPage: null,
-      totalResults: filteredNews.length > 0 ? filteredNews.length : news.length,
+      totalResults: news.length,
       currentPage: 1,
       hasMore: false
     };
