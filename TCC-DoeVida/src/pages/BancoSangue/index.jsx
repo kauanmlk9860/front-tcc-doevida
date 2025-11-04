@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
-import logoBranca from '../../assets/Logo_Branca.png'
+import logoSemFundo from '../../assets/icons/logo_semfundo.png'
 
 function BancoSangue() {
   const navigate = useNavigate()
@@ -59,7 +59,7 @@ function BancoSangue() {
             
             <div className="header-brand-banco">
               <div className="brand-logo-container-banco">
-                <img src={logoBranca} alt="DoeVida" className="header-logo-banco" />
+                <img src={logoSemFundo} alt="DoeVida" className="header-logo-banco" />
                 <div className="logo-glow-banco"></div>
               </div>
               <h1 className="brand-title-banco">Banco de Sangue</h1>

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { listarHospitais } from '../../api/usuario/hospital'
 import './style.css'
-import logoBranca from '../../assets/Logo_Branca.png'
+import logoSemFundo from '../../assets/icons/logo_semfundo.png'
 
 function Hospitais() {
   const navigate = useNavigate()
@@ -246,7 +246,7 @@ function Hospitais() {
             
             <div className="header-brand-simple">
               <div className="brand-logo-container">
-                <img src={logoBranca} alt="DoeVida" className="header-logo" />
+                <img src={logoSemFundo} alt="DoeVida" className="header-logo" />
                 <div className="logo-glow"></div>
               </div>
               <h1 className="brand-title">Hospitais</h1>
@@ -400,7 +400,7 @@ function Hospitais() {
             <div className="modal-header-premium">
               <div className="modal-header-bg">
                 <div className="modal-logo-section">
-                  <img src={logoBranca} alt="DoeVida" className="modal-logo" />
+                  <img src={logoSemFundo} alt="DoeVida" className="modal-logo" />
                   <div className="modal-brand">
                     <h1>DoeVida</h1>
                     <span>Hospitais Parceiros</span>

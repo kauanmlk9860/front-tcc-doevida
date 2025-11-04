@@ -4,7 +4,7 @@ import http from "../../services/http.js";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import { criarAgendamento, verificarDisponibilidade } from "../../api/agendamento/agendamento.js";
-import logoBranca from "../../assets/Logo_Branca.png";
+import logoSemFundo from "../../assets/icons/logo_semfundo.png";
 
 /* ---------- utils ---------- */
 function MonthLabel({ date }) {
@@ -318,7 +318,7 @@ export default function Agendamento() {
 
             <div className="header-brand-banco">
               <div className="brand-logo-container-banco">
-                <img src={logoBranca} alt="DoeVida" className="header-logo-banco" />
+                <img src={logoSemFundo} alt="DoeVida" className="header-logo-banco" />
                 <div className="logo-glow-banco"></div>
               </div>
               <h1 className="brand-title-banco">Agendamento</h1>

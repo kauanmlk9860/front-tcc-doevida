@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { buscarHospital } from '../../api/usuario/hospital'
 import './style.css'
-import logoBranca from '../../assets/Logo_Branca.png'
+import logoSemFundo from '../../assets/icons/logo_semfundo.png'
 
 function HospitalDetalhes() {
   const navigate = useNavigate()
@@ -196,7 +196,7 @@ function HospitalDetalhes() {
               
               <div className="header-brand-detalhes">
                 <div className="brand-logo-container-detalhes">
-                  <img src={logoBranca} alt="DoeVida" className="header-logo-detalhes" />
+                  <img src={logoSemFundo} alt="DoeVida" className="header-logo-detalhes" />
                   <div className="logo-glow-detalhes"></div>
                 </div>
                 <h1 className="brand-title-detalhes">Detalhes do Hospital</h1>

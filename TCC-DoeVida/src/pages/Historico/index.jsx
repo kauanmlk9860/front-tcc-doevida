@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listarMeusAgendamentos } from '../../api/agendamento/agendamento';
-import logoBranca from '../../assets/Logo_Branca.png';
+import logoSemFundo from '../../assets/icons/logo_semfundo.png';
 import './style.css';
 
 function Historico() {

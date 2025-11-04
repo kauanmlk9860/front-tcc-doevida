@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
-import logoBranca from '../../assets/Logo_Branca.png'
+import logoSemFundo from '../../assets/icons/logo_semfundo.png'
 import PasswordInput from '../../components/jsx/PasswordInput'
 import { useUser } from '../../contexts/UserContext'
 
@@ -66,7 +66,7 @@ export default function Login() {
   return (
     <div className="login">
       <div className="login__decor-circle" />
-      <img className="login__logo" src={logoBranca} alt="DoeVida" />
+      <img className="login__logo" src={logoSemFundo} alt="DoeVida" />
       <h1 className="login__title">Sou Doador</h1>
 
       <form className="login__form" autoComplete="off" onSubmit={(e) => e.preventDefault()}>

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
-import Logo_Branca from '../../assets/Logo_Branca.png'
+import logoSemFundo from '../../assets/icons/logo_semfundo.png'
 import AuthService from '../../services/auth.js'
 
 function Redefinir_senha() {
@@ -90,7 +90,7 @@ function Redefinir_senha() {
       
       <img 
         id='Logo_Branca' 
-        src={Logo_Branca} 
+        src={logoSemFundo} 
         alt="Logo DoeVida" 
       />
       

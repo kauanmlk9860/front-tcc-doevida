@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
-import logoBranca from "../../assets/Logo_Branca.png";
+import logoSemFundo from "../../assets/icons/logo_semfundo.png";
 import { buscarNoticiasPorTermo, buscarNoticiasPorCategoria } from "../../services/newsApi";
 import { useUser } from "../../contexts/UserContext";
 
@@ -178,7 +178,7 @@ function Noticias() {
       <header className="noticias-header">
         <div className="noticias-header-content">
           <div className="logo-container" onClick={() => navigate("/home")}>
-            <img src={logoBranca} alt="Logo DoeVida" className="logo-img" />
+            <img src={logoSemFundo} alt="Logo DoeVida" className="logo-img" />
             <h1 className="logo-text">DOEVIDA</h1>
           </div>
 

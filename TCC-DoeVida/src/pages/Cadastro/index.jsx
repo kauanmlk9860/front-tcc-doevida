@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
-import logoBranca from '../../assets/Logo_Branca.png'
+import logoSemFundo from '../../assets/icons/logo_semfundo.png'
 import FormattedInput from '../../components/jsx/FormattedInput'
 import PhotoUpload from '../../components/jsx/PhotoUpload'
 import PasswordInput from '../../components/jsx/PasswordInput'
@@ -165,7 +165,7 @@ function Cadastro() {
     return (
       <div className="cadastro">
         <div className="cadastro__decor-circle" />
-        <img className="cadastro__logo" src={logoBranca} alt="DoeVida" />
+        <img className="cadastro__logo" src={logoSemFundo} alt="DoeVida" />
         <h1 className="cadastro__title">Carregando...</h1>
       </div>
     )
@@ -174,7 +174,7 @@ function Cadastro() {
   return (
     <div className="cadastro">
       <div className="cadastro__decor-circle" />
-      <img className="cadastro__logo" src={logoBranca} alt="DoeVida" />
+      <img className="cadastro__logo" src={logoSemFundo} alt="DoeVida" />
       <h1 className="cadastro__title">Sou Doador</h1>
 
       <form className="cadastro__form" onSubmit={(e) => e.preventDefault()}>

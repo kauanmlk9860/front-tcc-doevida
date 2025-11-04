@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import './style.css'
-import Logo_Branca from '../../assets/Logo_Branca.png'
+import logoSemFundo from '../../assets/icons/logo_semfundo.png'
 import { useNavigate } from 'react-router-dom'
 import AuthService from '../../services/auth.js'
 
@@ -58,7 +58,7 @@ function Recuperar_senha() {
   return (
     <div className="rec-senha">
       <div className="rec-senha__decor"></div>
-      <img className="rec-senha__logo" src={Logo_Branca} alt="DoeVida" />
+      <img className="rec-senha__logo" src={logoSemFundo} alt="DoeVida" />
       <h1 className="rec-senha__title">Recuperar Senha</h1>
       
       <form className="rec-senha__form" autoComplete="off" onSubmit={(e) => e.preventDefault()}>

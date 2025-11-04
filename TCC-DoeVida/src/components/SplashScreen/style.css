@@ -1,10 +1,11 @@
-/* ================= SPLASH SCREEN ================= */
+/* ================= SPLASH SCREEN - NOVO DESIGN ================= */
 .splash-screen {
   position: fixed;
   inset: 0;
-  background: #ffffff;
-  display: grid;
-  place-items: center;
+  background: linear-gradient(135deg, #ffffff 0%, #fff5f7 30%, #ffe8eb 60%, #ffd6db 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 99999;
   overflow: hidden;
   transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
@@ -16,335 +17,315 @@
   pointer-events: none;
 }
 
+/* Círculos de fundo animados */
+.bg-circles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(153, 4, 16, 0.08), transparent 70%);
+  animation: float 20s ease-in-out infinite;
+}
+
+.circle-1 {
+  width: 600px;
+  height: 600px;
+  top: -200px;
+  left: -200px;
+  animation-delay: 0s;
+}
+
+.circle-2 {
+  width: 400px;
+  height: 400px;
+  bottom: -150px;
+  right: -150px;
+  animation-delay: 2s;
+}
+
+.circle-3 {
+  width: 500px;
+  height: 500px;
+  top: 50%;
+  right: -250px;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.05);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+/* Conteúdo centralizado */
 .splash-content {
   position: relative;
-  display: grid;
-  place-items: center;
-  width: 100vw;
-  height: 100vh;
-}
-
-/* ================= CONTAINER DA GOTA ================= */
-.blood-drop-container {
-  position: relative;
-  width: 240px;
-  height: 300px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease-out;
+  gap: 1.5rem;
+  z-index: 1;
+  padding: 2rem;
 }
 
-.blood-drop-container.exploding {
-  animation: dropExplode 0.4s ease-out forwards;
+/* Logo - Gota de sangue */
+.logo-container {
+  position: relative;
+  animation: logoEntrance 1s ease-out;
 }
 
-@keyframes dropExplode {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.15);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(0);
+@keyframes logoEntrance {
+  from {
     opacity: 0;
+    transform: scale(0.5) translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 
-.blood-drop {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 10px 30px rgba(153, 4, 16, 0.6));
+.blood-drop-logo {
+  width: 180px;
+  height: auto;
+  filter: drop-shadow(0 15px 50px rgba(153, 4, 16, 0.4)) 
+          drop-shadow(0 5px 20px rgba(153, 4, 16, 0.2));
   animation: dropFloat 3s ease-in-out infinite;
+  transition: transform 0.3s ease;
 }
 
-/* Animação de flutuação da gota */
 @keyframes dropFloat {
   0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  25% {
-    transform: translateY(-10px) rotate(-2deg);
+    transform: translateY(0);
   }
   50% {
-    transform: translateY(0) rotate(0deg);
-  }
-  75% {
-    transform: translateY(-10px) rotate(2deg);
+    transform: translateY(-15px);
   }
 }
 
-/* Contorno da gota */
-.drop-outline {
-  animation: pulseOutline 2s ease-in-out infinite;
+.drop-path {
+  animation: dropPulse 2s ease-in-out infinite;
 }
 
-@keyframes pulseOutline {
+@keyframes dropPulse {
   0%, 100% {
-    stroke-width: 4;
     opacity: 1;
   }
   50% {
-    stroke-width: 5;
-    opacity: 0.8;
+    opacity: 0.9;
   }
 }
 
-/* Preenchimento da gota */
-.drop-fill {
-  transition: y 0.3s ease-out;
-}
-
-/* Onda no topo do líquido */
-.wave {
-  animation: waveMotion 1.5s ease-in-out infinite;
-}
-
-@keyframes waveMotion {
-  0%, 100% {
-    d: path("M0,0 Q50,-10 100,0 T200,0 V280 H0 Z");
-  }
-  50% {
-    d: path("M0,0 Q50,10 100,0 T200,0 V280 H0 Z");
-  }
-}
-
-/* Brilho na gota */
 .drop-shine {
   animation: shineGlow 2s ease-in-out infinite;
 }
 
 @keyframes shineGlow {
   0%, 100% {
-    opacity: 0.3;
+    opacity: 0.4;
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.6;
   }
 }
 
-/* ================= PORCENTAGEM ================= */
-.progress-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: white;
-  z-index: 10;
-  pointer-events: none;
+.heart-icon {
+  animation: heartBeat 1.5s ease-in-out infinite;
 }
 
-.percentage {
-  display: block;
+@keyframes heartBeat {
+  0%, 100% {
+    transform: translate(100px, 155px) scale(1);
+  }
+  14% {
+    transform: translate(100px, 155px) scale(1.15);
+  }
+  28% {
+    transform: translate(100px, 155px) scale(1);
+  }
+  42% {
+    transform: translate(100px, 155px) scale(1.15);
+  }
+  56% {
+    transform: translate(100px, 155px) scale(1);
+  }
+}
+
+/* Texto do app */
+.app-name {
   font-family: 'Poppins', sans-serif;
-  font-size: 3rem;
+  font-size: 2.8rem;
   font-weight: 800;
   color: #990410;
-  text-shadow: 0 2px 8px rgba(153, 4, 16, 0.2);
-  animation: percentagePulse 1s ease-in-out infinite;
+  margin: 0;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 10px rgba(153, 4, 16, 0.1);
+  animation: textEntrance 1s ease-out 0.3s both;
+}
+
+.app-tagline {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #666;
+  margin: -0.8rem 0 0 0;
+  text-align: center;
+  max-width: 350px;
+  line-height: 1.5;
+  animation: textEntrance 1s ease-out 0.5s both;
+}
+
+@keyframes textEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Barra de progresso */
+.progress-container {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  animation: textEntrance 1s ease-out 0.7s both;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(153, 4, 16, 0.12);
+  border-radius: 100px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff1744 0%, #d32f2f 50%, #990410 100%);
+  border-radius: 100px;
+  transition: width 0.3s ease-out;
+  box-shadow: 0 0 10px rgba(153, 4, 16, 0.5);
+  animation: progressGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes progressGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(153, 4, 16, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(153, 4, 16, 0.8);
+  }
+}
+
+.progress-percentage {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #990410;
   letter-spacing: 1px;
 }
 
-@keyframes percentagePulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.08);
-  }
+/* Partículas flutuantes */
+.floating-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-/* ================= EXPLOSÃO ================= */
-.explosion-flash {
+.particle {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, 
-    rgba(255, 23, 68, 1) 0%, 
-    rgba(255, 23, 68, 0.8) 20%,
-    rgba(255, 23, 68, 0.5) 40%,
-    rgba(255, 23, 68, 0.2) 70%,
-    transparent 100%
-  );
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, rgba(153, 4, 16, 0.6), transparent);
   border-radius: 50%;
-  animation: explosionFlash 1.2s ease-out forwards;
-  pointer-events: none;
-  z-index: 5;
-}
-
-@keyframes explosionFlash {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-  5% {
-    transform: translate(-50%, -50%) scale(0.3);
-    opacity: 0.5;
-  }
-  12% {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 1;
-  }
-  25% {
-    transform: translate(-50%, -50%) scale(1.5);
-    opacity: 0.9;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(2.5);
-    opacity: 0.6;
-  }
-  75% {
-    transform: translate(-50%, -50%) scale(3.5);
-    opacity: 0.3;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(4.5);
-    opacity: 0;
-  }
-}
-
-.explosion-particles {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.particle-drop {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: var(--size, 16px);
-  height: var(--size, 16px);
-  transform-origin: center;
-  animation: dropletExplode 3.5s cubic-bezier(0.15, 0.7, 0.3, 1) forwards;
+  animation: particleFloat var(--duration, 4s) ease-in-out infinite;
   animation-delay: var(--delay, 0s);
-  filter: drop-shadow(0 0 8px rgba(255, 23, 68, 1)) 
-          drop-shadow(0 0 4px rgba(255, 23, 68, 0.8))
-          drop-shadow(0 0 2px rgba(255, 255, 255, 0.6))
-          brightness(1.3);
-  z-index: 100;
+  opacity: 0;
 }
 
-.particle-drop svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-@keyframes dropletExplode {
+@keyframes particleFloat {
   0% {
-    transform: translate(-50%, -50%) rotate(0deg) translateX(0) scale(0.3);
+    transform: translateY(100vh) scale(0);
     opacity: 0;
   }
-  3% {
-    opacity: 1;
-    transform: translate(-50%, -50%) rotate(calc(var(--rotation, 0deg) * 0.05)) translateX(calc(var(--distance, 250px) * 0.02)) scale(0.8);
-  }
-  8% {
-    transform: translate(-50%, -50%) rotate(calc(var(--rotation, 0deg) * 0.1)) translateX(calc(var(--distance, 250px) * 0.08)) scale(1.4);
+  10% {
     opacity: 1;
   }
-  15% {
-    transform: translate(-50%, -50%) rotate(calc(var(--rotation, 0deg) * 0.2)) translateX(calc(var(--distance, 250px) * 0.18)) scale(1.2);
+  90% {
     opacity: 1;
-  }
-  25% {
-    transform: translate(-50%, -50%) rotate(calc(var(--rotation, 0deg) * 0.3)) translateX(calc(var(--distance, 250px) * 0.3)) scale(1.1);
-    opacity: 1;
-  }
-  45% {
-    opacity: 1;
-    transform: translate(-50%, -50%) rotate(calc(var(--rotation, 0deg) * 0.5)) translateX(calc(var(--distance, 250px) * 0.55)) scale(1);
-  }
-  65% {
-    opacity: 0.95;
-    transform: translate(-50%, -50%) rotate(calc(var(--rotation, 0deg) * 0.75)) translateX(calc(var(--distance, 250px) * 0.8)) scale(0.8);
-  }
-  85% {
-    opacity: 0.7;
-    transform: translate(-50%, -50%) rotate(calc(var(--rotation, 0deg) * 0.9)) translateX(calc(var(--distance, 250px) * 0.95)) scale(0.5);
   }
   100% {
-    transform: translate(-50%, -50%) rotate(var(--rotation, 0deg)) translateX(var(--distance, 250px)) scale(0.2);
+    transform: translateY(-100px) scale(1);
     opacity: 0;
   }
 }
 
-
-/* ================= PULSO DE FUNDO ================= */
-.background-pulse {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(153, 4, 16, 0.08) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: backgroundPulse 3s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes backgroundPulse {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.6;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.3);
-    opacity: 0.3;
-  }
-}
-
-/* ================= RESPONSIVIDADE ================= */
+/* Responsividade */
 @media (max-width: 768px) {
-  .blood-drop-container {
-    width: 180px;
-    height: 240px;
+  .blood-drop-logo {
+    width: 140px;
+    height: auto;
   }
 
-  .percentage {
-    font-size: 2.2rem;
+  .app-name {
+    font-size: 2.3rem;
   }
 
-  .particle {
-    width: 6px;
-    height: 6px;
+  .app-tagline {
+    font-size: 0.95rem;
+    max-width: 280px;
   }
 
-  @keyframes particleExplode {
-    0% {
-      transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0) scale(1);
-      opacity: 1;
-    }
-    70% {
-      opacity: 1;
-    }
-    100% {
-      transform: translate(-50%, -50%) rotate(var(--angle)) translateX(180px) scale(0.3);
-      opacity: 0;
-    }
+  .progress-container {
+    width: 240px;
+  }
+
+  .circle-1,
+  .circle-2,
+  .circle-3 {
+    width: 350px;
+    height: 350px;
   }
 }
 
 @media (max-width: 480px) {
-  .blood-drop-container {
-    width: 150px;
-    height: 200px;
+  .blood-drop-logo {
+    width: 110px;
+    height: auto;
   }
 
-  .percentage {
-    font-size: 1.8rem;
+  .app-name {
+    font-size: 2rem;
+  }
+
+  .app-tagline {
+    font-size: 0.9rem;
+    max-width: 240px;
+  }
+
+  .progress-container {
+    width: 200px;
+  }
+
+  .splash-content {
+    gap: 1.2rem;
+    padding: 1.5rem;
   }
 }

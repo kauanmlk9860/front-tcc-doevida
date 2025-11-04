@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
-import logoBranca from "../../assets/Logo_Branca.png";
+import logoSemFundo from "../../assets/icons/logo_semfundo.png";
 import pessoas from "../../assets/pessoas.png";
 import AuthService from "../../services/auth.js";
 
@@ -69,7 +69,7 @@ function SaibaMais() {
       <header className="header">
         <div className="logo-container">
           <div className="logo-icon">
-            <img src={logoBranca} alt="Logo DoeVida" className="logo-img" />
+            <img src={logoSemFundo} alt="Logo DoeVida" className="logo-img" />
           </div>
           <h1 className="logo-text">DOEVIDA</h1>
         </div>

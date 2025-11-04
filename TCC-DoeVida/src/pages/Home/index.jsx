@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./style.css";
-import logoBranca from "../../assets/Logo_Branca.png";
+import logoSemFundo from "../../assets/icons/logo_semfundo.png";
 import { useNavigate } from "react-router-dom";
 import LogoutModal from "../../components/jsx/LogoutModal";
 import { useUser } from "../../contexts/UserContext";
@@ -139,7 +139,7 @@ function Home() {
       <header className="header" role="banner">
         <div className="logo-container">
           <div className="logo-icon">
-            <img src={logoBranca} alt="Logo DoeVida" className="logo-img" />
+            <img src={logoSemFundo} alt="Logo DoeVida" className="logo-img" />
           </div>
           <h1 className="logo-text">DOEVIDA</h1>
         </div>
