@@ -12,6 +12,8 @@ import SaibaMais from "../../pages/Saiba_mais";
 import Hospital_Login from "../../pages/Hospital_Login";
 import Hospital_cadastro from "../../pages/Hospital_cadastro";
 import HospitalDashboard from "../../pages/HospitalDashboard";
+import HospitalHome from "../../pages/HospitalHome";
+import HospitalPerfil from "../../pages/HospitalPerfil";
 import Protocolo_agendamento from "../../pages/Protocolo_agendamento";
 import Agendamento from "../../pages/Agendamento";
 import Hospitais from "../../pages/Hospitais";
@@ -53,7 +55,9 @@ const AnimatedRoutes = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/hospital-cadastro" element={<Hospital_cadastro />} />
         <Route path="/hospital-login" element={<Hospital_Login />} />
+        <Route path="/hospital-home" element={<HospitalHome />} />
         <Route path="/hospital-dashboard" element={<HospitalDashboard />} />
+        <Route path="/hospital-perfil" element={<HospitalPerfil />} />
         <Route path="/protocolo-agendamento" element={<Protocolo_agendamento />} />
         <Route path="/agendamento" element={<Agendamento />} />
         <Route path="/hospitais" element={<Hospitais />} />

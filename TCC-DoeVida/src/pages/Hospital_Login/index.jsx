@@ -51,8 +51,8 @@ export default function Hospital_Login() {
         
         console.log('✅ Hospital logado com sucesso:', result.hospital)
         
-        // Redirecionar para dashboard do hospital
-        navigate('/hospital-dashboard')
+        // Redirecionar para home do hospital
+        navigate('/hospital-home')
       } else {
         setError(result.message || 'E-mail ou senha incorretos')
       }
