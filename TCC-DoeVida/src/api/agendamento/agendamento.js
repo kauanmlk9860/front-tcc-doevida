@@ -28,8 +28,10 @@ function buildUpdatePayload(data) {
 export async function criarAgendamento(data) {
   try {
     const payload = buildCreatePayload(data);
+    console.log('📤 Enviando agendamento para API:', payload);
     
     const res = await http.post('/agendamento', payload);
+    console.log('📥 Resposta da API:', res.data);
     
     // Verificar se a resposta indica sucesso
     const isSuccess = res.data.status === true || res.data.status_code === 201 || res.data.status_code === 200;
@@ -40,7 +42,10 @@ export async function criarAgendamento(data) {
       message: res.data.message || 'Agendamento criado com sucesso!'
     };
   } catch (error) {
-    console.error('Erro ao criar agendamento:', error);
+    console.error('❌ Erro ao criar agendamento:', error);
+    console.error('❌ Status:', error.response?.status);
+    console.error('❌ Dados:', error.response?.data);
+    console.error('❌ Mensagem completa:', JSON.stringify(error.response?.data, null, 2));
     
     // Tratar diferentes tipos de erro
     if (error.response?.status === 400) {
@@ -54,6 +59,13 @@ export async function criarAgendamento(data) {
       return {
         success: false,
         message: 'Não autorizado. Faça login novamente.'
+      };
+    }
+    
+    if (error.response?.status === 403) {
+      return {
+        success: false,
+        message: error.response.data?.message || 'Acesso negado. Você não tem permissão para realizar esta ação.'
       };
     }
     

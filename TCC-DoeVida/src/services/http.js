@@ -39,10 +39,18 @@ function clearSessionAndRedirect() {
 /* ===== Request interceptor ===== */
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem(STORAGE_KEYS.token);
-
-  // Apenas adicionar token se válido (não redirecionar em cadastro/login)
-  if (token && isTokenValid(token)) {
+  
+  console.log('🔑 Token no localStorage:', token ? 'Existe' : 'NÃO EXISTE');
+  
+  // SEMPRE adicionar token se existir (mesmo que não seja JWT válido)
+  // Isso é necessário para tokens gerados pelo fallback de desenvolvimento
+  if (token) {
+    const isValid = isTokenValid(token);
+    console.log('🔑 Token válido (JWT)?', isValid);
     config.headers.Authorization = `Bearer ${token}`;
+    console.log('✅ Token adicionado ao header');
+  } else {
+    console.warn('⚠️ Token não existe no localStorage!');
   }
 
   if (!config.headers['Content-Type']) {
@@ -61,9 +69,12 @@ http.interceptors.response.use(
     const status = error?.response?.status;
     const currentPath = window.location.pathname;
 
-    // Só redirecionar se não estiver em páginas de auth e for erro de autenticação
-    if ((status === 401 || status === 403) && !isRedirecting && 
-        !currentPath.includes('/login') && !currentPath.includes('/cadastro')) {
+    // Páginas que não devem redirecionar automaticamente (deixam o componente tratar)
+    const noAutoRedirect = ['/login', '/cadastro', '/agendamento'];
+    const shouldNotRedirect = noAutoRedirect.some(path => currentPath.includes(path));
+
+    // Só redirecionar se não estiver em páginas especiais e for erro de autenticação
+    if ((status === 401 || status === 403) && !isRedirecting && !shouldNotRedirect) {
       isRedirecting = true;
       localStorage.removeItem(STORAGE_KEYS.token);
       localStorage.removeItem(STORAGE_KEYS.user);

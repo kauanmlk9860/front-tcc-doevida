@@ -238,8 +238,30 @@ export default function Agendamento() {
       return alert("A data selecionada já passou. Escolha outra data.");
     }
     if (!selectedTime) return alert("Selecione um horário.");
+    
+    // Verificar se o usuário está autenticado
     if (!user?.id) {
-      return alert("Usuário não identificado. Faça login novamente.");
+      alert("Usuário não identificado. Faça login novamente.");
+      navigate('/login');
+      return;
+    }
+
+    // Verificar se o token existe
+    const token = localStorage.getItem('token');
+    const userStorage = localStorage.getItem('usuario');
+    
+    console.log('🔍 Verificando autenticação antes de agendar:');
+    console.log('  - Token existe?', !!token);
+    console.log('  - Token:', token ? token.substring(0, 30) + '...' : 'null');
+    console.log('  - User do contexto:', user);
+    console.log('  - User do localStorage:', userStorage ? JSON.parse(userStorage) : null);
+    console.log('  - User ID:', user?.id);
+    console.log('  - User role:', user?.role);
+    
+    if (!token) {
+      alert("Sessão expirada. Faça login novamente.");
+      navigate('/login');
+      return;
     }
 
     setLoadingConfirm(true);
@@ -257,6 +279,8 @@ export default function Agendamento() {
         hora: horaAgendamento,
         status: 'Agendado'
       };
+
+      console.log('📅 Criando agendamento:', dadosAgendamento);
 
       // Salvar na API
       const resultado = await criarAgendamento(dadosAgendamento);
@@ -285,13 +309,39 @@ export default function Agendamento() {
         }
 
         // Navegar para o protocolo
+        console.log('✅ Agendamento criado com sucesso!');
         navigate("/protocolo-agendamento", { state: payload });
       } else {
-        setErrorConfirm(resultado.message || 'Erro ao criar agendamento');
+        // Tratar erro de autenticação especificamente
+        if (resultado.message && resultado.message.includes('autorizado')) {
+          alert('Sessão expirada. Faça login novamente.');
+          navigate('/login');
+        } else {
+          setErrorConfirm(resultado.message || 'Erro ao criar agendamento');
+          alert(resultado.message || 'Erro ao criar agendamento');
+        }
       }
     } catch (error) {
-      console.error('Erro ao confirmar agendamento:', error);
-      setErrorConfirm('Erro de conexão. Verifique se o servidor está rodando.');
+      console.error('❌ Erro ao confirmar agendamento:', error);
+      console.error('❌ Detalhes completos:', {
+        status: error?.response?.status,
+        data: error?.response?.data,
+        message: error?.message
+      });
+      
+      // Verificar se é erro de autenticação
+      if (error?.response?.status === 401) {
+        alert('Sessão expirada. Faça login novamente.');
+        navigate('/login');
+      } else if (error?.response?.status === 403) {
+        const msg = error?.response?.data?.message || 'Acesso negado. Você não tem permissão para criar agendamentos.';
+        alert(msg + '\n\nPossíveis causas:\n- Seu usuário não tem as permissões necessárias\n- O token de autenticação está inválido\n\nTente fazer login novamente.');
+        setErrorConfirm(msg);
+      } else {
+        const errorMsg = error?.response?.data?.message || 'Erro de conexão. Verifique se o servidor está rodando.';
+        setErrorConfirm(errorMsg);
+        alert(errorMsg);
+      }
     } finally {
       setLoadingConfirm(false);
     }

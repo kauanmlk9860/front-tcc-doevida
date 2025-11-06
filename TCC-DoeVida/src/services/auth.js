@@ -104,62 +104,39 @@ class AuthService {
 
         console.log('✅ Resposta do login:', response.data);
 
-        const ok = response?.data?.status;
-        const token = response?.data?.token;
+        // Aceitar múltiplos formatos de resposta do backend
+        const data = response?.data || {};
+        const token = data.token || data?.dados?.token || data?.data?.token || null;
+        const usuarioRaw = data.usuario || data?.dados?.usuario || data?.data?.usuario || null;
+        const ok = data.status === true || data.status_code === 200 || !!token;
 
         if (ok && token) {
-          const usuario = response?.data?.usuario || null;
-          const role = deriveRoleFrom(usuario, token);
+          const role = deriveRoleFrom(usuarioRaw, token);
           const prevRaw = localStorage.getItem(STORAGE_KEYS.user);
           const prevUser = prevRaw ? JSON.parse(prevRaw) : null;
-          const merged = { ...(prevUser || {}), ...(usuario || {}) };
+          const merged = { ...(prevUser || {}), ...(usuarioRaw || {}) };
           const usuarioPersist = role ? { ...merged, role } : merged;
 
           this.setSession(token, usuarioPersist);
 
           return {
             success: true,
-            data: response.data,
-            message: response.data?.message || 'Login realizado com sucesso!',
+            data,
+            message: data?.message || 'Login realizado com sucesso!',
           };
         }
       } catch (loginError) {
-        // Se o endpoint /login não existir (404), tentar autenticação alternativa
+        console.error('❌ Erro no endpoint /login:', loginError);
+        
+        // Se o endpoint /login não existir (404)
         if (loginError?.response?.status === 404) {
-          console.log('⚠️ Endpoint /login não encontrado, tentando autenticação via /usuario');
+          console.error('⚠️ ERRO: Endpoint /login não encontrado!');
+          console.error('⚠️ O backend precisa ter um endpoint POST /login funcionando');
+          console.error('⚠️ Endpoint esperado: http://localhost:8080/v1/doevida/login');
           
-          // Buscar usuário por email
-          const usuariosResponse = await http.get('/usuario');
-          const usuarios = usuariosResponse?.data?.usuarios || [];
-          const usuario = usuarios.find(u => u.email?.toLowerCase() === email?.trim().toLowerCase());
-          
-          if (!usuario) {
-            return {
-              success: false,
-              message: 'E-mail ou senha incorretos',
-            };
-          }
-
-          // Verificar senha usando bcrypt (simulação - em produção isso deve ser feito no backend)
-          // Por enquanto, vamos aceitar qualquer senha e fazer login
-          console.log('✅ Usuário encontrado, fazendo login (modo desenvolvimento)');
-          
-          // Gerar um token fake para desenvolvimento
-          const fakeToken = btoa(JSON.stringify({ 
-            email: usuario.email, 
-            id: usuario.id,
-            exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 horas
-          }));
-          
-          const role = deriveRoleFrom(usuario, fakeToken);
-          const usuarioPersist = role ? { ...usuario, role } : usuario;
-          
-          this.setSession(fakeToken, usuarioPersist);
-
           return {
-            success: true,
-            data: { usuario: usuarioPersist, token: fakeToken },
-            message: 'Login realizado com sucesso!',
+            success: false,
+            message: 'Endpoint de login não encontrado. Verifique se o backend está configurado corretamente.'
           };
         }
         
