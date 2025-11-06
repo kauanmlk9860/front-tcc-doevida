@@ -25,14 +25,31 @@ export const UserProvider = ({ children }) => {
         setIsLoggedIn(loggedIn);
 
         if (loggedIn) {
-          // Tentar obter dados atualizados do perfil
-          const profileResult = await AuthService.obterPerfil();
-          if (profileResult.success && profileResult.data) {
-            setUser(profileResult.data);
-          } else {
-            // Fallback para dados do localStorage
-            const userData = AuthService.getUsuario();
+          // Pegar dados do localStorage primeiro
+          const userData = AuthService.getUsuario();
+          
+          // Verificar se é hospital (tem CNPJ ou role HOSPITAL)
+          const isHospital = userData?.cnpj || userData?.role === 'HOSPITAL' || userData?.tipo === 'HOSPITAL';
+          
+          if (isHospital) {
+            // Se for hospital, usar apenas dados do localStorage
+            // (não chamar API de perfil pois não existe endpoint específico)
+            console.log('🏥 Hospital detectado - usando dados do localStorage');
             setUser(userData);
+          } else {
+            // Se for usuário normal, tentar obter dados atualizados do perfil
+            try {
+              const profileResult = await AuthService.obterPerfil();
+              if (profileResult.success && profileResult.data) {
+                setUser(profileResult.data);
+              } else {
+                // Fallback para dados do localStorage
+                setUser(userData);
+              }
+            } catch (error) {
+              console.log('⚠️ Erro ao buscar perfil, usando localStorage');
+              setUser(userData);
+            }
           }
         }
       } catch (error) {
@@ -98,6 +115,7 @@ export const UserProvider = ({ children }) => {
     logout,
     updateUser,
     setUser, // Para atualizações manuais se necessário
+    setIsLoggedIn, // Para controle manual do estado de login
   };
 
   return (

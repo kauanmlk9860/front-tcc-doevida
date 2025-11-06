@@ -97,6 +97,13 @@ function Home() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
 
+  // Redirecionar hospitais para dashboard específico
+  useEffect(() => {
+    if (user && (user.role === 'HOSPITAL' || user.tipo === 'HOSPITAL')) {
+      navigate('/hospital-dashboard', { replace: true });
+    }
+  }, [user, navigate]);
+
   const YT_ID = "97Sx0KiExZM";
   const EMBED_URL =
     `https://www.youtube.com/embed/${YT_ID}` +
