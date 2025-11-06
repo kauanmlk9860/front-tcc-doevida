@@ -664,6 +664,20 @@ function Home() {
                 </div>
               )}
 
+              {user?.cpf && (
+                <div className="user-modal-info-card">
+                  <div className="user-modal-info-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 11H7m4 0h2m4 0h2m-9 4h2m4 0h2M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="#990410" strokeWidth="2"/>
+                    </svg>
+                  </div>
+                  <div className="user-modal-info-content">
+                    <span className="user-modal-info-label">CPF</span>
+                    <span className="user-modal-info-value">{user.cpf}</span>
+                  </div>
+                </div>
+              )}
+
               {user?.telefone && (
                 <div className="user-modal-info-card">
                   <div className="user-modal-info-icon">
@@ -674,6 +688,25 @@ function Home() {
                   <div className="user-modal-info-content">
                     <span className="user-modal-info-label">Telefone</span>
                     <span className="user-modal-info-value">{user.telefone}</span>
+                  </div>
+                </div>
+              )}
+
+              {user?.data_nascimento && (
+                <div className="user-modal-info-card">
+                  <div className="user-modal-info-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="#990410" strokeWidth="2"/>
+                      <line x1="16" y1="2" x2="16" y2="6" stroke="#990410" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="8" y1="2" x2="8" y2="6" stroke="#990410" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="3" y1="10" x2="21" y2="10" stroke="#990410" strokeWidth="2"/>
+                    </svg>
+                  </div>
+                  <div className="user-modal-info-content">
+                    <span className="user-modal-info-label">Data de Nascimento</span>
+                    <span className="user-modal-info-value">
+                      {new Date(user.data_nascimento).toLocaleDateString('pt-BR')}
+                    </span>
                   </div>
                 </div>
               )}

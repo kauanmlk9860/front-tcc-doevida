@@ -837,6 +837,11 @@ body::after {
   padding: 0 24px 24px;
 }
 
+/* Se houver mais de 2 cards, ajusta para 2x2 */
+.user-modal-info-grid:has(> :nth-child(3)) {
+  grid-template-columns: repeat(2, 1fr);
+}
+
 .user-modal-info-card {
   background: linear-gradient(135deg, rgba(153, 4, 16, 0.03) 0%, rgba(153, 4, 16, 0.01) 100%);
   border: 1px solid rgba(153, 4, 16, 0.1);
