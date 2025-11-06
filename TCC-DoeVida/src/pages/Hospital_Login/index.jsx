@@ -2,11 +2,13 @@ import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
 import logoSemFundo from '../../assets/icons/logo_semfundo.png'
-import AuthService from '../../services/auth.js'
+import { loginHospital } from '../../api/hospital/auth.js'
+import { useUser } from '../../contexts/UserContext'
 import PasswordInput from '../../components/jsx/PasswordInput'
 
 export default function Hospital_Login() {
   const navigate = useNavigate()
+  const { setUser, setIsLoggedIn } = useUser()
   const emailRef = useRef()
   const senhaRef = useRef()
   const [loading, setLoading] = useState(false)
@@ -36,11 +38,21 @@ export default function Hospital_Login() {
     setError('')
 
     try {
-      const result = await AuthService.login(email, senha)
+      const result = await loginHospital(email, senha)
       
-      if (result.success) {
-        // 🔹 Login validado no banco → redireciona para home
-        navigate('/home')
+      if (result.success && result.token) {
+        // Salvar token e dados do hospital
+        localStorage.setItem('token', result.token)
+        localStorage.setItem('usuario', JSON.stringify(result.hospital))
+        
+        // Atualizar contexto
+        setUser(result.hospital)
+        setIsLoggedIn(true)
+        
+        console.log('✅ Hospital logado com sucesso:', result.hospital)
+        
+        // Redirecionar para dashboard do hospital
+        navigate('/hospital-dashboard')
       } else {
         setError(result.message || 'E-mail ou senha incorretos')
       }

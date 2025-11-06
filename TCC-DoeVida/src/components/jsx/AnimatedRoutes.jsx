@@ -11,6 +11,7 @@ import Redefinir_senha from "../../pages/Redefinir_senha";
 import SaibaMais from "../../pages/Saiba_mais";
 import Hospital_Login from "../../pages/Hospital_Login";
 import Hospital_cadastro from "../../pages/Hospital_cadastro";
+import HospitalDashboard from "../../pages/HospitalDashboard";
 import Protocolo_agendamento from "../../pages/Protocolo_agendamento";
 import Agendamento from "../../pages/Agendamento";
 import Hospitais from "../../pages/Hospitais";
@@ -52,6 +53,7 @@ const AnimatedRoutes = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/hospital-cadastro" element={<Hospital_cadastro />} />
         <Route path="/hospital-login" element={<Hospital_Login />} />
+        <Route path="/hospital-dashboard" element={<HospitalDashboard />} />
         <Route path="/protocolo-agendamento" element={<Protocolo_agendamento />} />
         <Route path="/agendamento" element={<Agendamento />} />
         <Route path="/hospitais" element={<Hospitais />} />
