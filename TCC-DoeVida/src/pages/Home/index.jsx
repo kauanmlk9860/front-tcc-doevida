@@ -192,9 +192,23 @@ function Home() {
         <section className="hero-grid" aria-labelledby="hero-title">
           <div className="hero-left">
             <h2 id="hero-title" className="hero-title">
-              Doe sangue,
-              <br /> salve até 4 vidas
+              {isLoggedIn ? (
+                <>
+                  Olá,
+                  <br /> {user?.nome || 'Usuário'}
+                </>
+              ) : (
+                <>
+                  Doe sangue,
+                  <br /> salve até 4 vidas
+                </>
+              )}
             </h2>
+            {isLoggedIn && (
+              <p className="hero-subtitle">
+                Doe sangue, salve até 4 vidas
+              </p>
+            )}
             <button
               type="button"
               className="btn-cta"

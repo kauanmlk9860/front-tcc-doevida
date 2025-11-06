@@ -1,238 +1,467 @@
-import { useEffect, useMemo, useState } from 'react';
-import './style.css';
-import { useNavigate } from 'react-router-dom';
-import { useUser } from '../../contexts/UserContext';
-import { atualizarUsuario, obterSexos, obterTiposSanguineos } from '../../api/usuario/usuario';
-
-// Imagens
-const logoBranca = '/src/assets/Logo_Branca.png';
-const placeholder = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useUser } from '../../contexts/UserContext'
+import { atualizarUsuario, obterSexos, obterTiposSanguineos } from '../../api/usuario/usuario'
+import './style.css'
+import logoSemFundo from '../../assets/icons/logo_semfundo.png'
+import LogoutModal from '../../components/jsx/LogoutModal'
 
 function Perfil() {
-  const navigate = useNavigate();
-  const { user, isLoggedIn, loading, updateUser, setUser, logout } = useUser();
+  const navigate = useNavigate()
+  const { user, logout, updateUser } = useUser()
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [message, setMessage] = useState({ type: '', text: '' })
+  const [editMode, setEditMode] = useState(false)
+  const [tipos, setTipos] = useState([])
+  const [sexos, setSexos] = useState([])
 
-  const [edit, setEdit] = useState(false);
-  const [form, setForm] = useState({});
-  const [tipos, setTipos] = useState([]);
-  const [sexos, setSexos] = useState([]);
-  const [saving, setSaving] = useState(false);
-  const [donations, setDonations] = useState({ total: 12, ano: 3 }); // mock
+  const [formData, setFormData] = useState({
+    nome: '',
+    email: '',
+    senha: '',
+    cpf: '',
+    cep: '',
+    numero: '',
+    data_nascimento: '',
+    telefone: '',
+    id_sexo: '',
+    id_tipo_sanguineo: '',
+    foto_perfil: ''
+  })
 
+  // Verificar se está logado
   useEffect(() => {
-    if (!isLoggedIn) return;
-    setForm({
-      id: user?.id,
-      nome: user?.nome || '',
-      email: user?.email || '',
-      cpf: user?.cpf || '',
-      cep: user?.cep || '',
-      numero: user?.numero || '',
-      data_nascimento: user?.data_nascimento || '',
-      telefone: user?.telefone || '',
-      id_sexo: user?.id_sexo || '',
-      id_tipo_sanguineo: user?.id_tipo_sanguineo || '',
-      foto_perfil: user?.foto_perfil || '',
-    });
-  }, [user, isLoggedIn]);
-
-
-  useEffect(() => {
-    let isMounted = true;
-    
-    const loadData = async () => {
-      try {
-        const [t, s] = await Promise.all([
-          obterTiposSanguineos().catch(() => ({ data: [] })),
-          obterSexos().catch(() => ({ data: [] }))
-        ]);
-        
-        if (isMounted) {
-          if (t?.data) setTipos(Array.isArray(t.data) ? t.data : []);
-          if (s?.data) setSexos(Array.isArray(s.data) ? s.data : []);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-        if (isMounted) {
-          setTipos([]);
-          setSexos([]);
-        }
-      }
-    };
-
-    loadData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const bloodType = useMemo(() => {
-    return user?.tipo_sanguineo_nome || user?.tipo_sanguineo || 'O+';
-  }, [user]);
-
-  const handleSave = async () => {
-    if (!form?.id) { setEdit(false); return; }
-    setSaving(true);
-    const payload = { ...form };
-    const res = await atualizarUsuario(form.id, payload);
-    if (res?.success) {
-      await updateUser();
-      setEdit(false);
+    if (!user) {
+      navigate('/login')
+    } else {
+      carregarDados()
     }
-    setSaving(false);
-  };
+  }, [user, navigate])
 
-  if (loading || !user) {
-    return null; // Não mostra nada enquanto carrega
+  const carregarDados = async () => {
+    setLoading(true)
+    try {
+      // Carregar tipos sanguíneos e sexos
+      const [tiposRes, sexosRes] = await Promise.all([
+        obterTiposSanguineos(),
+        obterSexos()
+      ])
+      
+      if (tiposRes?.data) setTipos(Array.isArray(tiposRes.data) ? tiposRes.data : [])
+      if (sexosRes?.data) setSexos(Array.isArray(sexosRes.data) ? sexosRes.data : [])
+
+      // Preencher formulário com dados do usuário
+      if (user) {
+        setFormData({
+          nome: user.nome || '',
+          email: user.email || '',
+          senha: '',
+          cpf: user.cpf || '',
+          cep: user.cep || '',
+          numero: user.numero || '',
+          data_nascimento: user.data_nascimento || '',
+          telefone: user.telefone || '',
+          id_sexo: user.id_sexo || '',
+          id_tipo_sanguineo: user.id_tipo_sanguineo || '',
+          foto_perfil: user.foto_perfil || ''
+        })
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error)
+      setMessage({ type: 'error', text: 'Erro ao carregar dados' })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    
+    // Validações básicas
+    if (!formData.nome || !formData.email) {
+      setMessage({ type: 'error', text: 'Nome e email são obrigatórios' })
+      return
+    }
+
+    if (!formData.senha) {
+      setMessage({ type: 'error', text: 'Por favor, informe sua senha para confirmar as alterações' })
+      return
+    }
+
+    setSaving(true)
+    setMessage({ type: '', text: '' })
+
+    try {
+      const dataToUpdate = { ...formData }
+
+      const response = await atualizarUsuario(user.id, dataToUpdate)
+      
+      if (response.success) {
+        setMessage({ type: 'success', text: 'Perfil atualizado com sucesso!' })
+        setEditMode(false)
+        // Limpar senha após salvar
+        setFormData(prev => ({ ...prev, senha: '' }))
+        // Atualizar contexto do usuário
+        await updateUser()
+        setTimeout(() => {
+          carregarDados()
+        }, 1500)
+      } else {
+        setMessage({ type: 'error', text: response.message || 'Erro ao atualizar perfil' })
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar:', error)
+      setMessage({ type: 'error', text: 'Erro ao atualizar perfil' })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
+
+  const handleCancel = () => {
+    setEditMode(false)
+    setFormData(prev => ({ ...prev, senha: '' }))
+    carregarDados()
+    setMessage({ type: '', text: '' })
+  }
+
+  if (loading) {
+    return (
+      <div className="perfil-loading">
+        <div className="loading-spinner"></div>
+        <p>Carregando...</p>
+      </div>
+    )
   }
 
   return (
-    <div className="page-wrapper">
-      {/* Header Premium */}
-      <header className="perfil-header-premium">
+    <div className="perfil">
+      {/* Header */}
+      <header className="perfil-header">
         <div className="header-bg-pattern"></div>
-        <div className="header-content-premium">
-          <div className="header-left-simple">
+        <div className="header-content">
+          <div className="header-left">
             <button 
-              className="btn-voltar-premium"
-              onClick={() => navigate(-1)}
+              className="btn-voltar"
+              onClick={() => navigate('/home')}
+              aria-label="Voltar"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M19 12H5m7-7l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
+              Voltar
             </button>
-            
-            <div className="header-brand-simple">
-              <div className="brand-logo-container">
-                <img src={logoBranca} alt="DoeVida" className="header-logo" />
-                <div className="logo-glow"></div>
+            <div className="brand-section">
+              <img src={logoSemFundo} alt="DoeVida" className="header-logo" />
+              <div className="brand-info">
+                <h1>Meu Perfil</h1>
+                <p>Gerencie suas informações</p>
               </div>
-              <h1 className="brand-title">Perfil</h1>
             </div>
           </div>
-
-          <div className="user-brief">
-            <img
-              src={form.foto_perfil || placeholder}
-              alt={form.nome || 'Usuário'}
-              className="user-avatar-lg"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = placeholder;
-              }}
-            />
-            <div className="user-name-stack">
-              <span className="title">{form.nome || 'Usuário'}</span>
-              <span className="subtitle">{form.email || 'usuario@email.com'}</span>
-            </div>
+          <div className="header-right">
+            <button 
+              className="btn-logout-header"
+              onClick={() => setShowLogoutModal(true)}
+            >
+              Sair
+            </button>
           </div>
-
-          <div className="donations">
-            <div className="row">
-              <span className="label">Total de doações</span>
-              <span className="value">{donations.total}</span>
-            </div>
-            <div className="row">
-              <span className="label">Este ano</span>
-              <span className="value">{donations.ano}</span>
-            </div>
-          </div>
-
-          {/* Navegação removida do cabeçalho */}
         </div>
       </header>
 
-      <div className="blood-drop" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
-        {bloodType || 'O+'}
-      </div>
-
-      {/* Menu Flutuante */}
-      <div className="floating-menu">
-        <button 
-          className={location.pathname === '/home' ? 'active' : ''} 
-          onClick={() => navigate('/home')}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M9 22V12h6v10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          Home
-        </button>
-        <button 
-          className={location.pathname === '/saiba-mais' ? 'active' : ''}
-          onClick={() => navigate('/saiba-mais')}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          Notícias
-        </button>
-      </div>
-
-      <div className="content">
-        <section className="card">
-          <div className="card-title-row">
-            <h3 className="card-title">Dados</h3>
-            {!edit ? (
-              <button className="edit-btn" onClick={() => setEdit(true)}>✏️</button>
-            ) : null}
-          </div>
-
-          {!edit ? (
-            <div className="fields">
-              <div className="field"><label>Nome</label><div className="value">{user?.nome}</div></div>
-              <div className="field"><label>Email</label><div className="value">{user?.email}</div></div>
-              <div className="field"><label>CPF</label><div className="value">{user?.cpf}</div></div>
-              <div className="field"><label>Cep</label><div className="value">{user?.cep}</div></div>
-              <div className="field"><label>Data de Nascimento</label><div className="value">{user?.data_nascimento}</div></div>
-              <div className="field"><label>Celular</label><div className="value">{user?.telefone}</div></div>
-            </div>
-          ) : (
-            <div className="form-grid">
-              <input className="input" placeholder="Nome" value={form.nome} onChange={e=>setForm(v=>({...v,nome:e.target.value}))} />
-              <input className="input" placeholder="Email" type="email" value={form.email} onChange={e=>setForm(v=>({...v,email:e.target.value}))} />
-              <input className="input" placeholder="CPF" value={form.cpf} onChange={e=>setForm(v=>({...v,cpf:e.target.value}))} />
-              <input className="input" placeholder="CEP" value={form.cep} onChange={e=>setForm(v=>({...v,cep:e.target.value}))} />
-              <input className="input" placeholder="Data de Nascimento" value={form.data_nascimento} onChange={e=>setForm(v=>({...v,data_nascimento:e.target.value}))} />
-              <input className="input" placeholder="Celular" value={form.telefone||''} onChange={e=>setForm(v=>({...v,telefone:e.target.value}))} />
-              <select className="input" value={form.id_tipo_sanguineo||''} onChange={e=>setForm(v=>({...v,id_tipo_sanguineo:Number(e.target.value)}))}>
-                <option value="">Tipo sanguíneo</option>
-                {tipos?.map(t=> (
-                  <option key={t.id} value={t.id}>{t.tipo}</option>
-                ))}
-              </select>
-              <select className="input" value={form.id_sexo||''} onChange={e=>setForm(v=>({...v,id_sexo:Number(e.target.value)}))}>
-                <option value="">Sexo</option>
-                {sexos?.map(s=> (
-                  <option key={s.id} value={s.id}>{s.sexo}</option>
-                ))}
-              </select>
-              <div className="actions">
-                <button className="btn ghost" onClick={()=>{ setEdit(false); setForm(user || {}); }}>Cancelar</button>
-                <button className="btn primary" onClick={handleSave} disabled={saving}>{saving? 'Salvando...' : 'Salvar'}</button>
-              </div>
+      {/* Main Content */}
+      <main className="perfil-main">
+        <div className="container">
+          {/* Mensagens */}
+          {message.text && (
+            <div className={`message message-${message.type}`}>
+              {message.text}
             </div>
           )}
-        </section>
 
-        <aside className="card">
-          <div className="card-title-row">
-            <h3 className="card-title">Certificados</h3>
-            <span>›</span>
-          </div>
-          <div className="cert-card">
-            <span>Certificados</span>
-            <span>›</span>
-          </div>
-        </aside>
-      </div>
+          {/* Profile Card */}
+          <div className="profile-card">
+            {/* Avatar Section */}
+            <div className="avatar-section">
+              <div className="avatar-container">
+                <img
+                  src={formData.foto_perfil || "/placeholder-profile.png"}
+                  alt="Foto de perfil"
+                  className="avatar-img"
+                  onError={(e) => {
+                    e.target.onerror = null
+                    e.target.src = "/placeholder-profile.png"
+                  }}
+                />
+                <div className="avatar-badge">
+                  {user?.tipo_sanguineo || 'O+'}
+                </div>
+              </div>
+              <div className="avatar-info">
+                <h2>{formData.nome || 'Usuário'}</h2>
+                <p>{formData.email}</p>
+              </div>
+            </div>
 
-      <div className="logout-wrapper">
-        <button className="logout" onClick={()=> { logout(); navigate('/login'); }}>⎋ Sair</button>
-      </div>
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="profile-form">
+              {/* Informações Básicas */}
+              <div className="form-section">
+                <h3 className="section-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
+                  Informações Pessoais
+                </h3>
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label htmlFor="nome">Nome Completo *</label>
+                    <input
+                      type="text"
+                      id="nome"
+                      name="nome"
+                      value={formData.nome}
+                      onChange={handleChange}
+                      disabled={!editMode}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="email">E-mail *</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      disabled={!editMode}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="cpf">CPF</label>
+                    <input
+                      type="text"
+                      id="cpf"
+                      name="cpf"
+                      value={formData.cpf}
+                      onChange={handleChange}
+                      disabled={!editMode}
+                      placeholder="000.000.000-00"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="data_nascimento">Data de Nascimento</label>
+                    <input
+                      type="date"
+                      id="data_nascimento"
+                      name="data_nascimento"
+                      value={formData.data_nascimento}
+                      onChange={handleChange}
+                      disabled={!editMode}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="telefone">Telefone</label>
+                    <input
+                      type="tel"
+                      id="telefone"
+                      name="telefone"
+                      value={formData.telefone}
+                      onChange={handleChange}
+                      disabled={!editMode}
+                      placeholder="(00) 00000-0000"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="id_sexo">Sexo</label>
+                    <select
+                      id="id_sexo"
+                      name="id_sexo"
+                      value={formData.id_sexo}
+                      onChange={handleChange}
+                      disabled={!editMode}
+                    >
+                      <option value="">Selecione</option>
+                      {sexos.map(sexo => (
+                        <option key={sexo.id} value={sexo.id}>
+                          {sexo.nome}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Endereço */}
+              <div className="form-section">
+                <h3 className="section-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" strokeWidth="2"/>
+                    <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
+                  Endereço
+                </h3>
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label htmlFor="cep">CEP</label>
+                    <input
+                      type="text"
+                      id="cep"
+                      name="cep"
+                      value={formData.cep}
+                      onChange={handleChange}
+                      disabled={!editMode}
+                      placeholder="00000-000"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="numero">Número</label>
+                    <input
+                      type="text"
+                      id="numero"
+                      name="numero"
+                      value={formData.numero}
+                      onChange={handleChange}
+                      disabled={!editMode}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Informações Médicas */}
+              <div className="form-section">
+                <h3 className="section-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#990410"/>
+                  </svg>
+                  Informações Médicas
+                </h3>
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label htmlFor="id_tipo_sanguineo">Tipo Sanguíneo</label>
+                    <select
+                      id="id_tipo_sanguineo"
+                      name="id_tipo_sanguineo"
+                      value={formData.id_tipo_sanguineo}
+                      onChange={handleChange}
+                      disabled={!editMode}
+                    >
+                      <option value="">Selecione</option>
+                      {tipos.map(tipo => (
+                        <option key={tipo.id} value={tipo.id}>
+                          {tipo.nome}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="foto_perfil">URL da Foto de Perfil</label>
+                    <input
+                      type="url"
+                      id="foto_perfil"
+                      name="foto_perfil"
+                      value={formData.foto_perfil}
+                      onChange={handleChange}
+                      disabled={!editMode}
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Senha (apenas quando editando) */}
+              {editMode && (
+                <div className="form-section">
+                  <h3 className="section-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    Confirmação de Senha
+                  </h3>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label htmlFor="senha">Senha Atual *</label>
+                      <input
+                        type="password"
+                        id="senha"
+                        name="senha"
+                        value={formData.senha}
+                        onChange={handleChange}
+                        placeholder="Digite sua senha para confirmar"
+                        required={editMode}
+                      />
+                      <small>Necessário para confirmar as alterações</small>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Botões de Ação */}
+              <div className="form-actions">
+                {!editMode ? (
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    onClick={() => setEditMode(true)}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Editar Perfil
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={handleCancel}
+                      disabled={saving}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn-primary"
+                      disabled={saving}
+                    >
+                      {saving ? 'Salvando...' : 'Salvar Alterações'}
+                    </button>
+                  </>
+                )}
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+
+      {/* Logout Modal */}
+      {showLogoutModal && (
+        <LogoutModal
+          onConfirm={handleLogout}
+          onCancel={() => setShowLogoutModal(false)}
+        />
+      )}
     </div>
-  );
+  )
 }
 
-export default Perfil;
+export default Perfil

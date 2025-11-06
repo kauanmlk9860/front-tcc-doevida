@@ -187,9 +187,17 @@ body::after {
   color: var(--text);
   font-family: 'Poppins', sans-serif;
   font-weight: 900;
-  font-size: clamp(3rem, 7vw, 6rem);
+  font-size: clamp(4rem, 9vw, 8rem); /* Aumentado de 3rem/6rem para 4rem/8rem */
   line-height: 1.1;
   letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  color: #666;
+  margin: 0 0 2rem 0;
+  line-height: 1.5;
+  font-weight: 400;
 }
 
 .btn-cta {
@@ -436,7 +444,7 @@ body::after {
   }
 
   .hero-title {
-    font-size: clamp(2.2rem, 7vw, 3rem);
+    font-size: clamp(3rem, 8vw, 4.5rem);
     text-align: center;
   }
 
@@ -480,7 +488,7 @@ body::after {
   }
 
   .hero-title {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
 
   .feature-emoji.big {
@@ -705,7 +713,7 @@ body::after {
   background: white;
   border-radius: 24px;
   width: 100%;
-  max-width: 500px;
+  max-width: 520px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 
