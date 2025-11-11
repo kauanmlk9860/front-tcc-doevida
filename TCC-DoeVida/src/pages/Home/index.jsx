@@ -705,7 +705,31 @@ function Home() {
                   <div className="user-modal-info-content">
                     <span className="user-modal-info-label">Data de Nascimento</span>
                     <span className="user-modal-info-value">
-                      {new Date(user.data_nascimento).toLocaleDateString('pt-BR')}
+                      {(() => {
+                        try {
+                          // Criar data a partir da string fornecida
+                          const data = new Date(user.data_nascimento);
+                          if (isNaN(data.getTime())) return 'Data inválida';
+                          
+                          // Adicionar um dia para compensar a diferença de fuso horário
+                          data.setDate(data.getDate() + 1);
+                          
+                          // Formatar a data no formato brasileiro
+                          return data.toLocaleDateString('pt-BR');
+                        } catch (error) {
+                          console.error('Erro ao formatar data de nascimento:', error);
+                          try {
+                            // Tentar extrair a data diretamente da string se o formato for conhecido
+                            const match = user.data_nascimento.match(/(\d{4})-(\d{2})-(\d{2})/);
+                            if (match) {
+                              return `${match[3]}/${match[2]}/${match[1]}`; // Formato DD/MM/YYYY
+                            }
+                            return 'Data inválida';
+                          } catch (e) {
+                            return 'Data inválida';
+                          }
+                        }
+                      })()}
                     </span>
                   </div>
                 </div>

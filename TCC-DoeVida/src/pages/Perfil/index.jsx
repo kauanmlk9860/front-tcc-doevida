@@ -23,7 +23,6 @@ function Perfil() {
     senha: '',
     cpf: '',
     cep: '',
-    numero: '',
     data_nascimento: '',
     telefone: '',
     id_sexo: '',
@@ -49,22 +48,80 @@ function Perfil() {
         obterSexos()
       ])
       
-      if (tiposRes?.data) setTipos(Array.isArray(tiposRes.data) ? tiposRes.data : [])
-      if (sexosRes?.data) setSexos(Array.isArray(sexosRes.data) ? sexosRes.data : [])
+      // Extrair listas da estrutura correta da API
+      const tiposSanguineos = Array.isArray(tiposRes?.data?.tipos)
+        ? tiposRes.data.tipos
+        : Array.isArray(tiposRes?.data?.data?.tipos)
+          ? tiposRes.data.data.tipos
+          : []
+
+      const listaSexos = Array.isArray(sexosRes?.data?.sexo)
+        ? sexosRes.data.sexo
+        : Array.isArray(sexosRes?.data?.data?.sexo)
+          ? sexosRes.data.data.sexo
+          : []
+
+      setTipos(tiposSanguineos)
+      setSexos(listaSexos)
 
       // Preencher formulário com dados do usuário
       if (user) {
+        // Formatar data para o input date (YYYY-MM-DD)
+        let dataNascimento = ''
+        if (user.data_nascimento) {
+          try {
+            console.log('Data original:', user.data_nascimento);
+            // Criar data a partir da string fornecida
+            const data = new Date(user.data_nascimento);
+            
+            if (!isNaN(data.getTime())) {
+              // Adicionar um dia para compensar a diferença de fuso horário
+              data.setDate(data.getDate() + 1);
+              
+              // Extrair os componentes da data
+              const year = data.getFullYear();
+              const month = String(data.getMonth() + 1).padStart(2, '0');
+              const day = String(data.getDate()).padStart(2, '0');
+              
+              dataNascimento = `${year}-${month}-${day}`;
+              console.log('Data formatada para input:', dataNascimento, 'de', user.data_nascimento);
+            } else {
+              console.warn('Data de nascimento inválida:', user.data_nascimento);
+              // Tentar extrair a data diretamente da string se o formato for conhecido
+              const match = user.data_nascimento.match(/(\d{4})-(\d{2})-(\d{2})/);
+              if (match) {
+                dataNascimento = `${match[1]}-${match[2]}-${match[3]}`;
+                console.log('Data extraída da string:', dataNascimento);
+              }
+            }
+          } catch (error) {
+            console.error('Erro ao formatar data de nascimento:', error);
+          }
+        }
+
+        // Mapear IDs a partir dos nomes (quando não vierem)
+        let idTipo = user.id_tipo_sanguineo || ''
+        if ((!idTipo || idTipo === 'undefined') && user.tipo_sanguineo_nome) {
+          const t = tiposSanguineos.find(x => (x.tipo || '').toUpperCase() === user.tipo_sanguineo_nome.toUpperCase())
+          if (t) idTipo = String(t.id)
+        }
+
+        let idSexo = user.id_sexo || ''
+        if ((!idSexo || idSexo === 'undefined') && user.nome_sexo) {
+          const s = listaSexos.find(x => (x.sexo || '').toUpperCase() === user.nome_sexo.toUpperCase())
+          if (s) idSexo = String(s.id)
+        }
+
         setFormData({
           nome: user.nome || '',
           email: user.email || '',
           senha: '',
           cpf: user.cpf || '',
           cep: user.cep || '',
-          numero: user.numero || '',
-          data_nascimento: user.data_nascimento || '',
+          data_nascimento: dataNascimento,
           telefone: user.telefone || '',
-          id_sexo: user.id_sexo || '',
-          id_tipo_sanguineo: user.id_tipo_sanguineo || '',
+          id_sexo: idSexo || '',
+          id_tipo_sanguineo: idTipo || '',
           foto_perfil: user.foto_perfil || ''
         })
       }
@@ -301,7 +358,7 @@ function Perfil() {
                       <option value="">Selecione</option>
                       {sexos.map(sexo => (
                         <option key={sexo.id} value={sexo.id}>
-                          {sexo.nome}
+                          {sexo.sexo || sexo.nome}
                         </option>
                       ))}
                     </select>
@@ -331,17 +388,6 @@ function Perfil() {
                       placeholder="00000-000"
                     />
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="numero">Número</label>
-                    <input
-                      type="text"
-                      id="numero"
-                      name="numero"
-                      value={formData.numero}
-                      onChange={handleChange}
-                      disabled={!editMode}
-                    />
-                  </div>
                 </div>
               </div>
 
@@ -366,7 +412,7 @@ function Perfil() {
                       <option value="">Selecione</option>
                       {tipos.map(tipo => (
                         <option key={tipo.id} value={tipo.id}>
-                          {tipo.nome}
+                          {tipo.tipo}
                         </option>
                       ))}
                     </select>

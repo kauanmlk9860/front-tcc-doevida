@@ -1,36 +1,28 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import AuthService from '../../services/auth';
+import { Navigate } from 'react-router-dom';
+import { useUser } from '../../contexts/UserContext';
 
-/**
- * Componente para proteger rotas que requerem autenticação
- */
-function ProtectedRoute({ children }) {
-  const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+function ProtectedRoute({ children, requiredRole = null }) {
+  const { user, loading, isLoggedIn } = useUser();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const loggedIn = AuthService.isLoggedIn();
-      setIsAuthenticated(loggedIn);
-      
-      if (!loggedIn) {
-        navigate('/login', { replace: true });
-      }
-    };
-
-    checkAuth();
-  }, [navigate]);
-
-  // Mostra loading enquanto verifica autenticação
-  if (isAuthenticated === null) {
+  if (loading) {
     return <div style={{display: 'grid', placeItems: 'center', minHeight: '50vh'}}>Carregando...</div>;
   }
 
-  if (!isAuthenticated) {
-    return null;
+  // Se não está logado, redireciona para o login
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />;
   }
 
+  // Se há uma role requerida e o usuário não tem permissão
+  if (requiredRole) {
+    const userRole = user?.role || user?.tipo;
+    if (userRole !== requiredRole) {
+      // Redireciona para a página inicial ou para uma página de acesso negado
+      return <Navigate to="/" replace />;
+    }
+  }
+
+  // Se chegou até aqui, o usuário está autenticado e tem a role necessária
   return children;
 }
 
