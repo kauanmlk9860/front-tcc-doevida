@@ -9,4 +9,13 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)), // @ -> src
     },
   },
+  server: {
+    proxy: {
+      '/v1/doevida': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
 })

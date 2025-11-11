@@ -68,6 +68,14 @@ export async function criarUsuario(data) {
       };
     }
     
+    if (error.response?.status === 429) {
+      const backendMessage = error.response.data?.message;
+      return {
+        success: false,
+        message: backendMessage || 'Limite de requisições atingido. Aguarde alguns minutos e tente novamente.'
+      };
+    }
+    
     if (error.response?.status >= 500) {
       return {
         success: false,
