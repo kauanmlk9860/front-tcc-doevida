@@ -8,28 +8,47 @@ import http from '../../services/http.js';
  */
 export async function listarAgendamentosHospital(filtros = {}) {
   try {
+    console.log('🔍 Chamando API: GET /agendamento');
     // Buscar todos os agendamentos
     const res = await http.get('/agendamento');
+    console.log('📦 Resposta da API:', res);
+    console.log('📦 res.data:', res.data);
     
-    let agendamentos = res.data.agendamentos || res.data.dados || res.data || [];
+    // Tentar múltiplas estruturas de resposta
+    let agendamentos = res.data?.agendamentos || 
+                       res.data?.dados || 
+                       res.data?.data ||
+                       (Array.isArray(res.data) ? res.data : []);
+    
+    console.log('📋 Agendamentos extraídos:', agendamentos);
+    console.log('📊 Total de agendamentos:', Array.isArray(agendamentos) ? agendamentos.length : 0);
+    
+    // Garantir que é um array
+    if (!Array.isArray(agendamentos)) {
+      console.warn('⚠️ Agendamentos não é um array:', agendamentos);
+      agendamentos = [];
+    }
     
     // Filtrar por status se fornecido
     if (filtros.status && Array.isArray(agendamentos)) {
       agendamentos = agendamentos.filter(a => a.status === filtros.status);
+      console.log(`🔍 Filtrado por status "${filtros.status}":`, agendamentos.length);
     }
     
     // Filtrar por data se fornecido
     if (filtros.data && Array.isArray(agendamentos)) {
       agendamentos = agendamentos.filter(a => a.data === filtros.data);
+      console.log(`🔍 Filtrado por data "${filtros.data}":`, agendamentos.length);
     }
     
     return {
-      success: res.data.status || true,
+      success: true,
       data: agendamentos,
-      message: res.data.message
+      message: res.data.message || `${agendamentos.length} agendamentos encontrados`
     };
   } catch (error) {
-    console.error('Erro ao listar agendamentos do hospital:', error);
+    console.error('❌ Erro ao listar agendamentos do hospital:', error);
+    console.error('❌ Detalhes do erro:', error.response?.data);
     return {
       success: false,
       data: [],
@@ -180,27 +199,52 @@ export async function obterEstatisticasHospital(periodo = 'mes') {
  */
 export async function obterAgendamentosHoje() {
   try {
+    console.log('🔍 Chamando API: GET /agendamento (hoje)');
     const res = await http.get('/agendamento');
-    const agendamentos = res.data.agendamentos || res.data.dados || res.data || [];
+    console.log('📦 Resposta da API (hoje):', res.data);
+    
+    let agendamentos = res.data?.agendamentos || 
+                       res.data?.dados || 
+                       res.data?.data ||
+                       (Array.isArray(res.data) ? res.data : []);
+    
+    console.log('📋 Total de agendamentos antes do filtro:', agendamentos.length);
+    
+    // Garantir que é um array
+    if (!Array.isArray(agendamentos)) {
+      console.warn('⚠️ Agendamentos não é um array');
+      agendamentos = [];
+    }
     
     // Obter data de hoje no formato YYYY-MM-DD
     const hoje = new Date().toISOString().split('T')[0];
+    console.log('📅 Data de hoje:', hoje);
     
     // Filtrar agendamentos de hoje
     const agendamentosHoje = agendamentos.filter(a => {
-      if (!a.data) return false;
+      if (!a.data) {
+        console.log('⚠️ Agendamento sem data:', a);
+        return false;
+      }
       // Normalizar data para comparação
       const dataAgendamento = a.data.split('T')[0];
-      return dataAgendamento === hoje;
+      const isHoje = dataAgendamento === hoje;
+      if (isHoje) {
+        console.log('✅ Agendamento de hoje encontrado:', a);
+      }
+      return isHoje;
     });
+    
+    console.log('📊 Total de agendamentos de hoje:', agendamentosHoje.length);
     
     return {
       success: true,
       data: agendamentosHoje,
-      message: 'Agendamentos de hoje carregados'
+      message: `${agendamentosHoje.length} agendamentos de hoje`
     };
   } catch (error) {
-    console.error('Erro ao buscar agendamentos de hoje:', error);
+    console.error('❌ Erro ao buscar agendamentos de hoje:', error);
+    console.error('❌ Detalhes do erro:', error.response?.data);
     return {
       success: false,
       data: [],

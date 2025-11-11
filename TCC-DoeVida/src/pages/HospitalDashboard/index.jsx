@@ -179,48 +179,55 @@ function HospitalDashboard() {
       const resTodos = await listarAgendamentosHospital()
       console.log('Resposta de todos os agendamentos:', resTodos)
       
-      if (resTodos.success) {
-        console.log('Dados brutos dos agendamentos recebidos:', resTodos.data)
+      if (resTodos.success && resTodos.data) {
+        console.log('✅ Dados brutos dos agendamentos recebidos:', resTodos.data)
+        console.log('📊 Quantidade de agendamentos:', resTodos.data.length)
 
-        // Criar um array para armazenar os agendamentos com os dados completos do usuário
-        console.log('Buscando dados dos usuários para cada agendamento...')
-        const agendamentosComUsuarios = await Promise.all(
-          resTodos.data.map(async (agendamento) => {
-            try {
-              console.log(`Buscando dados do usuário ${agendamento.id_usuario} para o agendamento ${agendamento.id}`)
-              const dadosUsuario = await buscarDadosUsuario(agendamento.id_usuario, tiposMap)
-              console.log(`Dados do usuário ${agendamento.id_usuario} recebidos:`, dadosUsuario)
-              
-              return {
-                ...agendamento,
-                usuario: {
-                  ...dadosUsuario,
-                  id: agendamento.id_usuario,
-                  nome: dadosUsuario?.nome || 'Usuário não encontrado',
-                  email: dadosUsuario?.email || '',
-                  telefone: dadosUsuario?.numero || dadosUsuario?.telefone || '',
-                  tipoSanguineo: dadosUsuario?.tipoSanguineo || 'Não informado'
+        if (resTodos.data.length === 0) {
+          console.warn('⚠️ Nenhum agendamento encontrado')
+          setTodosAgendamentos([])
+        } else {
+          // Criar um array para armazenar os agendamentos com os dados completos do usuário
+          console.log('🔍 Buscando dados dos usuários para cada agendamento...')
+          const agendamentosComUsuarios = await Promise.all(
+            resTodos.data.map(async (agendamento) => {
+              try {
+                console.log(`👤 Buscando dados do usuário ${agendamento.id_usuario} para o agendamento ${agendamento.id}`)
+                const dadosUsuario = await buscarDadosUsuario(agendamento.id_usuario, tiposMap)
+                console.log(`✅ Dados do usuário ${agendamento.id_usuario} recebidos:`, dadosUsuario)
+                
+                return {
+                  ...agendamento,
+                  usuario: {
+                    ...dadosUsuario,
+                    id: agendamento.id_usuario,
+                    nome: dadosUsuario?.nome || 'Usuário não encontrado',
+                    email: dadosUsuario?.email || '',
+                    telefone: dadosUsuario?.numero || dadosUsuario?.telefone || '',
+                    tipoSanguineo: dadosUsuario?.tipoSanguineo || 'Não informado'
+                  }
+                }
+              } catch (error) {
+                console.error(`❌ Erro ao buscar dados do usuário ${agendamento.id_usuario}:`, error)
+                return {
+                  ...agendamento,
+                  usuario: {
+                    id: agendamento.id_usuario,
+                    nome: 'Erro ao carregar',
+                    email: '',
+                    tipoSanguineo: 'N/A'
+                  }
                 }
               }
-            } catch (error) {
-              console.error(`Erro ao buscar dados do usuário ${agendamento.id_usuario}:`, error)
-              return {
-                ...agendamento,
-                usuario: {
-                  id: agendamento.id_usuario,
-                  nome: 'Erro ao carregar',
-                  email: '',
-                  tipoSanguineo: 'N/A'
-                }
-              }
-            }
-          })
-        )
+            })
+          )
 
-        console.log('Agendamentos com dados completos dos usuários:', agendamentosComUsuarios)
-        setTodosAgendamentos(agendamentosComUsuarios)
+          console.log('✅ Agendamentos com dados completos dos usuários:', agendamentosComUsuarios)
+          setTodosAgendamentos(agendamentosComUsuarios)
+        }
       } else {
-        console.warn('Falha ao carregar todos os agendamentos:', resTodos.message)
+        console.error('❌ Falha ao carregar todos os agendamentos:', resTodos.message)
+        setTodosAgendamentos([])
       }
 
       // Carregar estatísticas
