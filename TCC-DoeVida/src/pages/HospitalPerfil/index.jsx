@@ -1,19 +1,19 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useUser } from '../../contexts/UserContext'
-import { atualizarHospital, buscarHospital } from '../../api/usuario/hospital'
-import './style.css'
-import logoSemFundo from '../../assets/icons/logo_semfundo.png'
-import LogoutModal from '../../components/jsx/LogoutModal'
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from '../../contexts/UserContext';
+import { atualizarHospital, buscarHospital } from '../../api/usuario/hospital';
+import './style.css';
+import logoSemFundo from '../../assets/icons/logo_semfundo.png';
+import LogoutModal from '../../components/jsx/LogoutModal';
 
 function HospitalPerfil() {
-  const navigate = useNavigate()
-  const { user, logout } = useUser()
-  const [showLogoutModal, setShowLogoutModal] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState({ type: '', text: '' })
-  const [editMode, setEditMode] = useState(false)
+  const navigate = useNavigate();
+  const { user, logout } = useUser();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const [editMode, setEditMode] = useState(false);
 
   const [formData, setFormData] = useState({
     nome: '',
@@ -29,24 +29,104 @@ function HospitalPerfil() {
     horario_fechamento: '',
     foto: '',
     tipo_hospital: ''
-  })
+  });
 
   // Verificar se é hospital
   useEffect(() => {
     if (!user || user.role !== 'HOSPITAL') {
-      navigate('/hospital-login')
+      navigate('/hospital-login');
     } else {
-      carregarDados()
+      carregarDados();
     }
-  }, [user, navigate])
+  }, [user, navigate]);
+
+  const formatarHora = (hora) => {
+    console.log('Hora recebida para formatação:', hora);
+    
+    // Se for nulo ou indefinido
+    if (!hora) {
+      console.log('Hora vazia, retornando string vazia');
+      return '';
+    }
+    
+    // Se já estiver no formato HH:MM
+    if (typeof hora === 'string' && /^\d{2}:\d{2}$/.test(hora)) {
+      console.log('Hora já está no formato HH:MM:', hora);
+      return hora;
+    }
+    
+    // Se for um timestamp ISO (1970-01-01T10:00:00.000Z)
+    if (typeof hora === 'string' && hora.includes('T')) {
+      console.log('Convertendo timestamp ISO para HH:MM:', hora);
+      try {
+        // Extrai apenas a parte do tempo (HH:MM:SS) e pega as primeiras 5 posições (HH:MM)
+        const timePart = hora.split('T')[1] || '';
+        const timeOnly = timePart.split('.')[0]; // Remove os milissegundos
+        const [hours, minutes] = timeOnly.split(':');
+        
+        // Formata para garantir 2 dígitos
+        const format = (num) => String(num).padStart(2, '0');
+        return `${format(hours)}:${format(minutes)}`;
+      } catch (error) {
+        console.error('Erro ao formatar timestamp ISO:', error);
+        return '';
+      }
+    }
+    
+    // Se for um número (timestamp em milissegundos)
+    if (typeof hora === 'number' || (typeof hora === 'string' && /^\d+$/.test(hora))) {
+      console.log('Convertendo timestamp numérico para HH:MM:', hora);
+      try {
+        const date = new Date(Number(hora));
+        if (isNaN(date.getTime())) {
+          console.error('Timestamp numérico inválido:', hora);
+          return '';
+        }
+        return date.toLocaleTimeString('pt-BR', { 
+          hour: '2-digit', 
+          minute: '2-digit', 
+          hour12: false 
+        });
+      } catch (error) {
+        console.error('Erro ao formatar timestamp numérico:', error);
+        return '';
+      }
+    }
+    
+    // Se for um objeto de data
+    if (hora instanceof Date && !isNaN(hora.getTime())) {
+      console.log('Convertendo objeto Date para HH:MM');
+      return hora.toLocaleTimeString('pt-BR', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: false 
+      });
+    }
+    
+    console.log('Formato de hora não reconhecido:', typeof hora, hora);
+    return '';
+  };
 
   const carregarDados = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       if (user?.id) {
-        const response = await buscarHospital(user.id)
+        const response = await buscarHospital(user.id);
         if (response.success && response.data) {
-          const hospital = response.data
+          const hospital = response.data;
+          console.log('Dados completos do hospital:', hospital);
+          
+          // Log dos horários brutos recebidos da API
+          console.log('Horário de abertura (bruto):', hospital.horario_abertura);
+          console.log('Horário de fechamento (bruto):', hospital.horario_fechamento);
+          
+          // Formatando os horários
+          const horarioAbertura = formatarHora(hospital.horario_abertura);
+          const horarioFechamento = formatarHora(hospital.horario_fechamento);
+          
+          console.log('Horário de abertura (formatado):', horarioAbertura);
+          console.log('Horário de fechamento (formatado):', horarioFechamento);
+          
           setFormData({
             nome: hospital.nome || '',
             email: hospital.email || '',
@@ -57,85 +137,85 @@ function HospitalPerfil() {
             telefone: hospital.telefone || '',
             capacidade_maxima: hospital.capacidade_maxima || '',
             convenios: hospital.convenios || '',
-            horario_abertura: hospital.horario_abertura?.substring(0, 5) || '',
-            horario_fechamento: hospital.horario_fechamento?.substring(0, 5) || '',
+            horario_abertura: horarioAbertura,
+            horario_fechamento: horarioFechamento,
             foto: hospital.foto || '',
             tipo_hospital: hospital.tipo_hospital || ''
-          })
+          });
         }
       }
     } catch (error) {
-      console.error('Erro ao carregar dados:', error)
-      setMessage({ type: 'error', text: 'Erro ao carregar dados do hospital' })
+      console.error('Erro ao carregar dados:', error);
+      setMessage({ type: 'error', text: 'Erro ao carregar dados do hospital' });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     
     // Validações básicas
     if (!formData.nome || !formData.email) {
-      setMessage({ type: 'error', text: 'Nome e email são obrigatórios' })
-      return
+      setMessage({ type: 'error', text: 'Nome e email são obrigatórios' });
+      return;
     }
 
     if (!formData.senha) {
-      setMessage({ type: 'error', text: 'Por favor, informe sua senha para confirmar as alterações' })
-      return
+      setMessage({ type: 'error', text: 'Por favor, informe sua senha para confirmar as alterações' });
+      return;
     }
 
-    setSaving(true)
-    setMessage({ type: '', text: '' })
+    setSaving(true);
+    setMessage({ type: '', text: '' });
 
     try {
       const dataToUpdate = {
         ...formData,
         capacidade_maxima: parseInt(formData.capacidade_maxima) || 0
-      }
+      };
 
-      const response = await atualizarHospital(user.id, dataToUpdate)
+      const response = await atualizarHospital(user.id, dataToUpdate);
       
       if (response.success) {
-        setMessage({ type: 'success', text: 'Perfil atualizado com sucesso!' })
-        setEditMode(false)
+        setMessage({ type: 'success', text: 'Perfil atualizado com sucesso!' });
+        setEditMode(false);
         // Limpar senha após salvar
-        setFormData(prev => ({ ...prev, senha: '' }))
+        setFormData(prev => ({ ...prev, senha: '' }));
         // Recarregar dados
         setTimeout(() => {
-          carregarDados()
-        }, 1500)
+          carregarDados();
+        }, 1500);
       } else {
-        setMessage({ type: 'error', text: response.message || 'Erro ao atualizar perfil' })
+        setMessage({ type: 'error', text: response.message || 'Erro ao atualizar perfil' });
       }
     } catch (error) {
-      console.error('Erro ao atualizar:', error)
-      setMessage({ type: 'error', text: 'Erro ao atualizar perfil' })
+      console.error('Erro ao atualizar:', error);
+      setMessage({ type: 'error', text: 'Erro ao atualizar perfil' });
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const handleLogout = () => {
-    logout()
-    navigate('/hospital-login')
-  }
+    logout();
+    navigate('/hospital-login');
+  };
 
   const handleCancel = () => {
-    setEditMode(false)
-    setFormData(prev => ({ ...prev, senha: '' }))
-    carregarDados()
-    setMessage({ type: '', text: '' })
-  }
+    setEditMode(false);
+    setFormData(prev => ({ ...prev, senha: '' }));
+    carregarDados();
+    setMessage({ type: '', text: '' });
+  };
 
   if (loading) {
     return (
@@ -143,7 +223,7 @@ function HospitalPerfil() {
         <div className="loading-spinner"></div>
         <p>Carregando...</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -318,31 +398,40 @@ function HospitalPerfil() {
 
               <div className="form-section">
                 <h3 className="section-title">⏰ Horário de Funcionamento</h3>
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label htmlFor="horario_abertura">Horário de Abertura</label>
-                    <input
-                      type="time"
-                      id="horario_abertura"
-                      name="horario_abertura"
-                      value={formData.horario_abertura}
-                      onChange={handleChange}
-                      disabled={!editMode}
-                    />
+                {!editMode ? (
+                  <div className="horario-display">
+                    {formData.horario_abertura && formData.horario_fechamento ? (
+                      <p className="horario-text">
+                        <span className="horario-label">Aberto de</span> {formData.horario_abertura} <span className="horario-label">até</span> {formData.horario_fechamento}
+                      </p>
+                    ) : (
+                      <p className="horario-text">Horário de funcionamento não definido</p>
+                    )}
                   </div>
-
-                  <div className="form-group">
-                    <label htmlFor="horario_fechamento">Horário de Fechamento</label>
-                    <input
-                      type="time"
-                      id="horario_fechamento"
-                      name="horario_fechamento"
-                      value={formData.horario_fechamento}
-                      onChange={handleChange}
-                      disabled={!editMode}
-                    />
+                ) : (
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label htmlFor="horario_abertura">Horário de Abertura</label>
+                      <input
+                        type="time"
+                        id="horario_abertura"
+                        name="horario_abertura"
+                        value={formData.horario_abertura || ''}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="horario_fechamento">Horário de Fechamento</label>
+                      <input
+                        type="time"
+                        id="horario_fechamento"
+                        name="horario_fechamento"
+                        value={formData.horario_fechamento || ''}
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               <div className="form-section">
@@ -428,7 +517,7 @@ function HospitalPerfil() {
                       className="btn-save"
                       disabled={saving}
                     >
-                      {saving ? 'Salvando...' : '💾 Salvar Alterações'}
+                      {saving ? 'Salvando...' : 'Salvar Alterações'}
                     </button>
                   </div>
                 </>
@@ -439,14 +528,13 @@ function HospitalPerfil() {
       </main>
 
       {/* Logout Modal */}
-      {showLogoutModal && (
-        <LogoutModal
-          onConfirm={handleLogout}
-          onCancel={() => setShowLogoutModal(false)}
-        />
-      )}
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+      />
     </div>
-  )
+  );
 }
 
-export default HospitalPerfil
+export default HospitalPerfil;

@@ -244,6 +244,26 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Horário de Funcionamento */
+.horario-display {
+  padding: 15px 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.horario-text {
+  margin: 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.horario-label {
+  font-weight: 600;
+  color: #495057;
+  margin-right: 5px;
+}
+
 /* Message */
 .message {
   margin: 20px 40px;
