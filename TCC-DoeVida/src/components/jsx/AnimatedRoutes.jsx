@@ -22,7 +22,11 @@ import HospitalDetalhes from "../../pages/HospitalDetalhes";
 import BancoSangue from "../../pages/BancoSangue";
 import Historico from "../../pages/Historico";
 import Perfil from "../../pages/Perfil";
+
+import RegistrarDoacao from "../../pages/RegistrarDoacao";
+
 import ProtectedRoute from "./ProtectedRoute";
+
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -115,6 +119,12 @@ const AnimatedRoutes = () => {
           <Route path="/protocolo-agendamento" element={
             <ProtectedRoute>
               <Protocolo_agendamento />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/registrar-doacao" element={
+            <ProtectedRoute>
+              <RegistrarDoacao />
             </ProtectedRoute>
           } />
           
