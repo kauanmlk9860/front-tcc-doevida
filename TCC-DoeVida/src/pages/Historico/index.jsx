@@ -31,9 +31,9 @@ function Historico() {
         const agendamentosFormatados = agendamentosData.map((a, index) => ({
           id: a.id,
           numero: `Doação ${String(agendamentosData.length - index).padStart(2, '0')}`,
-          hospital: a.hospital?.nome || a.nome_hospital || 'Hospital',
-          data: a.data,
-          horario: a.hora,
+          hospital: a.hospital?.nome || a.nome_hospital || a.hospital_nome || 'Hospital não informado',
+          data: a.data_agendamento || a.data, // Usa data_agendamento se existir, senão usa data
+          horario: a.hora_agendamento || a.hora, // Usa hora_agendamento se existir, senão usa hora
           status: a.status?.toLowerCase() || 'agendado',
           endereco: a.hospital?.endereco || a.endereco_hospital,
           telefone: a.hospital?.telefone || a.telefone_hospital,
@@ -66,22 +66,24 @@ function Historico() {
   };
 
   const formatarData = (data) => {
-    if (!data) return '05/07/2025';
+    if (!data) return 'Data não informada';
+    // Adiciona um dia para compensar o fuso horário
     const date = new Date(data);
+    date.setDate(date.getDate() + 1);
     return date.toLocaleDateString('pt-BR');
   };
 
   const formatarHorario = (horario) => {
-    if (!horario) return '09:00';
+    // Retorna o horário exatamente como está no banco de dados
+    // Sem formatação adicional para manter o valor original
+    if (!horario) return 'Horário não informado';
     
-    // Se vier no formato ISO (1970-01-01T09:00:00.000Z)
-    if (horario.includes && horario.includes('T')) {
-      const date = new Date(horario);
-      const horas = date.getUTCHours().toString().padStart(2, '0');
-      const minutos = date.getUTCMinutes().toString().padStart(2, '0');
-      return `${horas}:${minutos}`;
+    // Se for uma string de data ISO, extrai apenas a parte do tempo
+    if (typeof horario === 'string' && horario.includes('T')) {
+      return horario.split('T')[1].substring(0, 5); // Retorna apenas HH:MM
     }
     
+    // Retorna o horário como está
     return horario;
   };
 
