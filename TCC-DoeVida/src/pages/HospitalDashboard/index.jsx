@@ -8,7 +8,7 @@ import {
   concluirDoacao,
   cancelarAgendamentoHospital
 } from '../../api/hospital/agendamentos'
-import { buscarUsuario } from '../../api/usuario/usuario'
+import { buscarUsuario, obterTiposSanguineos } from '../../api/usuario/usuario'
 import './style.css'
 import logoSemFundo from '../../assets/icons/logo_semfundo.png'
 import LogoutModal from '../../components/jsx/LogoutModal'
@@ -30,6 +30,7 @@ function HospitalDashboard() {
   const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null)
   const [showDetalhesModal, setShowDetalhesModal] = useState(false)
   const [processando, setProcessando] = useState(false)
+  const [tiposSanguineos, setTiposSanguineos] = useState({})
 
   // Verificar se é hospital
   useEffect(() => {
@@ -45,51 +46,68 @@ function HospitalDashboard() {
   }, [])
 
   // Função para buscar informações completas do usuário
-  const buscarDadosUsuario = async (idUsuario) => {
+  const buscarDadosUsuario = async (idUsuario, tiposMap) => {
     try {
+      console.log('========================================')
       console.log('Buscando dados do usuário ID:', idUsuario)
       const res = await buscarUsuario(idUsuario)
-      console.log('Resposta da busca do usuário:', JSON.parse(JSON.stringify(res)))
+      console.log('Resposta completa da API buscarUsuario:', JSON.stringify(res, null, 2))
       
-      if (res && res.success) {
-        const userData = res.data || {};
-        console.log('Dados completos do usuário:', JSON.parse(JSON.stringify(userData)))
+      if (res && res.success && res.data) {
+        const userData = res.data;
+        console.log('userData recebido:', JSON.stringify(userData, null, 2))
         
-        // Mapear o ID do tipo sanguíneo para o tipo correspondente
-        const tiposSanguineos = {
-          1: 'A+', 2: 'A-', 3: 'B+', 4: 'B-',
-          5: 'AB+', 6: 'AB-', 7: 'O+', 8: 'O-'
-        };
+        // Tentar extrair o ID do tipo sanguíneo de diferentes possíveis campos
+        let idTipoSanguineo = userData.id_tipo_sanguineo || 
+                              userData.idTipoSanguineo || 
+                              userData.tipo_sanguineo?.id ||
+                              userData.tipoSanguineo?.id;
         
-        // Extrair o ID do tipo sanguíneo do usuário
-        const idTipoSanguineo = userData.id_tipo_sanguineo;
-        const tipoSanguineo = idTipoSanguineo ? tiposSanguineos[idTipoSanguineo] || 'N/A' : 'N/A';
+        console.log('ID do tipo sanguíneo encontrado:', idTipoSanguineo)
+        console.log('Tipos sanguíneos disponíveis:', tiposMap)
         
-        console.log(`Tipo sanguíneo mapeado: ID ${idTipoSanguineo} -> ${tipoSanguineo}`);
+        // Se o tipo sanguíneo já vier como string (A+, B-, etc)
+        let tipoSanguineo = 'Não informado';
+        
+        if (typeof userData.tipo_sanguineo === 'string' && userData.tipo_sanguineo !== '') {
+          tipoSanguineo = userData.tipo_sanguineo;
+          console.log('Tipo sanguíneo veio como string:', tipoSanguineo)
+        } else if (typeof userData.tipoSanguineo === 'string' && userData.tipoSanguineo !== '') {
+          tipoSanguineo = userData.tipoSanguineo;
+          console.log('Tipo sanguíneo veio como tipoSanguineo:', tipoSanguineo)
+        } else if (idTipoSanguineo && tiposMap[idTipoSanguineo]) {
+          tipoSanguineo = tiposMap[idTipoSanguineo];
+          console.log(`Tipo sanguíneo mapeado: ID ${idTipoSanguineo} -> ${tipoSanguineo}`)
+        } else {
+          console.warn('⚠️ Tipo sanguíneo não encontrado! ID:', idTipoSanguineo, 'userData:', userData)
+        }
+        
+        console.log(`✅ Tipo sanguíneo final: ${tipoSanguineo}`);
         
         // Retornar os dados do usuário com o tipo sanguíneo incluído
         const result = {
           ...userData,
           tipoSanguineo: tipoSanguineo,
-          id_tipo_sanguineo: idTipoSanguineo // Garantir que o ID também esteja disponível
+          id_tipo_sanguineo: idTipoSanguineo
         };
         
-        console.log('Dados do usuário que serão retornados:', JSON.parse(JSON.stringify(result)));
+        console.log('Dados finais do usuário:', result);
+        console.log('========================================')
         return result;
       }
       
-      console.warn('Usuário não encontrado ou erro na resposta:', res)
+      console.warn('❌ Usuário não encontrado ou erro na resposta:', res)
       return { 
         id: idUsuario, 
         nome: 'Usuário não encontrado',
-        tipoSanguineo: 'N/A'
+        tipoSanguineo: 'Não informado'
       }
     } catch (error) {
-      console.error('Erro ao buscar dados do usuário:', error)
+      console.error('❌ Erro ao buscar dados do usuário:', error)
       return { 
         id: idUsuario, 
         nome: 'Erro ao carregar',
-        tipoSanguineo: 'N/A'
+        tipoSanguineo: 'Não informado'
       }
     }
   }
@@ -99,6 +117,27 @@ function HospitalDashboard() {
     console.log('Iniciando carregamento dos dados...')
     
     try {
+      // Carregar tipos sanguíneos da API
+      console.log('Buscando tipos sanguíneos da API...')
+      const resTipos = await obterTiposSanguineos()
+      console.log('Resposta dos tipos sanguíneos:', resTipos)
+      
+      let tiposMap = {
+        1: 'A+', 2: 'A-', 3: 'B+', 4: 'B-',
+        5: 'AB+', 6: 'AB-', 7: 'O+', 8: 'O-'
+      };
+      
+      if (resTipos.success && resTipos.data) {
+        // Criar mapeamento dinâmico a partir da API
+        tiposMap = resTipos.data.reduce((acc, tipo) => {
+          acc[tipo.id] = tipo.tipo;
+          return acc;
+        }, {});
+        console.log('Mapeamento de tipos sanguíneos criado:', tiposMap)
+      }
+      
+      setTiposSanguineos(tiposMap)
+      
       // Carregar agendamentos de hoje
       console.log('Buscando agendamentos de hoje...')
       const resHoje = await obterAgendamentosHoje()
@@ -125,7 +164,7 @@ function HospitalDashboard() {
           resTodos.data.map(async (agendamento) => {
             try {
               console.log(`Buscando dados do usuário ${agendamento.id_usuario} para o agendamento ${agendamento.id}`)
-              const dadosUsuario = await buscarDadosUsuario(agendamento.id_usuario)
+              const dadosUsuario = await buscarDadosUsuario(agendamento.id_usuario, tiposMap)
               console.log(`Dados do usuário ${agendamento.id_usuario} recebidos:`, dadosUsuario)
               
               return {
@@ -135,7 +174,8 @@ function HospitalDashboard() {
                   id: agendamento.id_usuario,
                   nome: dadosUsuario?.nome || 'Usuário não encontrado',
                   email: dadosUsuario?.email || '',
-                  tipoSanguineo: dadosUsuario?.tipoSanguineo || 'N/A'
+                  telefone: dadosUsuario?.numero || dadosUsuario?.telefone || '',
+                  tipoSanguineo: dadosUsuario?.tipoSanguineo || 'Não informado'
                 }
               }
             } catch (error) {
@@ -482,8 +522,8 @@ function HospitalDashboard() {
                     </div>
                     <div>
                       <h4>{agendamento.usuario?.nome || 'Doador'}</h4>
-                      <p className="tipo-sanguineo">
-                        {agendamento.usuario?.tipo_sanguineo || 'Não informado'}
+                      <p className="tipo-sanguineo-badge">
+                        🩸 {agendamento.usuario?.tipoSanguineo || 'Tipo não informado'}
                       </p>
                     </div>
                   </div>
@@ -741,7 +781,7 @@ function HospitalDashboard() {
                 </div>
                 <div className="info-item">
                   <span className="label">Tipo Sanguíneo:</span>
-                  <span className="value tipo-destaque">{agendamentoSelecionado.usuario?.tipo_sanguineo || 'Não informado'}</span>
+                  <span className="value tipo-destaque">🩸 {agendamentoSelecionado.usuario?.tipoSanguineo || 'Não informado'}</span>
                 </div>
               </div>
 
