@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
 import { atualizarHospital, buscarHospital } from '../../api/usuario/hospital';
 import './style.css';
-import logoSemFundo from '../../assets/icons/logo_semfundo.png';
+import logo from '../../assets/logo.png';
 import LogoutModal from '../../components/jsx/LogoutModal';
 
 function HospitalPerfil() {
@@ -111,7 +111,10 @@ function HospitalPerfil() {
     setLoading(true);
     try {
       if (user?.id) {
+        console.log('Buscando dados do hospital para o ID:', user.id);
         const response = await buscarHospital(user.id);
+        console.log('Resposta da API ao buscar hospital:', response);
+        
         if (response.success && response.data) {
           const hospital = response.data;
           console.log('Dados completos do hospital:', hospital);
@@ -127,26 +130,42 @@ function HospitalPerfil() {
           console.log('Horário de abertura (formatado):', horarioAbertura);
           console.log('Horário de fechamento (formatado):', horarioFechamento);
           
-          setFormData({
+          // Mapeando os campos de telefone e CEP, verificando possíveis nomes alternativos
+          const telefone = hospital.telefone || hospital.telefone_contato || hospital.telefone1 || hospital.telefone2 || '';
+          const cep = hospital.cep || '';
+          
+          console.log('Telefone encontrado:', telefone);
+          console.log('CEP encontrado:', cep);
+          
+          const formDataAtualizado = {
             nome: hospital.nome || '',
             email: hospital.email || '',
             senha: '', // Não preencher senha por segurança
             cnpj: hospital.cnpj || '',
             crm: hospital.crm || '',
-            cep: hospital.cep || '',
-            telefone: hospital.telefone || '',
+            cep: cep,
+            telefone: telefone,
             capacidade_maxima: hospital.capacidade_maxima || '',
             convenios: hospital.convenios || '',
             horario_abertura: horarioAbertura,
             horario_fechamento: horarioFechamento,
             foto: hospital.foto || '',
             tipo_hospital: hospital.tipo_hospital || ''
-          });
+          };
+          
+          console.log('FormData preenchido:', formDataAtualizado);
+          setFormData(formDataAtualizado);
+        } else {
+          console.error('Resposta da API sem sucesso ou sem dados:', response);
+          setMessage({ type: 'error', text: response.message || 'Dados do hospital não encontrados' });
         }
+      } else {
+        console.error('ID do usuário não encontrado:', user);
+        setMessage({ type: 'error', text: 'ID do usuário não encontrado' });
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
-      setMessage({ type: 'error', text: 'Erro ao carregar dados do hospital' });
+      setMessage({ type: 'error', text: 'Erro ao carregar dados do hospital: ' + (error.message || 'Erro desconhecido') });
     } finally {
       setLoading(false);
     }
@@ -240,7 +259,7 @@ function HospitalPerfil() {
               ← Voltar
             </button>
             <div className="brand-section">
-              <img src={logoSemFundo} alt="DoeVida" className="header-logo" />
+              <img src={logo} alt="DoeVida" className="header-logo" />
               <div className="brand-info">
                 <h1>Meu Perfil</h1>
                 <p>Gerencie suas informações</p>
@@ -465,25 +484,7 @@ function HospitalPerfil() {
                 </div>
               </div>
 
-              <div className="form-section">
-                <h3 className="section-title">🖼️ Foto</h3>
-                <div className="form-grid">
-                  <div className="form-group form-group-full">
-                    <label htmlFor="foto">URL da Foto</label>
-                    <input
-                      type="text"
-                      id="foto"
-                      name="foto"
-                      value={formData.foto}
-                      onChange={handleChange}
-                      disabled={!editMode}
-                      placeholder="https://exemplo.com/foto.jpg"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {editMode && (
+                {editMode && (
                 <>
                   <div className="form-section">
                     <h3 className="section-title">🔒 Confirmação de Senha</h3>
@@ -517,7 +518,7 @@ function HospitalPerfil() {
                       className="btn-save"
                       disabled={saving}
                     >
-                      {saving ? 'Salvando...' : 'Salvar Alterações'}
+                      {saving ? 'Salvando...' : 'Salvar'}
                     </button>
                   </div>
                 </>

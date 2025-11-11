@@ -22,45 +22,64 @@ export const UserProvider = ({ children }) => {
       setLoading(true);
       try {
         const loggedIn = AuthService.isLoggedIn();
-        setIsLoggedIn(loggedIn);
-
+        console.log('🔍 Estado de autenticação:', loggedIn ? 'Logado' : 'Não logado');
+        
         if (loggedIn) {
           // Pegar dados do localStorage primeiro
           const userData = AuthService.getUsuario();
+          console.log('📋 Dados do usuário do localStorage:', userData);
           
           // Verificar se é hospital (tem CNPJ ou role HOSPITAL)
           const isHospital = userData?.cnpj || userData?.role === 'HOSPITAL' || userData?.tipo === 'HOSPITAL';
           
           if (isHospital) {
             // Se for hospital, usar apenas dados do localStorage
-            // (não chamar API de perfil pois não existe endpoint específico)
             console.log('🏥 Hospital detectado - usando dados do localStorage');
             setUser(userData);
+            setIsLoggedIn(true);
           } else {
             // Se for usuário normal, tentar obter dados atualizados do perfil
             try {
+              console.log('🔄 Buscando dados atualizados do perfil...');
               const profileResult = await AuthService.obterPerfil();
+              console.log('✅ Resposta da API de perfil:', profileResult);
+              
               if (profileResult.success && profileResult.data) {
+                console.log('✅ Dados do perfil atualizados com sucesso');
                 setUser(profileResult.data);
+                setIsLoggedIn(true);
               } else {
                 // Fallback para dados do localStorage
+                console.warn('⚠️ Dados de perfil inválidos, usando localStorage');
                 setUser(userData);
+                setIsLoggedIn(true);
               }
             } catch (error) {
-              console.log('⚠️ Erro ao buscar perfil, usando localStorage');
+              console.error('❌ Erro ao buscar perfil:', error);
+              console.log('⚠️ Usando dados do localStorage devido ao erro');
               setUser(userData);
+              setIsLoggedIn(true);
             }
           }
+        } else {
+          console.log('🔒 Usuário não está logado');
+          setUser(null);
+          setIsLoggedIn(false);
         }
       } catch (error) {
-        console.error('Erro ao carregar dados do usuário:', error);
-        // Em caso de erro, usar dados do localStorage se disponíveis
+        console.error('❌ Erro ao carregar dados do usuário:', error);
+        // Em caso de erro, tentar usar dados do localStorage se disponíveis
         if (AuthService.isLoggedIn()) {
+          console.log('⚠️ Usando fallback para dados do localStorage');
           const userData = AuthService.getUsuario();
           setUser(userData);
           setIsLoggedIn(true);
+        } else {
+          setUser(null);
+          setIsLoggedIn(false);
         }
       } finally {
+        console.log('🏁 Finalizando carregamento do usuário');
         setLoading(false);
       }
     };

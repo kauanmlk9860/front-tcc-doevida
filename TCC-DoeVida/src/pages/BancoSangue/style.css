@@ -30,12 +30,13 @@
 .header-content-banco {
   width: 100%;
   margin: 0 auto;
-  padding: 20px 40px;
+  padding: 15px 40px;
   position: relative;
   z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 100px;
 }
 
 .header-left-banco {
@@ -79,11 +80,15 @@
 }
 
 .header-logo-banco {
-  width: 48px;
-  height: 48px;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  height: 80px;
+  width: auto;
+  filter: brightness(0) invert(1);
   z-index: 2;
   position: relative;
+  object-fit: contain;
+  margin: 0;
+  padding: 0;
+  display: block;
 }
 
 .logo-glow-banco {

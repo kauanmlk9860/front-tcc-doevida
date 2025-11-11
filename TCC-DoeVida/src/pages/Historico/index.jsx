@@ -154,7 +154,7 @@ function Historico() {
           </button>
 
           <div className="historico-title-section">
-            <h1>Histórico de Doação</h1>
+            <h1 style={{ fontSize: '1.8rem', margin: 0 }}>Histórico de Doação</h1>
           </div>
 
           <div className="historico-search-wrapper">

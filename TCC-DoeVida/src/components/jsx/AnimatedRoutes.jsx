@@ -2,6 +2,7 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../style/AnimatedRoutes.css";
 
+// Importações de componentes
 import SplashScreen from "../SplashScreen";
 import Home from "../../pages/Home";
 import Login from "../../pages/Login";
@@ -21,7 +22,7 @@ import HospitalDetalhes from "../../pages/HospitalDetalhes";
 import BancoSangue from "../../pages/BancoSangue";
 import Historico from "../../pages/Historico";
 import Perfil from "../../pages/Perfil";
-
+import ProtectedRoute from "./ProtectedRoute";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -46,31 +47,83 @@ const AnimatedRoutes = () => {
       {/* Renderiza o conteúdo primeiro */}
       <div className={`app-container ${isAnimating ? 'page-changing' : 'page-stable'}`}>
         <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Navigate to="/home" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/cadastro" element={<Cadastro />} />
-        <Route path="/recuperar-senha" element={<Recuperar_senha />} />
-        <Route path="/redefinir-senha" element={<Redefinir_senha />} />
-        <Route path="/saiba-mais" element={<SaibaMais />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/hospital-cadastro" element={<Hospital_cadastro />} />
-        <Route path="/hospital-login" element={<Hospital_Login />} />
-        <Route path="/hospital-home" element={<HospitalHome />} />
-        <Route path="/hospital-dashboard" element={<HospitalDashboard />} />
-        <Route path="/hospital-perfil" element={<HospitalPerfil />} />
-        <Route path="/protocolo-agendamento" element={<Protocolo_agendamento />} />
-        <Route path="/agendamento" element={<Agendamento />} />
-        <Route path="/hospitais" element={<Hospitais />} />
-        <Route path="/hospital/:id" element={<HospitalDetalhes />} />
-        <Route path="/banco-sangue" element={<BancoSangue />} />
-        <Route path="/historico" element={<Historico />} />
-        <Route path="/perfil" element={<Perfil />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </div>
-    
-    {/* Splash screen como overlay sobre o conteúdo */}
-    {isLoading && <SplashScreen onLoadingComplete={handleLoadingComplete} />}
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/recuperar-senha" element={<Recuperar_senha />} />
+          <Route path="/redefinir-senha" element={<Redefinir_senha />} />
+          <Route path="/saiba-mais" element={<SaibaMais />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/hospital-cadastro" element={<Hospital_cadastro />} />
+          <Route path="/hospital-login" element={<Hospital_Login />} />
+          
+          {/* Rotas protegidas - Apenas para usuários logados */}
+          <Route path="/hospital-home" element={
+            <ProtectedRoute>
+              <HospitalHome />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/hospital-dashboard" element={
+            <ProtectedRoute>
+              <HospitalDashboard />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/hospital-perfil" element={
+            <ProtectedRoute>
+              <HospitalPerfil />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/agendamento" element={
+            <ProtectedRoute>
+              <Agendamento />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/hospitais" element={
+            <ProtectedRoute>
+              <Hospitais />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/hospital/:id" element={
+            <ProtectedRoute>
+              <HospitalDetalhes />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/banco-sangue" element={
+            <ProtectedRoute>
+              <BancoSangue />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/historico" element={
+            <ProtectedRoute>
+              <Historico />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/perfil" element={
+            <ProtectedRoute>
+              <Perfil />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/protocolo-agendamento" element={
+            <ProtectedRoute>
+              <Protocolo_agendamento />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </div>
+      
+      {/* Splash screen como overlay sobre o conteúdo */}
+      {isLoading && <SplashScreen onLoadingComplete={handleLoadingComplete} />}
     </>
   );
 };
