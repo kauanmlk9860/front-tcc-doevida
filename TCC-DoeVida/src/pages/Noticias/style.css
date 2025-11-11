@@ -140,14 +140,18 @@
    ======================================== */
 .noticias-hero {
   padding: 4rem 2rem 3rem;
-  text-align: center;
   position: relative;
   z-index: 1;
 }
 
 .noticias-hero-content {
-  max-width: 800px;
+  max-width: 1400px;
   margin: 0 auto;
+}
+
+.noticias-hero-text {
+  text-align: center;
+  margin-bottom: 3rem;
 }
 
 .noticias-hero-icon {
@@ -191,6 +195,111 @@
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.6;
+}
+
+/* ========================================
+   CARROSSEL DE NOTÍCIAS EM DESTAQUE
+   ======================================== */
+.carousel-container {
+  margin-top: 2.5rem;
+  position: relative;
+  width: 100%;
+}
+
+.carousel-wrapper {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 20px;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carousel-slide {
+  min-width: calc(33.33% - 14px);
+  height: 280px;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(153, 4, 16, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.carousel-slide:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 
+    0 20px 40px rgba(153, 4, 16, 0.25),
+    0 10px 20px rgba(0, 0, 0, 0.15);
+  border-color: var(--brand);
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.carousel-slide:hover img {
+  transform: scale(1.1);
+}
+
+.carousel-slide-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.6) 50%, transparent 100%);
+  color: white;
+}
+
+.carousel-slide-overlay h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 1.5rem;
+}
+
+.carousel-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(153, 4, 16, 0.2);
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 0;
+}
+
+.carousel-indicator.active {
+  background: var(--brand);
+  width: 32px;
+  border-radius: 6px;
+}
+
+.carousel-indicator:hover:not(.active) {
+  background: rgba(153, 4, 16, 0.4);
 }
 
 /* ========================================
@@ -341,18 +450,25 @@
 /* ========================================
    GRID DE NOTÍCIAS
    ======================================== */
-.noticias-main {
-  padding: 0 2rem 4rem;
-  position: relative;
-  z-index: 1;
-}
-
 .noticias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 2rem;
+}
+
+/* Animação de entrada dos cards */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .noticia-card {
@@ -365,6 +481,8 @@
   border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
+  animation: slideInUp 0.6s ease-out backwards;
+  animation-delay: calc(var(--index) * 0.05s);
 }
 
 .noticia-card:hover {
@@ -1251,5 +1369,46 @@ html {
   }
   100% {
     box-shadow: 0 0 0 4px rgba(153, 4, 16, 0.1);
+  }
+}
+
+/* ========================================
+   RESPONSIVIDADE CARROSSEL
+   ======================================== */
+@media (max-width: 1024px) {
+  .carousel-slide {
+    min-width: calc(50% - 10px);
+    height: 240px;
+  }
+  
+  .carousel-track {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel-slide {
+    min-width: 100%;
+    height: 220px;
+  }
+  
+  .carousel-track {
+    gap: 0;
+  }
+  
+  .carousel-slide-overlay {
+    padding: 1rem;
+  }
+  
+  .carousel-slide-overlay h4 {
+    font-size: 0.9rem;
+  }
+  
+  .noticias-hero {
+    padding: 3rem 1.5rem 2rem;
+  }
+  
+  .noticias-hero-text {
+    margin-bottom: 2rem;
   }
 }

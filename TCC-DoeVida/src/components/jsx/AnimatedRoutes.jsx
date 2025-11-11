@@ -22,6 +22,7 @@ import HospitalDetalhes from "../../pages/HospitalDetalhes";
 import BancoSangue from "../../pages/BancoSangue";
 import Historico from "../../pages/Historico";
 import Perfil from "../../pages/Perfil";
+import Noticias from "../../pages/Noticias";
 
 import RegistrarDoacao from "../../pages/RegistrarDoacao";
 
@@ -58,6 +59,7 @@ const AnimatedRoutes = () => {
           <Route path="/redefinir-senha" element={<Redefinir_senha />} />
           <Route path="/saiba-mais" element={<SaibaMais />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/noticias" element={<Noticias />} />
           <Route path="/hospital-cadastro" element={<Hospital_cadastro />} />
           <Route path="/hospital-login" element={<Hospital_Login />} />
           
