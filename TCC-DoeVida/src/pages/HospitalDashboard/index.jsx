@@ -48,26 +48,14 @@ function HospitalDashboard() {
   // Função para buscar informações completas do usuário
   const buscarDadosUsuario = async (idUsuario, tiposMap) => {
     try {
-<<<<<<< HEAD
       console.log('========================================')
       console.log('Buscando dados do usuário ID:', idUsuario)
       const res = await buscarUsuario(idUsuario)
       console.log('Resposta completa da API buscarUsuario:', JSON.stringify(res, null, 2))
       
       if (res && res.success && res.data) {
-        const userData = res.data;
-        console.log('userData recebido:', JSON.stringify(userData, null, 2))
-=======
-      console.log('Buscando dados do usuário ID:', idUsuario);
-      const res = await buscarUsuario(idUsuario);
-      console.log('Resposta da busca do usuário:', JSON.parse(JSON.stringify(res)));
-      
-      if (res && res.success) {
-        // Extrair os dados do usuário da resposta
-        // Verificando diferentes formatos possíveis da resposta
         const userData = res.data?.usuario || res.data || {};
-        console.log('Dados completos do usuário:', JSON.parse(JSON.stringify(userData)));
->>>>>>> 7c5afcaf932d61da0a4110ef9367aac22befa05d
+        console.log('userData recebido:', JSON.stringify(userData, null, 2))
         
         // Tentar extrair o ID do tipo sanguíneo de diferentes possíveis campos
         let idTipoSanguineo = userData.id_tipo_sanguineo || 
@@ -75,7 +63,12 @@ function HospitalDashboard() {
                               userData.tipo_sanguineo?.id ||
                               userData.tipoSanguineo?.id;
         
-<<<<<<< HEAD
+        // Se for string, converter para número
+        if (typeof idTipoSanguineo === 'string') {
+          idTipoSanguineo = parseInt(idTipoSanguineo, 10);
+          console.log('Convertido id_tipo_sanguineo para número:', idTipoSanguineo);
+        }
+        
         console.log('ID do tipo sanguíneo encontrado:', idTipoSanguineo)
         console.log('Tipos sanguíneos disponíveis:', tiposMap)
         
@@ -95,35 +88,7 @@ function HospitalDashboard() {
           console.warn('⚠️ Tipo sanguíneo não encontrado! ID:', idTipoSanguineo, 'userData:', userData)
         }
         
-        console.log(`✅ Tipo sanguíneo final: ${tipoSanguineo}`);
-=======
-        // Extrair o ID do tipo sanguíneo do usuário
-        // Verificando em diferentes localizações possíveis
-        let idTipoSanguineo = userData.id_tipo_sanguineo || 
-                             (userData.tipo_sanguineo && parseInt(userData.tipo_sanguineo)) ||
-                             (userData.tipoSanguineo && parseInt(userData.tipoSanguineo));
-        
-        // Se for string, converter para número
-        if (typeof idTipoSanguineo === 'string') {
-          idTipoSanguineo = parseInt(idTipoSanguineo, 10);
-          console.log('Convertido id_tipo_sanguineo para número:', idTipoSanguineo);
-        }
-        
-        // Mapear o ID para o tipo sanguíneo correspondente
-        let tipoSanguineo = 'N/A';
-        
-        if (idTipoSanguineo && tiposSanguineos[idTipoSanguineo]) {
-          tipoSanguineo = tiposSanguineos[idTipoSanguineo];
-        } else if (userData.tipo_sanguineo) {
-          // Se já vier o tipo sanguíneo como texto
-          tipoSanguineo = userData.tipo_sanguineo;
-        } else if (userData.tipoSanguineo) {
-          // Outra variação de nome de campo
-          tipoSanguineo = userData.tipoSanguineo;
-        }
-        
-        console.log(`Tipo sanguíneo final: ${tipoSanguineo}, ID: ${idTipoSanguineo || 'não encontrado'}`);
->>>>>>> 7c5afcaf932d61da0a4110ef9367aac22befa05d
+        console.log(`✅ Tipo sanguíneo final: ${tipoSanguineo}`)
         
         // Retornar os dados do usuário com o tipo sanguíneo incluído
         const result = {
