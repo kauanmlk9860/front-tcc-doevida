@@ -55,6 +55,46 @@
   animation-delay: 4s;
 }
 
+.circle-4 {
+  width: 350px;
+  height: 350px;
+  top: 20%;
+  left: 10%;
+  animation-delay: 1s;
+}
+
+.circle-5 {
+  width: 450px;
+  height: 450px;
+  bottom: 10%;
+  left: -180px;
+  animation-delay: 3s;
+}
+
+.circle-6 {
+  width: 300px;
+  height: 300px;
+  top: 60%;
+  left: 50%;
+  animation-delay: 5s;
+}
+
+.circle-7 {
+  width: 380px;
+  height: 380px;
+  top: -100px;
+  right: 20%;
+  animation-delay: 2.5s;
+}
+
+.circle-8 {
+  width: 420px;
+  height: 420px;
+  bottom: -150px;
+  left: 30%;
+  animation-delay: 3.5s;
+}
+
 @keyframes float {
   0%, 100% {
     transform: translate(0, 0) scale(1);
@@ -299,7 +339,12 @@
 
   .circle-1,
   .circle-2,
-  .circle-3 {
+  .circle-3,
+  .circle-4,
+  .circle-5,
+  .circle-6,
+  .circle-7,
+  .circle-8 {
     width: 350px;
     height: 350px;
   }

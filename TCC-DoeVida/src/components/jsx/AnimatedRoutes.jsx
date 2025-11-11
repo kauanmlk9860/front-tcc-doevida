@@ -21,7 +21,7 @@ import HospitalDetalhes from "../../pages/HospitalDetalhes";
 import BancoSangue from "../../pages/BancoSangue";
 import Historico from "../../pages/Historico";
 import Perfil from "../../pages/Perfil";
-
+import RegistrarDoacao from "../../pages/RegistrarDoacao";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -65,6 +65,7 @@ const AnimatedRoutes = () => {
         <Route path="/banco-sangue" element={<BancoSangue />} />
         <Route path="/historico" element={<Historico />} />
         <Route path="/perfil" element={<Perfil />} />
+        <Route path="/registrar-doacao" element={<RegistrarDoacao />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </div>
