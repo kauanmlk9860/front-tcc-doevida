@@ -8,6 +8,7 @@ import {
   concluirDoacao,
   cancelarAgendamentoHospital
 } from '../../api/hospital/agendamentos'
+import { buscarUsuario } from '../../api/usuario/usuario'
 import './style.css'
 import logoSemFundo from '../../assets/icons/logo_semfundo.png'
 import LogoutModal from '../../components/jsx/LogoutModal'
@@ -39,32 +40,146 @@ function HospitalDashboard() {
 
   // Carregar dados
   useEffect(() => {
+    console.log('Iniciando carregamento dos dados...')
     carregarDados()
   }, [])
 
+  // Função para buscar informações completas do usuário
+  const buscarDadosUsuario = async (idUsuario) => {
+    try {
+      console.log('Buscando dados do usuário ID:', idUsuario)
+      const res = await buscarUsuario(idUsuario)
+      console.log('Resposta da busca do usuário:', JSON.parse(JSON.stringify(res)))
+      
+      if (res && res.success) {
+        const userData = res.data || {};
+        console.log('Dados completos do usuário:', JSON.parse(JSON.stringify(userData)))
+        
+        // Mapear o ID do tipo sanguíneo para o tipo correspondente
+        const tiposSanguineos = {
+          1: 'A+', 2: 'A-', 3: 'B+', 4: 'B-',
+          5: 'AB+', 6: 'AB-', 7: 'O+', 8: 'O-'
+        };
+        
+        // Extrair o ID do tipo sanguíneo do usuário
+        const idTipoSanguineo = userData.id_tipo_sanguineo;
+        const tipoSanguineo = idTipoSanguineo ? tiposSanguineos[idTipoSanguineo] || 'N/A' : 'N/A';
+        
+        console.log(`Tipo sanguíneo mapeado: ID ${idTipoSanguineo} -> ${tipoSanguineo}`);
+        
+        // Retornar os dados do usuário com o tipo sanguíneo incluído
+        const result = {
+          ...userData,
+          tipoSanguineo: tipoSanguineo,
+          id_tipo_sanguineo: idTipoSanguineo // Garantir que o ID também esteja disponível
+        };
+        
+        console.log('Dados do usuário que serão retornados:', JSON.parse(JSON.stringify(result)));
+        return result;
+      }
+      
+      console.warn('Usuário não encontrado ou erro na resposta:', res)
+      return { 
+        id: idUsuario, 
+        nome: 'Usuário não encontrado',
+        tipoSanguineo: 'N/A'
+      }
+    } catch (error) {
+      console.error('Erro ao buscar dados do usuário:', error)
+      return { 
+        id: idUsuario, 
+        nome: 'Erro ao carregar',
+        tipoSanguineo: 'N/A'
+      }
+    }
+  }
+
   const carregarDados = async () => {
     setLoading(true)
+    console.log('Iniciando carregamento dos dados...')
+    
     try {
       // Carregar agendamentos de hoje
+      console.log('Buscando agendamentos de hoje...')
       const resHoje = await obterAgendamentosHoje()
+      console.log('Resposta dos agendamentos de hoje:', resHoje)
+      
       if (resHoje.success) {
+        console.log('Agendamentos de hoje carregados:', resHoje.data)
         setAgendamentosHoje(resHoje.data)
+      } else {
+        console.warn('Falha ao carregar agendamentos de hoje:', resHoje.message)
       }
 
       // Carregar todos os agendamentos
+      console.log('Buscando todos os agendamentos...')
       const resTodos = await listarAgendamentosHospital()
+      console.log('Resposta de todos os agendamentos:', resTodos)
+      
       if (resTodos.success) {
-        setTodosAgendamentos(resTodos.data)
+        console.log('Dados brutos dos agendamentos recebidos:', resTodos.data)
+
+        // Criar um array para armazenar os agendamentos com os dados completos do usuário
+        console.log('Buscando dados dos usuários para cada agendamento...')
+        const agendamentosComUsuarios = await Promise.all(
+          resTodos.data.map(async (agendamento) => {
+            try {
+              console.log(`Buscando dados do usuário ${agendamento.id_usuario} para o agendamento ${agendamento.id}`)
+              const dadosUsuario = await buscarDadosUsuario(agendamento.id_usuario)
+              console.log(`Dados do usuário ${agendamento.id_usuario} recebidos:`, dadosUsuario)
+              
+              return {
+                ...agendamento,
+                usuario: {
+                  ...dadosUsuario,
+                  id: agendamento.id_usuario,
+                  nome: dadosUsuario?.nome || 'Usuário não encontrado',
+                  email: dadosUsuario?.email || '',
+                  tipoSanguineo: dadosUsuario?.tipoSanguineo || 'N/A'
+                }
+              }
+            } catch (error) {
+              console.error(`Erro ao buscar dados do usuário ${agendamento.id_usuario}:`, error)
+              return {
+                ...agendamento,
+                usuario: {
+                  id: agendamento.id_usuario,
+                  nome: 'Erro ao carregar',
+                  email: '',
+                  tipoSanguineo: 'N/A'
+                }
+              }
+            }
+          })
+        )
+
+        console.log('Agendamentos com dados completos dos usuários:', agendamentosComUsuarios)
+        setTodosAgendamentos(agendamentosComUsuarios)
+      } else {
+        console.warn('Falha ao carregar todos os agendamentos:', resTodos.message)
       }
 
       // Carregar estatísticas
-      const resStats = await obterEstatisticasHospital('mes')
-      if (resStats.success) {
-        setEstatisticas(resStats.data)
+      console.log('Buscando estatísticas...')
+      const resEstatisticas = await obterEstatisticasHospital()
+      console.log('Resposta das estatísticas:', resEstatisticas)
+      
+      if (resEstatisticas.success) {
+        const estatisticasAtualizadas = {
+          totalAgendamentos: resEstatisticas.data.totalAgendamentos || 0,
+          agendamentosConcluidos: resEstatisticas.data.agendamentosConcluidos || 0,
+          agendamentosPendentes: resEstatisticas.data.agendamentosPendentes || 0,
+          agendamentosCancelados: resEstatisticas.data.agendamentosCancelados || 0
+        }
+        console.log('Estatísticas atualizadas:', estatisticasAtualizadas)
+        setEstatisticas(estatisticasAtualizadas)
+      } else {
+        console.warn('Falha ao carregar estatísticas:', resEstatisticas.message)
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error)
     } finally {
+      console.log('Finalizando carregamento dos dados')
       setLoading(false)
     }
   }
@@ -112,15 +227,86 @@ function HospitalDashboard() {
     }
   }
 
+  // Função para formatar data no formato dd/mm/aaaa
   const formatarData = (dataStr) => {
     if (!dataStr) return 'Data não informada'
-    const data = new Date(dataStr)
-    return data.toLocaleDateString('pt-BR')
+    try {
+      // Adiciona o fuso horário para evitar problemas com a diferença de um dia
+      const data = new Date(dataStr)
+      
+      // Ajusta para o fuso horário local
+      const dataAjustada = new Date(data.getTime() + (data.getTimezoneOffset() * 60 * 1000))
+      
+      if (isNaN(dataAjustada.getTime())) {
+        // Se não for uma data válida, tenta extrair data de strings como '2023-01-01'
+        const match = dataStr.match(/(\d{4}-\d{2}-\d{2})/)
+        if (match) {
+          const [ano, mes, dia] = match[1].split('-')
+          // Cria a data no formato local
+          return new Date(ano, mes - 1, dia).toLocaleDateString('pt-BR')
+        }
+        return dataStr // Retorna o valor original se não conseguir formatar
+      }
+      
+      // Formata a data ajustada
+      return dataAjustada.toLocaleDateString('pt-BR')
+    } catch (error) {
+      console.error('Erro ao formatar data:', error, 'Valor:', dataStr)
+      return dataStr || 'Data inválida'
+    }
   }
 
+  // Função para formatar hora - exibe o horário corretamente
   const formatarHora = (horaStr) => {
-    if (!horaStr) return 'Hora não informada'
-    return horaStr.substring(0, 5) // HH:MM
+    if (!horaStr) return 'Horário não informado'
+    
+    try {
+      // Se for um objeto Date
+      if (horaStr instanceof Date) {
+        return horaStr.toTimeString().substring(0, 5)
+      }
+      
+      // Se for um timestamp
+      if (/^\d+$/.test(horaStr)) {
+        return new Date(parseInt(horaStr)).toLocaleTimeString('pt-BR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        })
+      }
+      
+      // Se for uma string de data/hora ISO
+      if (typeof horaStr === 'string' && horaStr.includes('T')) {
+        const [horaPart] = horaStr.split('T')[1]?.split('.') || [];
+        if (horaPart) {
+          return horaPart.substring(0, 5); // Retorna HH:MM
+        }
+      }
+      
+      // Se já estiver no formato HH:MM ou HH:MM:SS
+      const matchHora = horaStr.match(/(\d{1,2}):(\d{2})(?::\d{2})?/);
+      if (matchHora) {
+        // Formata para garantir 2 dígitos
+        const horas = matchHora[1].padStart(2, '0');
+        const minutos = matchHora[2].padStart(2, '0');
+        return `${horas}:${minutos}`;
+      }
+      
+      // Se for um objeto com propriedades de data/hora
+      if (typeof horaStr === 'object' && horaStr !== null) {
+        if (horaStr.hora !== undefined && horaStr.minuto !== undefined) {
+          return `${String(horaStr.hora).padStart(2, '0')}:${String(horaStr.minuto).padStart(2, '0')}`;
+        }
+        return 'Formato inválido';
+      }
+      
+      // Para qualquer outro formato, retorna o valor original
+      console.log('Formato de hora não reconhecido:', horaStr);
+      return String(horaStr);
+    } catch (error) {
+      console.error('Erro ao formatar hora:', error, 'Valor:', horaStr);
+      return 'Horário inválido';
+    }
   }
 
   const getStatusColor = (status) => {
@@ -439,9 +625,27 @@ function HospitalDashboard() {
                       </div>
                     </td>
                     <td>
-                      <span className="tipo-sangue-badge">
-                        {agendamento.usuario?.tipo_sanguineo || 'N/A'}
+                      {console.log('Renderizando tipo sanguíneo para agendamento:', agendamento.id, 'Dados do usuário:', agendamento.usuario)}
+                      <span className="tipo-sangue-badge" style={{ 
+                        backgroundColor: agendamento.usuario?.tipoSanguineo ? '#990410' : '#ccc',
+                        display: 'inline-block',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        color: 'white',
+                        fontWeight: 'bold'
+                      }}>
+                        {agendamento.usuario?.tipoSanguineo || 'N/A'}
                       </span>
+                      {agendamento.usuario?.tipoSanguineo && (
+                        <div style={{
+                          fontSize: '10px',
+                          color: '#666',
+                          marginTop: '4px',
+                          fontStyle: 'italic'
+                        }}>
+                          Tipo Sanguíneo
+                        </div>
+                      )}
                     </td>
                     <td>{formatarData(agendamento.data)}</td>
                     <td>{formatarHora(agendamento.hora)}</td>

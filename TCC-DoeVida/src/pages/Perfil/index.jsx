@@ -212,16 +212,6 @@ function Perfil() {
         <div className="header-bg-pattern"></div>
         <div className="header-content">
           <div className="header-left">
-            <button 
-              className="btn-voltar"
-              onClick={() => navigate('/home')}
-              aria-label="Voltar"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M19 12H5m7-7l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Voltar
-            </button>
             <div className="brand-section">
               <img src={logoSemFundo} alt="DoeVida" className="header-logo" />
               <div className="brand-info">
@@ -266,7 +256,7 @@ function Perfil() {
                   }}
                 />
                 <div className="avatar-badge">
-                  {user?.tipo_sanguineo || 'O+'}
+                  {user?.tipo_sanguineo_nome || user?.tipo_sanguineo || 'O+'}
                 </div>
               </div>
               <div className="avatar-info">
