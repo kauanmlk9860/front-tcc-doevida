@@ -49,25 +49,57 @@ function Cadastro() {
 
   // Carregar dados da API
   useEffect(() => {
+    const abortController = new AbortController()
+    let isMounted = true
+
     const carregarDados = async () => {
+      if (!isMounted) return
       setLoadingData(true)
+      
       try {
-        const respSexo = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida'}/sexo-usuario`)
+        const respSexo = await fetch(
+          `${import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida'}/sexo-usuario`,
+          { signal: abortController.signal }
+        )
+        if (!isMounted) return
         const dataSexo = await respSexo.json()
-        setSexos(dataSexo?.sexos || sexosPadrao)
-      } catch {
-        setSexos(sexosPadrao)
+        if (isMounted) {
+          setSexos(dataSexo?.sexos || sexosPadrao)
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError' && isMounted) {
+          setSexos(sexosPadrao)
+        }
       }
+      
       try {
-        const respTipo = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida'}/tipo-sanguineo`)
+        const respTipo = await fetch(
+          `${import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida'}/tipo-sanguineo`,
+          { signal: abortController.signal }
+        )
+        if (!isMounted) return
         const dataTipo = await respTipo.json()
-        setTiposSangue(dataTipo?.tipos_sanguineos || tiposSanguePadrao)
-      } catch {
-        setTiposSangue(tiposSanguePadrao)
+        if (isMounted) {
+          setTiposSangue(dataTipo?.tipos_sanguineos || tiposSanguePadrao)
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError' && isMounted) {
+          setTiposSangue(tiposSanguePadrao)
+        }
       }
-      setLoadingData(false)
+      
+      if (isMounted) {
+        setLoadingData(false)
+      }
     }
+    
     carregarDados()
+
+    // Cleanup function
+    return () => {
+      isMounted = false
+      abortController.abort()
+    }
   }, [])
 
   const validarFormulario = () => {

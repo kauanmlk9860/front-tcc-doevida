@@ -2,10 +2,20 @@
 import axios from 'axios';
 
 // Use .env: VITE_API_URL=http://localhost:8080/v1/doevida
-const http = axios.create({
+const httpConfig = {
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida',
   timeout: 15000,
-});
+};
+
+// Adicionar header de desenvolvimento se estiver em modo dev
+if (import.meta.env.VITE_DEVELOPMENT_MODE === 'true') {
+  httpConfig.headers = {
+    'X-Development-Mode': 'true',
+    'X-Bypass-Rate-Limit': 'true'
+  };
+}
+
+const http = axios.create(httpConfig);
 
 /* ==== Helpers locais (evitam dependência do AuthService) ==== */
 const STORAGE_KEYS = { token: 'token', user: 'usuario' };
@@ -38,19 +48,22 @@ function clearSessionAndRedirect() {
 
 /* ===== Request interceptor ===== */
 http.interceptors.request.use((config) => {
+  // Rotas que não precisam de token (públicas)
+  const publicRoutes = ['/usuario', '/login', '/sexo-usuario', '/tipo-sanguineo', '/hospital/login', '/hospital'];
+  const isPublicRoute = publicRoutes.some(route => config.url?.includes(route));
+  
   const token = localStorage.getItem(STORAGE_KEYS.token);
   
-  console.log('🔑 Token no localStorage:', token ? 'Existe' : 'NÃO EXISTE');
-  
-  // SEMPRE adicionar token se existir (mesmo que não seja JWT válido)
-  // Isso é necessário para tokens gerados pelo fallback de desenvolvimento
-  if (token) {
+  // Só adicionar token se não for rota pública E se o token existir
+  if (!isPublicRoute && token) {
     const isValid = isTokenValid(token);
     console.log('🔑 Token válido (JWT)?', isValid);
     config.headers.Authorization = `Bearer ${token}`;
     console.log('✅ Token adicionado ao header');
+  } else if (!isPublicRoute && !token) {
+    console.warn('⚠️ Token necessário mas não existe no localStorage!');
   } else {
-    console.warn('⚠️ Token não existe no localStorage!');
+    console.log('📝 Rota pública, não precisa de token');
   }
 
   if (!config.headers['Content-Type']) {
