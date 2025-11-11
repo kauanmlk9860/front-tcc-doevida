@@ -219,7 +219,7 @@
 .stat-number {
   font-size: 32px;
   font-weight: 700;
-  color: #333;
+  color: #000 !important; /* Preto puro e forçando a prioridade */
   margin: 0;
 }
 

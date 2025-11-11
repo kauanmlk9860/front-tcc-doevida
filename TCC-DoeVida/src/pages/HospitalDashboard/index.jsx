@@ -47,13 +47,15 @@ function HospitalDashboard() {
   // Função para buscar informações completas do usuário
   const buscarDadosUsuario = async (idUsuario) => {
     try {
-      console.log('Buscando dados do usuário ID:', idUsuario)
-      const res = await buscarUsuario(idUsuario)
-      console.log('Resposta da busca do usuário:', JSON.parse(JSON.stringify(res)))
+      console.log('Buscando dados do usuário ID:', idUsuario);
+      const res = await buscarUsuario(idUsuario);
+      console.log('Resposta da busca do usuário:', JSON.parse(JSON.stringify(res)));
       
       if (res && res.success) {
-        const userData = res.data || {};
-        console.log('Dados completos do usuário:', JSON.parse(JSON.stringify(userData)))
+        // Extrair os dados do usuário da resposta
+        // Verificando diferentes formatos possíveis da resposta
+        const userData = res.data?.usuario || res.data || {};
+        console.log('Dados completos do usuário:', JSON.parse(JSON.stringify(userData)));
         
         // Mapear o ID do tipo sanguíneo para o tipo correspondente
         const tiposSanguineos = {
@@ -62,16 +64,37 @@ function HospitalDashboard() {
         };
         
         // Extrair o ID do tipo sanguíneo do usuário
-        const idTipoSanguineo = userData.id_tipo_sanguineo;
-        const tipoSanguineo = idTipoSanguineo ? tiposSanguineos[idTipoSanguineo] || 'N/A' : 'N/A';
+        // Verificando em diferentes localizações possíveis
+        let idTipoSanguineo = userData.id_tipo_sanguineo || 
+                             (userData.tipo_sanguineo && parseInt(userData.tipo_sanguineo)) ||
+                             (userData.tipoSanguineo && parseInt(userData.tipoSanguineo));
         
-        console.log(`Tipo sanguíneo mapeado: ID ${idTipoSanguineo} -> ${tipoSanguineo}`);
+        // Se for string, converter para número
+        if (typeof idTipoSanguineo === 'string') {
+          idTipoSanguineo = parseInt(idTipoSanguineo, 10);
+          console.log('Convertido id_tipo_sanguineo para número:', idTipoSanguineo);
+        }
+        
+        // Mapear o ID para o tipo sanguíneo correspondente
+        let tipoSanguineo = 'N/A';
+        
+        if (idTipoSanguineo && tiposSanguineos[idTipoSanguineo]) {
+          tipoSanguineo = tiposSanguineos[idTipoSanguineo];
+        } else if (userData.tipo_sanguineo) {
+          // Se já vier o tipo sanguíneo como texto
+          tipoSanguineo = userData.tipo_sanguineo;
+        } else if (userData.tipoSanguineo) {
+          // Outra variação de nome de campo
+          tipoSanguineo = userData.tipoSanguineo;
+        }
+        
+        console.log(`Tipo sanguíneo final: ${tipoSanguineo}, ID: ${idTipoSanguineo || 'não encontrado'}`);
         
         // Retornar os dados do usuário com o tipo sanguíneo incluído
         const result = {
           ...userData,
           tipoSanguineo: tipoSanguineo,
-          id_tipo_sanguineo: idTipoSanguineo // Garantir que o ID também esteja disponível
+          id_tipo_sanguineo: idTipoSanguineo
         };
         
         console.log('Dados do usuário que serão retornados:', JSON.parse(JSON.stringify(result)));
@@ -626,26 +649,35 @@ function HospitalDashboard() {
                     </td>
                     <td>
                       {console.log('Renderizando tipo sanguíneo para agendamento:', agendamento.id, 'Dados do usuário:', agendamento.usuario)}
-                      <span className="tipo-sangue-badge" style={{ 
-                        backgroundColor: agendamento.usuario?.tipoSanguineo ? '#990410' : '#ccc',
-                        display: 'inline-block',
-                        padding: '4px 8px',
-                        borderRadius: '4px',
-                        color: 'white',
-                        fontWeight: 'bold'
+                      <div style={{ 
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center'
                       }}>
-                        {agendamento.usuario?.tipoSanguineo || 'N/A'}
-                      </span>
-                      {agendamento.usuario?.tipoSanguineo && (
+                        <span style={{ 
+                          backgroundColor: agendamento.usuario?.tipoSanguineo && agendamento.usuario.tipoSanguineo !== 'N/A' ? '#990410' : '#ccc',
+                          display: 'inline-block',
+                          padding: '4px 12px',
+                          borderRadius: '4px',
+                          color: 'white',
+                          fontWeight: 'bold',
+                          minWidth: '50px',
+                          textAlign: 'center',
+                          fontSize: '14px'
+                        }}>
+                          {agendamento.usuario?.tipoSanguineo || 'N/A'}
+                        </span>
                         <div style={{
                           fontSize: '10px',
-                          color: '#666',
+                          color: agendamento.usuario?.tipoSanguineo && agendamento.usuario.tipoSanguineo !== 'N/A' ? '#666' : '#999',
                           marginTop: '4px',
                           fontStyle: 'italic'
                         }}>
-                          Tipo Sanguíneo
+                          {agendamento.usuario?.tipoSanguineo && agendamento.usuario.tipoSanguineo !== 'N/A' 
+                            ? 'Tipo Sanguíneo' 
+                            : 'Não informado'}
                         </div>
-                      )}
+                      </div>
                     </td>
                     <td>{formatarData(agendamento.data)}</td>
                     <td>{formatarHora(agendamento.hora)}</td>
