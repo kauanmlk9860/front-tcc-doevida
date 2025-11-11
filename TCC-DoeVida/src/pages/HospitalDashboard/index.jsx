@@ -47,6 +47,7 @@ function HospitalDashboard() {
   // Função para buscar informações completas do usuário
   const buscarDadosUsuario = async (idUsuario) => {
     try {
+<<<<<<< HEAD
       const res = await buscarUsuario(idUsuario);
       
       if (res && res.success) {
@@ -64,40 +65,75 @@ function HospitalDashboard() {
                              (userData.tipo_sanguineo && parseInt(userData.tipo_sanguineo)) ||
                              (userData.tipoSanguineo && parseInt(userData.tipoSanguineo)) ||
                              (userData.tipo_sanguineo_id && parseInt(userData.tipo_sanguineo_id));
+=======
+      console.log('========================================')
+      console.log('Buscando dados do usuário ID:', idUsuario)
+      const res = await buscarUsuario(idUsuario)
+      console.log('Resposta completa da API buscarUsuario:', JSON.stringify(res, null, 2))
+      
+      if (res && res.success && res.data) {
+        const userData = res.data?.usuario || res.data || {};
+        console.log('userData recebido:', JSON.stringify(userData, null, 2))
+        
+        // Tentar extrair o ID do tipo sanguíneo de diferentes possíveis campos
+        let idTipoSanguineo = userData.id_tipo_sanguineo || 
+                              userData.idTipoSanguineo || 
+                              userData.tipo_sanguineo?.id ||
+                              userData.tipoSanguineo?.id ||
+                              userData.tipo_sanguineo_id;
+>>>>>>> 3dc4e35fdf3c887ad16de14b28f685d812d4fc04
         
         // Se for string, converter para número
         if (typeof idTipoSanguineo === 'string') {
           idTipoSanguineo = parseInt(idTipoSanguineo, 10);
         }
         
-        // Verificar se o tipo sanguíneo já está no formato desejado (ex: 'O-')
-        let tipoSanguineo = 'N/A';
+        console.log('ID do tipo sanguíneo encontrado:', idTipoSanguineo)
+        console.log('Tipos sanguíneos disponíveis:', tiposMap)
+        
+        // Determinar o tipo sanguíneo - prioridade: nome direto > mapeamento por ID > campos alternativos
+        let tipoSanguineo = 'Não informado';
         
         // Primeiro verifica se já tem o tipo sanguíneo como texto
         if (userData.tipo_sanguineo_nome) {
           tipoSanguineo = userData.tipo_sanguineo_nome;
+          console.log('Tipo sanguíneo veio de tipo_sanguineo_nome:', tipoSanguineo)
         } 
-        // Se não tiver, tenta mapear pelo ID
-        else if (idTipoSanguineo && tiposSanguineos[idTipoSanguineo]) {
-          tipoSanguineo = tiposSanguineos[idTipoSanguineo];
-        }
-        // Se ainda não encontrou, verifica outros campos possíveis
-        else if (userData.tipo_sanguineo) {
+        else if (typeof userData.tipo_sanguineo === 'string' && userData.tipo_sanguineo !== '') {
           tipoSanguineo = userData.tipo_sanguineo;
-        } else if (userData.tipoSanguineo) {
+          console.log('Tipo sanguíneo veio como string:', tipoSanguineo)
+        } 
+        else if (typeof userData.tipoSanguineo === 'string' && userData.tipoSanguineo !== '') {
           tipoSanguineo = userData.tipoSanguineo;
-        } else if (userData.tipo_sanguineo_obj?.tipo) {
+          console.log('Tipo sanguíneo veio como tipoSanguineo:', tipoSanguineo)
+        } 
+        else if (idTipoSanguineo && tiposMap[idTipoSanguineo]) {
+          tipoSanguineo = tiposMap[idTipoSanguineo];
+          console.log(`Tipo sanguíneo mapeado: ID ${idTipoSanguineo} -> ${tipoSanguineo}`)
+        } 
+        else if (userData.tipo_sanguineo_obj?.tipo) {
           tipoSanguineo = userData.tipo_sanguineo_obj.tipo;
-        } else if (userData.tipoSanguineoObj?.tipo) {
+          console.log('Tipo sanguíneo veio de tipo_sanguineo_obj:', tipoSanguineo)
+        } 
+        else if (userData.tipoSanguineoObj?.tipo) {
           tipoSanguineo = userData.tipoSanguineoObj.tipo;
+          console.log('Tipo sanguíneo veio de tipoSanguineoObj:', tipoSanguineo)
+        } 
+        else {
+          console.warn('⚠️ Tipo sanguíneo não encontrado! ID:', idTipoSanguineo, 'userData:', userData)
         }
         
+<<<<<<< HEAD
+=======
+        console.log(`✅ Tipo sanguíneo final: ${tipoSanguineo}`)
+        
+>>>>>>> 3dc4e35fdf3c887ad16de14b28f685d812d4fc04
         // Retornar os dados do usuário com o tipo sanguíneo incluído
         const result = {
           ...userData,
           tipoSanguineo: tipoSanguineo,
           id_tipo_sanguineo: idTipoSanguineo,
-          tipo_sanguineo_nome: tipoSanguineo // Garantir que o nome esteja disponível
+          tipo_sanguineo_nome: tipoSanguineo
         };
         
         return result;

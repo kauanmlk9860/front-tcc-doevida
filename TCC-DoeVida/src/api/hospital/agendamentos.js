@@ -8,10 +8,15 @@ import http from '../../services/http.js';
  */
 export async function listarAgendamentosHospital(filtros = {}) {
   try {
-    // Buscar todos os agendamentos
+    console.log('Chamando GET /agendamento...');
     const res = await http.get('/agendamento');
+    console.log('Resposta recebida:', res);
+    console.log('res.data:', res.data);
     
     let agendamentos = res.data.agendamentos || res.data.dados || res.data || [];
+    console.log('Agendamentos extraídos:', agendamentos);
+    console.log('É array?', Array.isArray(agendamentos));
+    console.log('Quantidade:', Array.isArray(agendamentos) ? agendamentos.length : 'N/A');
     
     // Filtrar por status se fornecido
     if (filtros.status && Array.isArray(agendamentos)) {
@@ -29,7 +34,9 @@ export async function listarAgendamentosHospital(filtros = {}) {
       message: res.data.message
     };
   } catch (error) {
-    console.error('Erro ao listar agendamentos do hospital:', error);
+    console.error('ERRO ao listar agendamentos:', error);
+    console.error('Status:', error.response?.status);
+    console.error('Mensagem:', error.response?.data);
     return {
       success: false,
       data: [],
