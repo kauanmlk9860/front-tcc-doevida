@@ -125,6 +125,126 @@ const NOTICIAS_MOCKADAS = [
     source: { name: "Metrópoles" },
     published_at: "2024-09-25T11:30:00Z",
     category: "Ciência"
+  },
+  {
+    id: 13,
+    title: "Brasil atinge meta de doações de sangue estabelecida pela OMS",
+    description: "País alcança índice recomendado pela Organização Mundial da Saúde de doadores voluntários por habitante.",
+    image: "https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&q=80",
+    url: "https://www.saude.gov.br/",
+    source: { name: "Portal da Saúde" },
+    published_at: "2024-09-20T10:00:00Z",
+    category: "Internacional"
+  },
+  {
+    id: 14,
+    title: "Aplicativo conecta doadores e receptores de sangue em tempo real",
+    description: "Nova tecnologia permite que hospitais encontrem doadores compatíveis rapidamente em casos de emergência.",
+    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&q=80",
+    url: "https://www.tecmundo.com.br/",
+    source: { name: "TecMundo" },
+    published_at: "2024-09-15T14:30:00Z",
+    category: "Tecnologia"
+  },
+  {
+    id: 15,
+    title: "Doação de plaquetas: entenda a importância deste procedimento",
+    description: "Especialistas explicam diferenças entre doação de sangue total e plaquetas, e quando cada uma é necessária.",
+    image: "https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?w=800&q=80",
+    url: "https://drauziovarella.uol.com.br/",
+    source: { name: "Dr. Drauzio Varella" },
+    published_at: "2024-09-10T11:45:00Z",
+    category: "Saúde"
+  },
+  {
+    id: 16,
+    title: "Universidades promovem maratona de doação de sangue",
+    description: "Estudantes de todo país participam de campanha universitária que arrecadou mais de 5 mil bolsas de sangue.",
+    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80",
+    url: "https://www.correiobraziliense.com.br/",
+    source: { name: "Correio Braziliense" },
+    published_at: "2024-09-05T09:20:00Z",
+    category: "Campanha"
+  },
+  {
+    id: 17,
+    title: "Transfusão de sangue: avanços tecnológicos aumentam segurança",
+    description: "Novos testes e protocolos reduzem ainda mais os riscos de reações adversas em transfusões sanguíneas.",
+    image: "https://images.unsplash.com/photo-1581594549595-35f6edc7b762?w=800&q=80",
+    url: "https://www.nature.com/",
+    source: { name: "Nature Brasil" },
+    published_at: "2024-08-30T16:00:00Z",
+    category: "Ciência"
+  },
+  {
+    id: 18,
+    title: "Campanha Natal Solidário incentiva doação de sangue nas festas",
+    description: "Hemocentros lançam ação especial para manter estoques durante período de festas de fim de ano.",
+    image: "https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=800&q=80",
+    url: "https://www.gazetadopovo.com.br/",
+    source: { name: "Gazeta do Povo" },
+    published_at: "2024-11-10T08:30:00Z",
+    category: "Campanha"
+  },
+  {
+    id: 19,
+    title: "Doadores de sangue ganham benefícios em estabelecimentos parceiros",
+    description: "Programa de incentivo oferece descontos e vantagens para doadores regulares em diversos comércios.",
+    image: "https://images.unsplash.com/photo-1556740758-90de374c12ad?w=800&q=80",
+    url: "https://www.ig.com.br/",
+    source: { name: "iG Saúde" },
+    published_at: "2024-08-25T13:15:00Z",
+    category: "Sociedade"
+  },
+  {
+    id: 20,
+    title: "Inteligência artificial ajuda a prever demanda por sangue",
+    description: "Sistema de IA analisa dados históricos e prevê necessidades futuras de cada tipo sanguíneo nos hospitais.",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80",
+    url: "https://www.olhardigital.com.br/",
+    source: { name: "Olhar Digital" },
+    published_at: "2024-08-20T10:45:00Z",
+    category: "Tecnologia"
+  },
+  {
+    id: 21,
+    title: "Médicos alertam sobre queda de doações no inverno",
+    description: "Especialistas explicam por que período de frio reduz número de doadores e pedem conscientização.",
+    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80",
+    url: "https://www.uol.com.br/vivabem/",
+    source: { name: "UOL VivaBem" },
+    published_at: "2024-07-15T12:00:00Z",
+    category: "Urgente"
+  },
+  {
+    id: 22,
+    title: "Doação de sangue de cordão umbilical salva vidas",
+    description: "Bancos de sangue de cordão umbilical crescem no Brasil e ajudam no tratamento de diversas doenças.",
+    image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=800&q=80",
+    url: "https://www.bbc.com/portuguese",
+    source: { name: "BBC Brasil" },
+    published_at: "2024-07-10T15:30:00Z",
+    category: "Ciência"
+  },
+  {
+    id: 23,
+    title: "Bombeiros realizam campanha de doação em quartéis",
+    description: "Corporação abre portas para população doar sangue em unidades de todo o país durante o mês.",
+    image: "https://images.unsplash.com/photo-1587745416684-47953f16f02f?w=800&q=80",
+    url: "https://agenciabrasil.ebc.com.br/",
+    source: { name: "Agência Brasil" },
+    published_at: "2024-07-05T09:00:00Z",
+    category: "Campanha"
+  },
+  {
+    id: 24,
+    title: "Estudo mostra impacto positivo da doação na saúde mental",
+    description: "Pesquisa revela que doar sangue regularmente aumenta sensação de bem-estar e propósito de vida.",
+    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&q=80",
+    url: "https://www.scielo.br/",
+    source: { name: "SciELO Brasil" },
+    published_at: "2024-06-28T14:20:00Z",
+    category: "Ciência"
   }
 ];
 
@@ -160,33 +280,61 @@ function Noticias() {
     }
   };
 
-  // Buscar notícias por termo
+  // Buscar notícias por termo (em tempo real)
   const buscarPorTermo = (termo) => {
     if (!termo.trim()) {
-      setNoticiasFiltradas(noticias);
+      // Se busca vazia, aplica filtro de categoria atual
+      if (activeCategory === "todas") {
+        setNoticiasFiltradas(noticias);
+      } else {
+        const filtradas = noticias.filter(n => n.category === activeCategory);
+        setNoticiasFiltradas(filtradas);
+      }
       return;
     }
     
     const termoLower = termo.toLowerCase();
-    const resultados = noticias.filter(n => 
+    let resultados = noticias;
+    
+    // Aplica filtro de categoria se não for "todas"
+    if (activeCategory !== "todas") {
+      resultados = resultados.filter(n => n.category === activeCategory);
+    }
+    
+    // Aplica filtro de busca
+    resultados = resultados.filter(n => 
       n.title.toLowerCase().includes(termoLower) ||
       n.description.toLowerCase().includes(termoLower) ||
-      n.category.toLowerCase().includes(termoLower)
+      n.category.toLowerCase().includes(termoLower) ||
+      n.source.name.toLowerCase().includes(termoLower)
     );
+    
     setNoticiasFiltradas(resultados);
   };
 
   // Handler do formulário de busca
   const handleBuscar = (e) => {
     e.preventDefault();
-    buscarPorTermo(searchTerm);
+    // Busca já é feita em tempo real, mas mantemos para Enter
+  };
+  
+  // Handler de mudança no input de busca (tempo real)
+  const handleSearchChange = (e) => {
+    const valor = e.target.value;
+    setSearchTerm(valor);
+    buscarPorTermo(valor);
   };
 
   // Mudar categoria
   const mudarCategoria = (categoriaId) => {
     setActiveCategory(categoriaId);
-    setSearchTerm("");
-    filtrarNoticias(categoriaId);
+    if (searchTerm.trim()) {
+      // Se há busca ativa, reaplica com nova categoria
+      buscarPorTermo(searchTerm);
+    } else {
+      // Senão, apenas filtra por categoria
+      filtrarNoticias(categoriaId);
+    }
   };
 
   // Formatar data
@@ -347,7 +495,7 @@ function Noticias() {
               className="search-input"
               placeholder="Buscar notícias sobre saúde..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
             />
           </div>
           <button type="submit" className="btn-search">

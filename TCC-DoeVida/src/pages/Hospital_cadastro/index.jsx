@@ -171,177 +171,191 @@ function Hospital_cadastro() {
       <img className="cadastro__logo" src={logoSemFundo} alt="DoeVida" />
       <h1 className="cadastro__title">Sou Hospital</h1>
 
-      <form className="cadastro__form" autoComplete="off" onSubmit={(e) => e.preventDefault()}>
-        <div className="form-grid">
-          <div className="field">
-            <span>Nome do Hospital *</span>
-            <FormattedInput
-              ref={nomeRef}
-              placeholder="Digite o nome do hospital"
-              icon={<InputIcons.Hospital />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              maxLength={70}
-            />
-          </div>
+      <div className="cadastro__form-container">
+        {/* CARD 1 - Informações Institucionais */}
+        <form className="cadastro__form cadastro__form--left" autoComplete="off" onSubmit={(e) => e.preventDefault()}>
+          <h2 className="form-section-title">Informações Institucionais</h2>
+          <div className="form-fields">
+            <div className="field">
+              <span>Nome do Hospital *</span>
+              <FormattedInput
+                ref={nomeRef}
+                placeholder="Digite o nome do hospital"
+                icon={<InputIcons.Hospital />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                maxLength={70}
+              />
+            </div>
 
-          <div className="field">
-            <span>E-mail *</span>
-            <FormattedInput
-              ref={emailRef}
-              type="email"
-              placeholder="Digite o e-mail"
-              icon={<InputIcons.Email />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              maxLength={100}
-            />
-          </div>
+            <div className="field">
+              <span>E-mail *</span>
+              <FormattedInput
+                ref={emailRef}
+                type="email"
+                placeholder="Digite o e-mail"
+                icon={<InputIcons.Email />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                maxLength={100}
+              />
+            </div>
 
-          <div className="field">
-            <span>Senha *</span>
-            <PasswordInput
-              ref={senhaRef}
-              placeholder="Digite a senha"
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              minLength={6}
-              maxLength={255}
-            />
-          </div>
+            <div className="field">
+              <span>Senha *</span>
+              <PasswordInput
+                ref={senhaRef}
+                placeholder="Digite a senha"
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                minLength={6}
+                maxLength={255}
+              />
+            </div>
 
-          <div className="field">
-            <span>Confirmar Senha *</span>
-            <PasswordInput
-              ref={confirmarSenhaRef}
-              placeholder="Confirme a senha"
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              minLength={6}
-              maxLength={255}
-            />
-          </div>
+            <div className="field">
+              <span>Confirmar Senha *</span>
+              <PasswordInput
+                ref={confirmarSenhaRef}
+                placeholder="Confirme a senha"
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                minLength={6}
+                maxLength={255}
+              />
+            </div>
 
-          <div className="field">
-            <span>CNPJ *</span>
-            <FormattedInput
-              ref={cnpjRef}
-              formatType="cnpj"
-              placeholder="00.000.000/0000-00"
-              icon={<InputIcons.Building />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              maxLength={20}
-            />
-          </div>
+            <div className="field">
+              <span>CNPJ *</span>
+              <FormattedInput
+                ref={cnpjRef}
+                formatType="cnpj"
+                placeholder="00.000.000/0000-00"
+                icon={<InputIcons.Building />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                maxLength={20}
+              />
+            </div>
 
-          <div className="field">
-            <span>CEP *</span>
-            <FormattedInput
-              ref={cepRef}
-              formatType="cep"
-              placeholder="00000-000"
-              icon={<InputIcons.Location />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              maxLength={10}
-            />
+            <div className="field">
+              <span>CEP *</span>
+              <FormattedInput
+                ref={cepRef}
+                formatType="cep"
+                placeholder="00000-000"
+                icon={<InputIcons.Location />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                maxLength={10}
+              />
+            </div>
           </div>
+        </form>
 
-          <div className="field">
-            <span>Telefone *</span>
-            <FormattedInput
-              ref={telefoneRef}
-              formatType="phone"
-              placeholder="(00) 00000-0000"
-              icon={<InputIcons.Phone />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              maxLength={20}
-            />
-          </div>
+        {/* CARD 2 - Informações Operacionais */}
+        <form className="cadastro__form cadastro__form--right" autoComplete="off" onSubmit={(e) => e.preventDefault()}>
+          <h2 className="form-section-title">Informações Operacionais</h2>
+          <div className="form-fields">
+            <div className="field">
+              <span>Telefone *</span>
+              <FormattedInput
+                ref={telefoneRef}
+                formatType="phone"
+                placeholder="(00) 00000-0000"
+                icon={<InputIcons.Phone />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                maxLength={20}
+              />
+            </div>
 
-          <div className="field">
-            <span>Capacidade Máxima (Doadores) *</span>
-            <FormattedInput
-              ref={capacidadeRef}
-              type="number"
-              placeholder="Ex: 10"
-              icon={<InputIcons.Capacity />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              min={1}
-            />
-          </div>
+            <div className="field">
+              <span>Capacidade Máxima (Doadores) *</span>
+              <FormattedInput
+                ref={capacidadeRef}
+                type="number"
+                placeholder="Ex: 10"
+                icon={<InputIcons.Capacity />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                min={1}
+              />
+            </div>
 
-          <div className="field">
-            <span>Convênios Aceitos *</span>
-            <FormattedInput
-              ref={conveniosRef}
-              placeholder="Ex: SUS, Unimed, Amil"
-              icon={<InputIcons.Insurance />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              maxLength={255}
-            />
-          </div>
+            <div className="field">
+              <span>Convênios Aceitos *</span>
+              <FormattedInput
+                ref={conveniosRef}
+                placeholder="Ex: SUS, Unimed, Amil"
+                icon={<InputIcons.Insurance />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                maxLength={255}
+              />
+            </div>
 
-          <div className="field">
-            <span>CRM (Link) *</span>
-            <FormattedInput
-              ref={crmRef}
-              placeholder="Cole o link do CRM"
-              icon={<InputIcons.Link />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              maxLength={255}
-            />
-          </div>
+            <div className="field">
+              <span>CRM (Link) *</span>
+              <FormattedInput
+                ref={crmRef}
+                placeholder="Cole o link do CRM"
+                icon={<InputIcons.Link />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                maxLength={255}
+              />
+            </div>
 
-          <div className="field">
-            <span>Horário de Abertura *</span>
-            <FormattedInput
-              ref={aberturaRef}
-              type="time"
-              placeholder="Horário de Abertura"
-              icon={<InputIcons.Clock />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              step="900"
-            />
-          </div>
+            <div className="field">
+              <span>Horário de Abertura *</span>
+              <FormattedInput
+                ref={aberturaRef}
+                type="time"
+                placeholder="Horário de Abertura"
+                icon={<InputIcons.Clock />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                step="900"
+              />
+            </div>
 
-          <div className="field">
-            <span>Horário de Fechamento *</span>
-            <FormattedInput
-              ref={fechamentoRef}
-              type="time"
-              placeholder="Horário de Fechamento"
-              icon={<InputIcons.Clock />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              step="900"
-            />
+            <div className="field">
+              <span>Horário de Fechamento *</span>
+              <FormattedInput
+                ref={fechamentoRef}
+                type="time"
+                placeholder="Horário de Fechamento"
+                icon={<InputIcons.Clock />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                step="900"
+              />
+            </div>
           </div>
+        </form>
+      </div>
 
-          <div className="field field--full">
-            <span>Foto do Hospital</span>
-            <PhotoUpload
-              ref={photoUploadRef}
-              placeholder="Adicione foto do hospital (opcional)"
-              disabled={loading}
-            />
-          </div>
+      {/* Foto do Hospital - Card Separado */}
+      <div className="cadastro__form cadastro__form--photo">
+        <h2 className="form-section-title">Foto do Hospital</h2>
+        <div className="field">
+          <PhotoUpload
+            ref={photoUploadRef}
+            placeholder="Adicione foto do hospital (opcional)"
+            disabled={loading}
+          />
         </div>
+      </div>
 
-        {error && (
-          <div className="error-msg">{error}</div>
-        )}
+      {/* Mensagens de Erro/Sucesso */}
+      {error && (
+        <div className="error-msg">{error}</div>
+      )}
 
-        {success && (
-          <div className="success-msg">{success}</div>
-        )}
-      </form>
+      {success && (
+        <div className="success-msg">{success}</div>
+      )}
 
       <div className="cadastro__actions">
         <button

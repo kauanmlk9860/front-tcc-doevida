@@ -316,11 +316,14 @@
   margin: 0 auto;
   display: flex;
   gap: 1rem;
+  align-items: stretch;
 }
 
 .search-input-wrapper {
   flex: 1;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .search-icon {
@@ -334,6 +337,7 @@
 
 .search-input {
   width: 100%;
+  height: 100%;
   padding: 1rem 1rem 1rem 3.2rem;
   border: 2px solid var(--border);
   border-radius: 12px;
@@ -341,6 +345,7 @@
   font-family: 'Poppins', sans-serif;
   transition: var(--transition);
   background: white;
+  box-sizing: border-box;
 }
 
 .search-input:focus {
@@ -353,19 +358,26 @@
   background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
   color: white;
   border: none;
-  padding: 1rem 2.5rem;
+  padding: 0 2.5rem;
+  min-height: 56px;
   border-radius: 12px;
   font-weight: 600;
   font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
   box-shadow: 
-    0 4px 12px rgba(153, 4, 16, 0.25),
-    0 2px 6px rgba(0, 0, 0, 0.1),
-    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    0 4px 16px rgba(153, 4, 16, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
   position: relative;
   overflow: hidden;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .btn-search::before {
@@ -383,11 +395,11 @@
 
 .btn-search:hover {
   background: linear-gradient(135deg, var(--brand-dark) 0%, #5a0205 100%);
-  transform: translateY(-3px) scale(1.02);
+  transform: translateY(-4px) scale(1.05);
   box-shadow: 
-    0 8px 20px rgba(153, 4, 16, 0.35),
-    0 4px 12px rgba(0, 0, 0, 0.15),
-    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    0 12px 28px rgba(153, 4, 16, 0.4),
+    0 6px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.35);
 }
 
 .btn-search:active {
@@ -1410,5 +1422,20 @@ html {
   
   .noticias-hero-text {
     margin-bottom: 2rem;
+  }
+  
+  /* Responsividade da busca */
+  .noticias-search-form {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .btn-search {
+    width: 100%;
+    min-height: 50px;
+  }
+  
+  .search-input {
+    min-height: 50px;
   }
 }

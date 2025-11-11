@@ -209,141 +209,155 @@ function Cadastro() {
       <img className="cadastro__logo" src={logoSemFundo} alt="DoeVida" />
       <h1 className="cadastro__title">Sou Doador</h1>
 
-      <form className="cadastro__form" onSubmit={(e) => e.preventDefault()}>
-        <div className="form-grid">
-          <div className="field">
-            <span>Nome Completo *</span>
-            <FormattedInput
-              ref={nomeRef}
-              placeholder="Digite seu nome completo"
-              icon={<InputIcons.User />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              maxLength={100}
-            />
-          </div>
+      <div className="cadastro__form-container">
+        {/* CARD 1 - Informações Pessoais */}
+        <form className="cadastro__form cadastro__form--left" onSubmit={(e) => e.preventDefault()}>
+          <h2 className="form-section-title">Informações Pessoais</h2>
+          <div className="form-fields">
+            <div className="field">
+              <span>Nome Completo *</span>
+              <FormattedInput
+                ref={nomeRef}
+                placeholder="Digite seu nome completo"
+                icon={<InputIcons.User />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                maxLength={100}
+              />
+            </div>
 
-          <div className="field">
-            <span>E-mail *</span>
-            <FormattedInput
-              ref={emailRef}
-              type="email"
-              placeholder="Digite seu e-mail"
-              icon={<InputIcons.Email />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              maxLength={100}
-            />
-          </div>
+            <div className="field">
+              <span>E-mail *</span>
+              <FormattedInput
+                ref={emailRef}
+                type="email"
+                placeholder="Digite seu e-mail"
+                icon={<InputIcons.Email />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                maxLength={100}
+              />
+            </div>
 
-          <div className="field">
-            <span>Senha *</span>
-            <PasswordInput
-              ref={senhaRef}
-              placeholder="Digite sua senha"
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              maxLength={255}
-            />
-          </div>
+            <div className="field">
+              <span>Senha *</span>
+              <PasswordInput
+                ref={senhaRef}
+                placeholder="Digite sua senha"
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                maxLength={255}
+              />
+            </div>
 
-          <div className="field">
-            <span>Confirmar Senha *</span>
-            <PasswordInput
-              ref={confirmarSenhaRef}
-              placeholder="Confirme sua senha"
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-              maxLength={255}
-            />
-          </div>
+            <div className="field">
+              <span>Confirmar Senha *</span>
+              <PasswordInput
+                ref={confirmarSenhaRef}
+                placeholder="Confirme sua senha"
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                maxLength={255}
+              />
+            </div>
 
-          <div className="field">
-            <span>CPF</span>
-            <FormattedInput
-              ref={cpfRef}
-              formatType="cpf"
-              placeholder="000.000.000-00"
-              icon={<InputIcons.Document />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-            />
-          </div>
-
-          <div className="field">
-            <span>CEP</span>
-            <FormattedInput
-              ref={cepRef}
-              formatType="cep"
-              placeholder="00000-000"
-              icon={<InputIcons.Location />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-            />
-          </div>
-
-          <div className="field">
-            <span>Número de Telefone</span>
-            <FormattedInput
-              ref={numeroRef}
-              formatType="phone"
-              placeholder="(00) 00000-0000"
-              icon={<InputIcons.Phone />}
-              onKeyPress={handleKeyPress}
-              disabled={loading}
-            />
-          </div>
-
-          <div className="field">
-            <span>Data de Nascimento</span>
-            <FormattedInput
-              ref={dataNascimentoRef}
-              type="date"
-              icon={<InputIcons.Calendar />}
-              disabled={loading}
-            />
-          </div>
-
-          <div className="field">
-            <span>Tipo Sanguíneo *</span>
-            <div className="select-wrapper">
-              <InputIcons.Blood />
-              <select className="input input--blood" value={idTipoSanguineo} onChange={e => setIdTipoSanguineo(e.target.value)} disabled={loading}>
-                <option value="" disabled>Selecione...</option>
-                {tiposSangue.map(tipo => <option key={tipo.id} value={tipo.id}>{tipo.tipo}</option>)}
-              </select>
+            <div className="field">
+              <span>CPF</span>
+              <FormattedInput
+                ref={cpfRef}
+                formatType="cpf"
+                placeholder="000.000.000-00"
+                icon={<InputIcons.Document />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+              />
             </div>
           </div>
+        </form>
 
-          <div className="field">
-            <span>Sexo *</span>
-            <div className="select-wrapper">
-              <InputIcons.Gender />
-              <select className="input input--sex" value={idSexo} onChange={e => setIdSexo(e.target.value)} disabled={loading}>
-                <option value="" disabled>Selecione...</option>
-                {sexos.map(sexo => (
-                  <option key={sexo.id} value={sexo.id}>
-                    {sexo.sexo === 'MASCULINO' ? 'Masculino' :
-                     sexo.sexo === 'FEMININO' ? 'Feminino' : 'Outro'}
-                  </option>
-                ))}
-              </select>
+        {/* CARD 2 - Informações de Saúde e Contato */}
+        <form className="cadastro__form cadastro__form--right" onSubmit={(e) => e.preventDefault()}>
+          <h2 className="form-section-title">Informações de Saúde e Contato</h2>
+          <div className="form-fields">
+            <div className="field">
+              <span>CEP</span>
+              <FormattedInput
+                ref={cepRef}
+                formatType="cep"
+                placeholder="00000-000"
+                icon={<InputIcons.Location />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+              />
+            </div>
+
+            <div className="field">
+              <span>Número de Telefone</span>
+              <FormattedInput
+                ref={numeroRef}
+                formatType="phone"
+                placeholder="(00) 00000-0000"
+                icon={<InputIcons.Phone />}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+              />
+            </div>
+
+            <div className="field">
+              <span>Data de Nascimento</span>
+              <FormattedInput
+                ref={dataNascimentoRef}
+                type="date"
+                icon={<InputIcons.Calendar />}
+                disabled={loading}
+              />
+            </div>
+
+            <div className="field">
+              <span>Tipo Sanguíneo *</span>
+              <div className="select-wrapper">
+                <InputIcons.Blood />
+                <select className="input input--blood" value={idTipoSanguineo} onChange={e => setIdTipoSanguineo(e.target.value)} disabled={loading}>
+                  <option value="" disabled>Selecione...</option>
+                  {tiposSangue.map(tipo => <option key={tipo.id} value={tipo.id}>{tipo.tipo}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="field">
+              <span>Sexo *</span>
+              <div className="select-wrapper">
+                <InputIcons.Gender />
+                <select className="input input--sex" value={idSexo} onChange={e => setIdSexo(e.target.value)} disabled={loading}>
+                  <option value="" disabled>Selecione...</option>
+                  {sexos.map(sexo => (
+                    <option key={sexo.id} value={sexo.id}>
+                      {sexo.sexo === 'MASCULINO' ? 'Masculino' :
+                       sexo.sexo === 'FEMININO' ? 'Feminino' : 'Outro'}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
+        </form>
+      </div>
 
-          <div className="field field--full">
-            <span>Foto de Perfil</span>
-            <PhotoUpload
-              ref={photoUploadRef}
-              placeholder="Adicione sua foto de perfil"
-              disabled={loading}
-            />
-          </div>
+      {/* Foto de Perfil - Card Separado */}
+      <div className="cadastro__form cadastro__form--photo">
+        <h2 className="form-section-title">Foto de Perfil</h2>
+        <div className="field">
+          <PhotoUpload
+            ref={photoUploadRef}
+            placeholder="Adicione sua foto de perfil"
+            disabled={loading}
+          />
         </div>
+      </div>
 
-        {error && <div className="error-msg">{error}</div>}
-        {success && <div className="success-msg">{success}</div>}
-      </form>
+      {/* Mensagens de Erro/Sucesso */}
+      {error && <div className="error-msg">{error}</div>}
+      {success && <div className="success-msg">{success}</div>}
 
       <div className="cadastro__actions">
         <button className="btn btn--primary" type="button" onClick={criarUsuario} disabled={loading}>

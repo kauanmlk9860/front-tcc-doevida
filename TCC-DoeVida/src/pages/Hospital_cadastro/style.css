@@ -139,15 +139,26 @@
   /* =========================
      FORM BASE
      ========================= */
+  /* Container para os 2 cards lado a lado */
+  .cadastro__form-container {
+    display: flex;
+    gap: 24px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 20px 0 10px;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+  }
+
   .cadastro__form {
     display: flex;
     flex-direction: column;
     gap: var(--gap-y);
-    padding: 20px;
+    padding: 28px;
     border-radius: 24px;
-    max-width: 980px; /* mais largo p/ 2 colunas */
-    width: 100%;
-    margin: 20px 0 10px;
+    flex: 1;
+    min-width: 420px;
     position: relative;
     z-index: 1;
     background: 
@@ -160,17 +171,39 @@
       0 25px 50px rgba(153,4,16,0.08),
       0 10px 30px rgba(0,0,0,0.04),
       inset 0 1px 0 rgba(255,255,255,0.8);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
-  /* Grid para “Sou Hospital” (2 colunas no desktop) */
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr;     /* mobile: 1 col */
-    gap: 22px 38px;                  /* espaçamento linha x coluna */
-    max-width: 980px;
-    width: 100%;
-    margin: 16px auto 10px;
-    padding: 2px;
+  .cadastro__form:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 30px 60px rgba(153,4,16,0.12),
+      0 15px 40px rgba(0,0,0,0.06),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+
+  /* Card de foto - largura total */
+  .cadastro__form--photo {
+    max-width: 1200px;
+    min-width: auto;
+  }
+
+  /* Título da seção */
+  .form-section-title {
+    color: var(--brand);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(153,4,16,0.1);
+    letter-spacing: 0.3px;
+  }
+
+  /* Container dos campos */
+  .form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-y);
   }
 
   /* Wrapper de campo com label acima do input */
@@ -449,6 +482,19 @@
     .btn { height: 58px; font-size: 19px; }
   }
   
+  /* Responsividade dos cards */
+  @media (max-width: 1024px) {
+    .cadastro__form-container {
+      flex-direction: column;
+    }
+    
+    .cadastro__form {
+      min-width: auto;
+      max-width: 600px;
+      width: 100%;
+    }
+  }
+
   /* Telas pequenas (smartphones médios) */
   @media (max-width: 767px) {
     .cadastro { padding-top: 60px; }
@@ -456,7 +502,16 @@
     .cadastro__title { font-size: 48px; }
     .cadastro__decor-circle { width: 60vw; height: 50vw; top: -25vw; left: -25vw; }
     .cadastro__form,
-    .cadastro__actions { max-width: 92%; gap: 18px; }
+    .cadastro__actions,
+    .cadastro__form-container { max-width: 92%; gap: 18px; }
+    
+    .cadastro__form {
+      padding: 20px;
+    }
+    
+    .form-section-title {
+      font-size: 20px;
+    }
   
     :root{
       --input-h:62px;
