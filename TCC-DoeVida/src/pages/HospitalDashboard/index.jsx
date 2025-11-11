@@ -41,64 +41,25 @@ function HospitalDashboard() {
 
   // Carregar dados
   useEffect(() => {
-    console.log('Iniciando carregamento dos dados...')
     carregarDados()
   }, [])
 
   // Função para buscar informações completas do usuário
-  const buscarDadosUsuario = async (idUsuario, tiposMap) => {
+  const buscarDadosUsuario = async (idUsuario) => {
     try {
-<<<<<<< HEAD
-      console.log('========================================')
-      console.log('Buscando dados do usuário ID:', idUsuario)
-      const res = await buscarUsuario(idUsuario)
-      console.log('Resposta completa da API buscarUsuario:', JSON.stringify(res, null, 2))
-      
-      if (res && res.success && res.data) {
-        const userData = res.data;
-        console.log('userData recebido:', JSON.stringify(userData, null, 2))
-=======
-      console.log('Buscando dados do usuário ID:', idUsuario);
       const res = await buscarUsuario(idUsuario);
-      console.log('Resposta da busca do usuário:', JSON.parse(JSON.stringify(res)));
       
       if (res && res.success) {
         // Extrair os dados do usuário da resposta
-        // Verificando diferentes formatos possíveis da resposta
         const userData = res.data?.usuario || res.data || {};
-        console.log('Dados completos do usuário:', JSON.parse(JSON.stringify(userData)));
->>>>>>> 7c5afcaf932d61da0a4110ef9367aac22befa05d
         
-        // Tentar extrair o ID do tipo sanguíneo de diferentes possíveis campos
-        let idTipoSanguineo = userData.id_tipo_sanguineo || 
-                              userData.idTipoSanguineo || 
-                              userData.tipo_sanguineo?.id ||
-                              userData.tipoSanguineo?.id;
+        // Mapear o ID do tipo sanguíneo para o tipo correspondente
+        const tiposSanguineos = {
+          1: 'A+', 2: 'A-', 3: 'B+', 4: 'B-',
+          5: 'AB+', 6: 'AB-', 7: 'O+', 8: 'O-'
+        };
         
-<<<<<<< HEAD
-        console.log('ID do tipo sanguíneo encontrado:', idTipoSanguineo)
-        console.log('Tipos sanguíneos disponíveis:', tiposMap)
-        
-        // Se o tipo sanguíneo já vier como string (A+, B-, etc)
-        let tipoSanguineo = 'Não informado';
-        
-        if (typeof userData.tipo_sanguineo === 'string' && userData.tipo_sanguineo !== '') {
-          tipoSanguineo = userData.tipo_sanguineo;
-          console.log('Tipo sanguíneo veio como string:', tipoSanguineo)
-        } else if (typeof userData.tipoSanguineo === 'string' && userData.tipoSanguineo !== '') {
-          tipoSanguineo = userData.tipoSanguineo;
-          console.log('Tipo sanguíneo veio como tipoSanguineo:', tipoSanguineo)
-        } else if (idTipoSanguineo && tiposMap[idTipoSanguineo]) {
-          tipoSanguineo = tiposMap[idTipoSanguineo];
-          console.log(`Tipo sanguíneo mapeado: ID ${idTipoSanguineo} -> ${tipoSanguineo}`)
-        } else {
-          console.warn('⚠️ Tipo sanguíneo não encontrado! ID:', idTipoSanguineo, 'userData:', userData)
-        }
-        
-        console.log(`✅ Tipo sanguíneo final: ${tipoSanguineo}`);
-=======
         // Extrair o ID do tipo sanguíneo do usuário
-        // Verificando em diferentes localizações possíveis
         let idTipoSanguineo = userData.id_tipo_sanguineo || 
                              (userData.tipo_sanguineo && parseInt(userData.tipo_sanguineo)) ||
                              (userData.tipoSanguineo && parseInt(userData.tipoSanguineo)) ||
@@ -107,7 +68,6 @@ function HospitalDashboard() {
         // Se for string, converter para número
         if (typeof idTipoSanguineo === 'string') {
           idTipoSanguineo = parseInt(idTipoSanguineo, 10);
-          console.log('Convertido id_tipo_sanguineo para número:', idTipoSanguineo);
         }
         
         // Verificar se o tipo sanguíneo já está no formato desejado (ex: 'O-')
@@ -132,9 +92,6 @@ function HospitalDashboard() {
           tipoSanguineo = userData.tipoSanguineoObj.tipo;
         }
         
-        console.log(`Tipo sanguíneo final: ${tipoSanguineo}, ID: ${idTipoSanguineo || 'não encontrado'}`);
->>>>>>> 7c5afcaf932d61da0a4110ef9367aac22befa05d
-        
         // Retornar os dados do usuário com o tipo sanguíneo incluído
         const result = {
           ...userData,
@@ -143,19 +100,17 @@ function HospitalDashboard() {
           tipo_sanguineo_nome: tipoSanguineo // Garantir que o nome esteja disponível
         };
         
-        console.log('Dados finais do usuário:', result);
-        console.log('========================================')
         return result;
       }
       
-      console.warn('❌ Usuário não encontrado ou erro na resposta:', res)
+      // Usuário não encontrado ou erro na resposta
       return { 
         id: idUsuario, 
         nome: 'Usuário não encontrado',
         tipoSanguineo: 'Não informado'
       }
     } catch (error) {
-      console.error('❌ Erro ao buscar dados do usuário:', error)
+      // Erro ao buscar dados do usuário
       return { 
         id: idUsuario, 
         nome: 'Erro ao carregar',
@@ -166,13 +121,10 @@ function HospitalDashboard() {
 
   const carregarDados = async () => {
     setLoading(true)
-    console.log('Iniciando carregamento dos dados...')
     
     try {
       // Carregar tipos sanguíneos da API
-      console.log('Buscando tipos sanguíneos da API...')
       const resTipos = await obterTiposSanguineos()
-      console.log('Resposta dos tipos sanguíneos:', resTipos)
       
       let tiposMap = {
         1: 'A+', 2: 'A-', 3: 'B+', 4: 'B-',
@@ -185,39 +137,27 @@ function HospitalDashboard() {
           acc[tipo.id] = tipo.tipo;
           return acc;
         }, {});
-        console.log('Mapeamento de tipos sanguíneos criado:', tiposMap)
       }
       
       setTiposSanguineos(tiposMap)
       
       // Carregar agendamentos de hoje
-      console.log('Buscando agendamentos de hoje...')
       const resHoje = await obterAgendamentosHoje()
-      console.log('Resposta dos agendamentos de hoje:', resHoje)
       
       if (resHoje.success) {
-        console.log('Agendamentos de hoje carregados:', resHoje.data)
         setAgendamentosHoje(resHoje.data)
-      } else {
-        console.warn('Falha ao carregar agendamentos de hoje:', resHoje.message)
       }
 
       // Carregar todos os agendamentos
-      console.log('Buscando todos os agendamentos...')
       const resTodos = await listarAgendamentosHospital()
-      console.log('Resposta de todos os agendamentos:', resTodos)
       
       if (resTodos.success) {
-        console.log('Dados brutos dos agendamentos recebidos:', resTodos.data)
 
         // Criar um array para armazenar os agendamentos com os dados completos do usuário
-        console.log('Buscando dados dos usuários para cada agendamento...')
         const agendamentosComUsuarios = await Promise.all(
           resTodos.data.map(async (agendamento) => {
             try {
-              console.log(`Buscando dados do usuário ${agendamento.id_usuario} para o agendamento ${agendamento.id}`)
               const dadosUsuario = await buscarDadosUsuario(agendamento.id_usuario, tiposMap)
-              console.log(`Dados do usuário ${agendamento.id_usuario} recebidos:`, dadosUsuario)
               
               return {
                 ...agendamento,
@@ -231,7 +171,7 @@ function HospitalDashboard() {
                 }
               }
             } catch (error) {
-              console.error(`Erro ao buscar dados do usuário ${agendamento.id_usuario}:`, error)
+              // Erro ao buscar dados do usuário
               return {
                 ...agendamento,
                 usuario: {
@@ -245,16 +185,12 @@ function HospitalDashboard() {
           })
         )
 
-        console.log('Agendamentos com dados completos dos usuários:', agendamentosComUsuarios)
         setTodosAgendamentos(agendamentosComUsuarios)
       } else {
-        console.warn('Falha ao carregar todos os agendamentos:', resTodos.message)
-      }
+        }
 
       // Carregar estatísticas
-      console.log('Buscando estatísticas...')
       const resEstatisticas = await obterEstatisticasHospital()
-      console.log('Resposta das estatísticas:', resEstatisticas)
       
       if (resEstatisticas.success) {
         const estatisticasAtualizadas = {
@@ -263,15 +199,12 @@ function HospitalDashboard() {
           agendamentosPendentes: resEstatisticas.data.agendamentosPendentes || 0,
           agendamentosCancelados: resEstatisticas.data.agendamentosCancelados || 0
         }
-        console.log('Estatísticas atualizadas:', estatisticasAtualizadas)
         setEstatisticas(estatisticasAtualizadas)
       } else {
-        console.warn('Falha ao carregar estatísticas:', resEstatisticas.message)
       }
     } catch (error) {
-      console.error('Erro ao carregar dados:', error)
+      // Erro ao carregar dados
     } finally {
-      console.log('Finalizando carregamento dos dados')
       setLoading(false)
     }
   }
@@ -284,13 +217,12 @@ function HospitalDashboard() {
       const result = await concluirDoacao(agendamentoId)
       if (result.success) {
         alert('Doação concluída com sucesso!')
-        carregarDados() // Recarregar dados
+        await carregarDados() // Recarregar dados
         setShowDetalhesModal(false)
       } else {
         alert(result.message || 'Erro ao concluir doação')
       }
     } catch (error) {
-      console.error('Erro:', error)
       alert('Erro ao processar solicitação')
     } finally {
       setProcessando(false)
@@ -306,13 +238,12 @@ function HospitalDashboard() {
       const result = await cancelarAgendamentoHospital(agendamentoId, motivo)
       if (result.success) {
         alert('Agendamento cancelado com sucesso!')
-        carregarDados()
+        await carregarDados()
         setShowDetalhesModal(false)
       } else {
         alert(result.message || 'Erro ao cancelar agendamento')
       }
     } catch (error) {
-      console.error('Erro:', error)
       alert('Erro ao processar solicitação')
     } finally {
       setProcessando(false)
@@ -343,7 +274,6 @@ function HospitalDashboard() {
       // Formata a data ajustada
       return dataAjustada.toLocaleDateString('pt-BR')
     } catch (error) {
-      console.error('Erro ao formatar data:', error, 'Valor:', dataStr)
       return dataStr || 'Data inválida'
     }
   }
@@ -393,10 +323,8 @@ function HospitalDashboard() {
       }
       
       // Para qualquer outro formato, retorna o valor original
-      console.log('Formato de hora não reconhecido:', horaStr);
       return String(horaStr);
     } catch (error) {
-      console.error('Erro ao formatar hora:', error, 'Valor:', horaStr);
       return 'Horário inválido';
     }
   }
@@ -717,7 +645,6 @@ function HospitalDashboard() {
                       </div>
                     </td>
                     <td>
-                      {console.log('Renderizando tipo sanguíneo para agendamento:', agendamento.id, 'Dados do usuário:', agendamento.usuario)}
                       <div style={{ 
                         display: 'flex',
                         flexDirection: 'column',
