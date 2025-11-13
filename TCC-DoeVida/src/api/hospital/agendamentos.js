@@ -8,58 +8,55 @@ import http from '../../services/http.js';
  */
 export async function listarAgendamentosHospital(filtros = {}) {
   try {
-    console.log('📞 Chamando GET /agendamento...');
-    const res = await http.get('/agendamento');
-    console.log('✅ Resposta HTTP recebida - Status:', res.status);
-    console.log('📊 Estrutura da resposta:', {
-      status: res.status,
-      dataKeys: Object.keys(res.data || {}),
-      dataType: typeof res.data
-    });
+    console.log('📞 Buscando agendamentos do hospital...');
     
-    let agendamentos = res.data.agendamentos || res.data.dados || res.data || [];
-    console.log('📋 Agendamentos extraídos:', {
-      isArray: Array.isArray(agendamentos),
-      length: Array.isArray(agendamentos) ? agendamentos.length : 'N/A',
-      firstItem: Array.isArray(agendamentos) && agendamentos.length > 0 ? agendamentos[0] : 'Nenhum'
-    });
+    // Tentar endpoint específico do hospital primeiro
+    let res;
+    try {
+      res = await http.get('/hospital/agendamentos');
+      console.log('✅ Resposta de /hospital/agendamentos:', res.data);
+    } catch (hospitalError) {
+      // Se não existir, usar endpoint geral
+      console.log('⚠️ Endpoint /hospital/agendamentos não disponível, usando /agendamento');
+      res = await http.get('/agendamento');
+      console.log('✅ Resposta de /agendamento:', res.data);
+    }
     
-    // Filtrar por status se fornecido
-    if (filtros.status && Array.isArray(agendamentos)) {
+    // Extrair agendamentos de diferentes estruturas
+    let agendamentos = [];
+    
+    if (Array.isArray(res.data)) {
+      agendamentos = res.data;
+    } else if (res.data.agendamentos && Array.isArray(res.data.agendamentos)) {
+      agendamentos = res.data.agendamentos;
+    } else if (res.data.dados && Array.isArray(res.data.dados)) {
+      agendamentos = res.data.dados;
+    } else if (res.data.data && Array.isArray(res.data.data)) {
+      agendamentos = res.data.data;
+    }
+    
+    console.log('📋 Total de agendamentos encontrados:', agendamentos.length);
+    
+    // Aplicar filtros
+    if (filtros.status) {
       agendamentos = agendamentos.filter(a => a.status === filtros.status);
     }
     
-    // Filtrar por data se fornecido
-    if (filtros.data && Array.isArray(agendamentos)) {
+    if (filtros.data) {
       agendamentos = agendamentos.filter(a => a.data === filtros.data);
     }
     
-    const result = {
-      success: res.data.status !== false,
+    return {
+      success: true,
       data: agendamentos,
-      message: res.data.message
+      message: 'Agendamentos carregados'
     };
-    
-    console.log('✅ Retornando resultado:', {
-      success: result.success,
-      dataLength: Array.isArray(result.data) ? result.data.length : 'N/A',
-      message: result.message
-    });
-    
-    return result;
   } catch (error) {
-    console.error('❌ ERRO ao listar agendamentos:', {
-      message: error.message,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data,
-      url: error.config?.url
-    });
-    
+    console.error('❌ Erro ao listar agendamentos:', error.response?.data || error.message);
     return {
       success: false,
       data: [],
-      message: error.response?.data?.message || `Erro ao listar agendamentos: ${error.message}`
+      message: error.response?.data?.message || `Erro: ${error.message}`
     };
   }
 }
@@ -88,24 +85,90 @@ export async function buscarAgendamentoHospital(id) {
 
 /**
  * Confirmar conclusão de uma doação
- * Endpoint: PUT /agendamento/:id
+ * Endpoint: PATCH /agendamento/:id/status
  */
-export async function concluirDoacao(id, observacoes = '') {
+export async function concluirDoacao(id) {
   try {
+    console.log('🔄 Concluindo doação ID:', id);
+    
+    // Buscar agendamento completo
+    const response = await http.get(`/agendamento/${id}`);
+    console.log('📥 Response completo:', JSON.stringify(response.data, null, 2));
+    
+    // Extrair dados do agendamento
+    let dados;
+    if (response.data.agendamento) {
+      dados = response.data.agendamento;
+    } else if (response.data.data) {
+      dados = response.data.data;
+    } else {
+      dados = response.data;
+    }
+    
+    console.log('📋 Dados do agendamento:', JSON.stringify(dados, null, 2));
+    
+    // Validar campos obrigatórios
+    if (!dados.id_usuario || !dados.id_hospital || !dados.data || !dados.hora) {
+      console.error('❌ Campos faltando:', { 
+        id_usuario: dados.id_usuario, 
+        id_hospital: dados.id_hospital, 
+        data: dados.data, 
+        hora: dados.hora 
+      });
+      return {
+        success: false,
+        message: 'Dados do agendamento incompletos'
+      };lj
+    }
+    
+    // Formatar data (YYYY-MM-DD)
+    let dataFormatada = dados.data;
+    if (typeof dados.data === 'string' && dados.data.includes('T')) {
+      dataFormatada = dados.data.split('T')[0];
+    }
+    
+    // Formatar hora (HH:MM:SS)
+    let horaFormatada = dados.hora;
+    if (typeof dados.hora === 'object' && dados.hora !== null) {
+      // Se hora é um objeto Date
+      const horaDate = new Date(dados.hora);
+      horaFormatada = horaDate.toISOString().substring(11, 19);
+    } else if (typeof dados.hora === 'string') {
+      if (dados.hora.includes('T')) {
+        horaFormatada = new Date(dados.hora).toISOString().substring(11, 19);
+      } else if (dados.hora.length === 5) {
+        horaFormatada = `${dados.hora}:00`;
+      } else if (dados.hora.length === 8) {
+        horaFormatada = dados.hora;
+      }
+    }
+    
+    // Montar payload
     const payload = {
       status: 'Concluído',
-      observacoes: observacoes || null
+      data: dataFormatada,
+      hora: horaFormatada,
+      id_usuario: Number(dados.id_usuario),
+      id_hospital: Number(dados.id_hospital)
     };
+    
+    // Adicionar id_doacao se existir
+    if (dados.id_doacao && Number(dados.id_doacao) > 0) {
+      payload.id_doacao = Number(dados.id_doacao);
+    }
+    
+    console.log('📤 Payload:', JSON.stringify(payload, null, 2));
     
     const res = await http.put(`/agendamento/${id}`, payload);
     
+    console.log('✅ Sucesso:', res.data);
     return {
-      success: res.data.status || true,
-      data: res.data.agendamento || res.data,
-      message: res.data.message || 'Doação confirmada com sucesso!'
+      success: true,
+      data: res.data,
+      message: 'Doação concluída!'
     };
   } catch (error) {
-    console.error('Erro ao concluir doação:', error);
+    console.error('❌ Erro:', error.response?.data || error.message);
     return {
       success: false,
       message: error.response?.data?.message || 'Erro ao concluir doação'
@@ -117,17 +180,19 @@ export async function concluirDoacao(id, observacoes = '') {
  * Cancelar um agendamento
  * Endpoint: DELETE /agendamento/:id
  */
-export async function cancelarAgendamentoHospital(id, motivo = '') {
+export async function cancelarAgendamentoHospital(id) {
   try {
+    console.log('🔄 Cancelando agendamento ID:', id);
     const res = await http.delete(`/agendamento/${id}`);
     
+    console.log('✅ Resposta ao cancelar:', res.data);
     return {
-      success: res.data.status || true,
-      data: res.data.agendamento || res.data,
+      success: true,
+      data: res.data,
       message: res.data.message || 'Agendamento cancelado com sucesso!'
     };
   } catch (error) {
-    console.error('Erro ao cancelar agendamento:', error);
+    console.error('❌ Erro ao cancelar agendamento:', error.response?.data || error.message);
     return {
       success: false,
       message: error.response?.data?.message || 'Erro ao cancelar agendamento'

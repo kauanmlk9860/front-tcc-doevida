@@ -7,15 +7,6 @@ const httpConfig = {
   timeout: 15000,
 };
 
-// Adicionar header de desenvolvimento se estiver em modo dev
-if (import.meta.env.VITE_DEVELOPMENT_MODE === 'true') {
-  httpConfig.headers = {
-    'X-Development-Mode': 'true',
-    'X-Bypass-Rate-Limit': 'true',
-    'X-Test-Mode': 'unlimited-requests'
-  };
-}
-
 const http = axios.create(httpConfig);
 
 /* ==== Helpers locais (evitam dependência do AuthService) ==== */
@@ -65,12 +56,6 @@ http.interceptors.request.use((config) => {
     console.warn('⚠️ Token necessário mas não existe no localStorage!');
   } else {
     console.log('📝 Rota pública, não precisa de token');
-  }
-
-  // Headers simples para desenvolvimento (sem causar CORS)
-  if (import.meta.env.VITE_DEVELOPMENT_MODE === 'true') {
-    // Apenas headers que não causam preflight CORS
-    console.log('Modo desenvolvimento ativo - rate limiting pode estar ativo')
   }
 
   if (!config.headers['Content-Type']) {
