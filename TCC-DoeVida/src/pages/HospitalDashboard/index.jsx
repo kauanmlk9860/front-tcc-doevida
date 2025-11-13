@@ -172,12 +172,18 @@ function HospitalDashboard() {
       };
       
       if (resTipos.success && resTipos.data) {
-        // Criar mapeamento dinâmico a partir da API
-        tiposMap = resTipos.data.reduce((acc, tipo) => {
-          acc[tipo.id] = tipo.tipo;
-          return acc;
-        }, {});
-        console.log('✅ Tipos sanguíneos carregados:', tiposMap)
+        // Verificar se data é array
+        const tiposArray = Array.isArray(resTipos.data) ? resTipos.data : resTipos.data.tipos || [];
+        
+        if (Array.isArray(tiposArray) && tiposArray.length > 0) {
+          tiposMap = tiposArray.reduce((acc, tipo) => {
+            acc[tipo.id] = tipo.tipo;
+            return acc;
+          }, {});
+          console.log('✅ Tipos sanguíneos carregados:', tiposMap)
+        } else {
+          console.log('⚠️ Usando tipos sanguíneos padrão')
+        }
       } else {
         console.log('⚠️ Usando tipos sanguíneos padrão')
       }
@@ -193,26 +199,7 @@ function HospitalDashboard() {
         setAgendamentosHoje(resHoje.data)
       } else {
         console.error('❌ Erro ao carregar agendamentos de hoje:', resHoje.message)
-        // Usar dados de teste para hoje
-        const hoje = new Date().toISOString().split('T')[0]
-        const agendamentosHojeTeste = [
-          {
-            id: 1,
-            data: hoje,
-            hora: '09:00',
-            status: 'Agendado',
-            id_usuario: 1,
-            usuario: {
-              id: 1,
-              nome: 'João Silva (Hoje - Teste)',
-              email: 'joao@teste.com',
-              telefone: '(11) 99999-9999',
-              tipoSanguineo: 'O+'
-            }
-          }
-        ]
-        console.log('⚠️ Usando agendamentos de hoje de teste para debug')
-        setAgendamentosHoje(agendamentosHojeTeste)
+        setAgendamentosHoje([])
       }
 
       // Carregar todos os agendamentos
@@ -260,40 +247,8 @@ function HospitalDashboard() {
         console.log('Agendamentos com usuários carregados:', agendamentosComUsuarios.length)
         setTodosAgendamentos(agendamentosComUsuarios)
       } else {
-        console.error('Erro ao carregar agendamentos:', resTodos.message)
-        // Adicionar dados de teste para debug
-        const dadosTeste = [
-          {
-            id: 1,
-            data: '2024-01-15',
-            hora: '09:00',
-            status: 'Agendado',
-            id_usuario: 1,
-            usuario: {
-              id: 1,
-              nome: 'João Silva (Teste)',
-              email: 'joao@teste.com',
-              telefone: '(11) 99999-9999',
-              tipoSanguineo: 'O+'
-            }
-          },
-          {
-            id: 2,
-            data: '2024-01-16',
-            hora: '14:30',
-            status: 'Agendado',
-            id_usuario: 2,
-            usuario: {
-              id: 2,
-              nome: 'Maria Santos (Teste)',
-              email: 'maria@teste.com',
-              telefone: '(11) 88888-8888',
-              tipoSanguineo: 'A+'
-            }
-          }
-        ]
-        console.log('⚠️ Usando dados de teste para debug')
-        setTodosAgendamentos(dadosTeste)
+        console.error('❌ Erro ao carregar agendamentos:', resTodos.message)
+        setTodosAgendamentos([])
       }
 
       // Carregar estatísticas
@@ -311,15 +266,6 @@ function HospitalDashboard() {
         setEstatisticas(estatisticasAtualizadas)
       } else {
         console.error('❌ Erro ao carregar estatísticas:', resEstatisticas.message)
-        // Usar estatísticas de teste
-        const estatisticasTeste = {
-          totalAgendamentos: 2,
-          agendamentosConcluidos: 0,
-          agendamentosPendentes: 2,
-          agendamentosCancelados: 0
-        }
-        console.log('⚠️ Usando estatísticas de teste para debug')
-        setEstatisticas(estatisticasTeste)
       }
     } catch (error) {
       console.error('❌ Erro geral ao carregar dados:', error)
@@ -331,41 +277,46 @@ function HospitalDashboard() {
   }
 
   const handleConcluirDoacao = async (agendamentoId) => {
-    if (!window.confirm('Confirmar conclusão desta doação?')) return
+    if (!window.confirm('Confirmar que esta doação foi concluída?')) return
     
     setProcessando(true)
     try {
+      console.log('🔄 Concluindo doação:', agendamentoId)
       const result = await concluirDoacao(agendamentoId)
+      
       if (result.success) {
-        alert('Doação concluída com sucesso!')
-        await carregarDados() // Recarregar dados
+        alert('✅ Doação concluída com sucesso!')
         setShowDetalhesModal(false)
+        await carregarDados()
       } else {
-        alert(result.message || 'Erro ao concluir doação')
+        alert('❌ ' + (result.message || 'Erro ao concluir doação'))
       }
     } catch (error) {
-      alert('Erro ao processar solicitação')
+      console.error('Erro:', error)
+      alert('❌ Erro ao processar solicitação')
     } finally {
       setProcessando(false)
     }
   }
 
   const handleCancelarAgendamento = async (agendamentoId) => {
-    const motivo = prompt('Digite o motivo do cancelamento:')
-    if (!motivo) return
+    if (!window.confirm('Tem certeza que deseja cancelar este agendamento?')) return
     
     setProcessando(true)
     try {
-      const result = await cancelarAgendamentoHospital(agendamentoId, motivo)
+      console.log('🔄 Cancelando agendamento:', agendamentoId)
+      const result = await cancelarAgendamentoHospital(agendamentoId)
+      
       if (result.success) {
-        alert('Agendamento cancelado com sucesso!')
-        await carregarDados()
+        alert('✅ Agendamento cancelado com sucesso!')
         setShowDetalhesModal(false)
+        await carregarDados()
       } else {
-        alert(result.message || 'Erro ao cancelar agendamento')
+        alert('❌ ' + (result.message || 'Erro ao cancelar agendamento'))
       }
     } catch (error) {
-      alert('Erro ao processar solicitação')
+      console.error('Erro:', error)
+      alert('❌ Erro ao processar solicitação')
     } finally {
       setProcessando(false)
     }
