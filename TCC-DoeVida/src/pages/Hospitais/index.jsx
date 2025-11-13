@@ -235,15 +235,6 @@ function Hospitais() {
         <div className="header-bg-pattern"></div>
         <div className="header-content-premium">
           <div className="header-left-simple">
-            <button 
-              className="btn-voltar-premium"
-              onClick={() => navigate('/')}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M19 12H5m7-7l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-            
             <div className="header-brand-simple">
               <div className="brand-logo-container">
                 <img src={logoSemFundo} alt="DoeVida" className="header-logo" />
@@ -400,7 +391,6 @@ function Hospitais() {
             <div className="modal-header-premium">
               <div className="modal-header-bg">
                 <div className="modal-logo-section">
-                  <img src={logoSemFundo} alt="DoeVida" className="modal-logo" />
                   <div className="modal-brand">
                     <h1>DoeVida</h1>
                     <span>Hospitais Parceiros</span>

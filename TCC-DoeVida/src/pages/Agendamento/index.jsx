@@ -360,12 +360,6 @@ export default function Agendamento() {
         <div className="header-bg-banco"></div>
         <div className="header-content-banco">
           <div className="header-left-banco">
-            <button className="btn-voltar-banco" onClick={handleVoltar} aria-label="Voltar">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M19 12H5m7-7l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-
             <div className="header-brand-banco">
               <div className="brand-logo-container-banco">
                 <img src={logoSemFundo} alt="DoeVida" className="header-logo-banco" />

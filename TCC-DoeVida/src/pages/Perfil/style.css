@@ -55,11 +55,9 @@
 }
 
 .header-content {
-  max-width: 1400px; /* Mais largo */
   margin: 0 auto;
   padding: 0 40px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   position: relative;
   z-index: 1;

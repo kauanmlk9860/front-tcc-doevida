@@ -112,6 +112,12 @@ function Perfil() {
           if (s) idSexo = String(s.id)
         }
 
+        console.log('===== DEBUG TELEFONE =====');
+        console.log('Objeto user completo:', user);
+        console.log('user.telefone:', user.telefone);
+        console.log('Tipo de user.telefone:', typeof user.telefone);
+        console.log('==========================');
+        
         setFormData({
           nome: user.nome || '',
           email: user.email || '',
@@ -166,9 +172,7 @@ function Perfil() {
       if (response.success) {
         setMessage({ type: 'success', text: 'Perfil atualizado com sucesso!' })
         setEditMode(false)
-        // Limpar senha após salvar
         setFormData(prev => ({ ...prev, senha: '' }))
-        // Atualizar contexto do usuário
         await updateUser()
         setTimeout(() => {
           carregarDados()
@@ -490,12 +494,12 @@ function Perfil() {
       </main>
 
       {/* Logout Modal */}
-      {showLogoutModal && (
-        <LogoutModal
-          onConfirm={handleLogout}
-          onCancel={() => setShowLogoutModal(false)}
-        />
-      )}
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+        userName={user?.nome}
+      />
     </div>
   )
 }
