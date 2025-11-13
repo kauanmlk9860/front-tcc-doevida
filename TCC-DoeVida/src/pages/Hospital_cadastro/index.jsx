@@ -115,29 +115,41 @@ function Hospital_cadastro() {
       let fotoHospitalUrl = null;
       if (photoUploadRef.current?.hasFile) {
         try {
-          const base64Data = await photoUploadRef.current.getBase64();
-          
-          // Validar token antes do upload
-          if (!validateSasToken()) {
-            setError('Token de upload expirado. Entre em contato com o suporte.');
-            setLoading(false);
-            return;
+          if (import.meta.env.VITE_DEVELOPMENT_MODE === 'true') {
+            // Modo desenvolvimento - criar Object URL da imagem
+            const file = photoUploadRef.current.getFile()
+            if (file) {
+              fotoHospitalUrl = URL.createObjectURL(file)
+              // Salvar também o arquivo no sessionStorage para persistir durante a sessão
+              const reader = new FileReader()
+              reader.onload = () => {
+                sessionStorage.setItem('hospital_photo_blob', reader.result)
+              }
+              reader.readAsDataURL(file)
+            }
+          } else {
+            // Produção - upload real para Azure
+            if (!validateSasToken()) {
+              setError('Token de upload expirado. Entre em contato com o suporte.')
+              setLoading(false)
+              return
+            }
+            
+            const base64Data = await photoUploadRef.current.getBase64()
+            const uploadResult = await uploadBase64ToAzure(base64Data, `hospital_${Date.now()}.jpg`)
+            
+            if (!uploadResult.success) {
+              setError('Erro ao fazer upload da foto: ' + uploadResult.error)
+              setLoading(false)
+              return
+            }
+            
+            fotoHospitalUrl = uploadResult.url
           }
-          
-          // Upload para Azure
-          const uploadResult = await uploadBase64ToAzure(base64Data, `hospital_${Date.now()}.jpg`);
-          if (!uploadResult.success) {
-            setError('Erro ao fazer upload da foto: ' + uploadResult.error);
-            setLoading(false);
-            return;
-          }
-          
-          // Enviar apenas o nome do arquivo para evitar URLs muito longas
-          fotoHospitalUrl = uploadResult.fileName;
         } catch (error) {
-          setError(error.message);
-          setLoading(false);
-          return;
+          setError('Erro ao processar foto: ' + error.message)
+          setLoading(false)
+          return
         }
       }
 
@@ -153,7 +165,7 @@ function Hospital_cadastro() {
         crm: crmRef.current.value.trim(),
         horario_abertura: aberturaRef.current.value,
         horario_fechamento: fechamentoRef.current.value,
-        foto: fotoHospitalUrl || 'https://via.placeholder.com/600x400?text=Hospital'
+        foto: fotoHospitalUrl || null
       }
 
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida'}/hospital`, {

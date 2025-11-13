@@ -261,6 +261,27 @@
   font-weight: 600;
 }
 
+.badge-count.urgent {
+  background: #dc3545;
+  animation: pulse 2s infinite;
+  box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(220, 53, 69, 0.8);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
+  }
+}
+
 /* Agendamentos de Hoje */
 .agendamentos-hoje-grid {
   display: grid;

@@ -8,15 +8,21 @@ import http from '../../services/http.js';
  */
 export async function listarAgendamentosHospital(filtros = {}) {
   try {
-    console.log('Chamando GET /agendamento...');
+    console.log('📞 Chamando GET /agendamento...');
     const res = await http.get('/agendamento');
-    console.log('Resposta recebida:', res);
-    console.log('res.data:', res.data);
+    console.log('✅ Resposta HTTP recebida - Status:', res.status);
+    console.log('📊 Estrutura da resposta:', {
+      status: res.status,
+      dataKeys: Object.keys(res.data || {}),
+      dataType: typeof res.data
+    });
     
     let agendamentos = res.data.agendamentos || res.data.dados || res.data || [];
-    console.log('Agendamentos extraídos:', agendamentos);
-    console.log('É array?', Array.isArray(agendamentos));
-    console.log('Quantidade:', Array.isArray(agendamentos) ? agendamentos.length : 'N/A');
+    console.log('📋 Agendamentos extraídos:', {
+      isArray: Array.isArray(agendamentos),
+      length: Array.isArray(agendamentos) ? agendamentos.length : 'N/A',
+      firstItem: Array.isArray(agendamentos) && agendamentos.length > 0 ? agendamentos[0] : 'Nenhum'
+    });
     
     // Filtrar por status se fornecido
     if (filtros.status && Array.isArray(agendamentos)) {
@@ -28,19 +34,32 @@ export async function listarAgendamentosHospital(filtros = {}) {
       agendamentos = agendamentos.filter(a => a.data === filtros.data);
     }
     
-    return {
-      success: res.data.status || true,
+    const result = {
+      success: res.data.status !== false,
       data: agendamentos,
       message: res.data.message
     };
+    
+    console.log('✅ Retornando resultado:', {
+      success: result.success,
+      dataLength: Array.isArray(result.data) ? result.data.length : 'N/A',
+      message: result.message
+    });
+    
+    return result;
   } catch (error) {
-    console.error('ERRO ao listar agendamentos:', error);
-    console.error('Status:', error.response?.status);
-    console.error('Mensagem:', error.response?.data);
+    console.error('❌ ERRO ao listar agendamentos:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      url: error.config?.url
+    });
+    
     return {
       success: false,
       data: [],
-      message: error.response?.data?.message || 'Erro ao listar agendamentos'
+      message: error.response?.data?.message || `Erro ao listar agendamentos: ${error.message}`
     };
   }
 }

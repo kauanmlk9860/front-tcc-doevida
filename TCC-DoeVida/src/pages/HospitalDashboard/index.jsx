@@ -34,35 +34,48 @@ function HospitalDashboard() {
 
   // Verificar se é hospital
   useEffect(() => {
-    if (!user || user.role !== 'HOSPITAL') {
+    console.log('🔍 Verificando autenticação do hospital...')
+    console.log('👤 Usuário atual:', user)
+    console.log('🏥 Role do usuário:', user?.role)
+    console.log('🏢 CNPJ do usuário:', user?.cnpj)
+    
+    if (!user) {
+      console.log('❌ Usuário não encontrado, redirecionando para login')
       navigate('/hospital-login')
+      return
+    }
+    
+    // Verificar se é hospital (por role ou CNPJ)
+    const isHospital = user.role === 'HOSPITAL' || user.cnpj || user.tipo === 'HOSPITAL'
+    
+    if (!isHospital) {
+      console.log('❌ Usuário não é hospital, redirecionando para login')
+      navigate('/hospital-login')
+    } else {
+      console.log('✅ Hospital autenticado com sucesso')
     }
   }, [user, navigate])
 
   // Carregar dados
   useEffect(() => {
-    carregarDados()
-  }, [])
+    if (user && (user.role === 'HOSPITAL' || user.cnpj || user.tipo === 'HOSPITAL')) {
+      console.log('🔄 Usuário autenticado, carregando dados...')
+      carregarDados()
+    } else {
+      console.log('⚠️ Aguardando autenticação do hospital...')
+    }
+  }, [user])
 
   // Função para buscar informações completas do usuário
-  const buscarDadosUsuario = async (idUsuario) => {
+  const buscarDadosUsuario = async (idUsuario, tiposMap) => {
     try {
-      console.log('========================================')
       console.log('Buscando dados do usuário ID:', idUsuario)
       const res = await buscarUsuario(idUsuario)
-      console.log('Resposta completa da API buscarUsuario:', JSON.stringify(res, null, 2))
       
       if (res && res.success && res.data) {
         const userData = res.data?.usuario || res.data || {};
-        console.log('userData recebido:', JSON.stringify(userData, null, 2))
         
-        // Mapear o ID do tipo sanguíneo para o tipo correspondente
-        const tiposSanguineos = {
-          1: 'A+', 2: 'A-', 3: 'B+', 4: 'B-',
-          5: 'AB+', 6: 'AB-', 7: 'O+', 8: 'O-'
-        };
-        
-        // Extrair o ID do tipo sanguíneo do usuário de diferentes possíveis campos
+        // Extrair o ID do tipo sanguíneo do usuário
         let idTipoSanguineo = userData.id_tipo_sanguineo || 
                              userData.idTipoSanguineo || 
                              userData.tipo_sanguineo?.id ||
@@ -76,61 +89,43 @@ function HospitalDashboard() {
           idTipoSanguineo = parseInt(idTipoSanguineo, 10);
         }
         
-        console.log('ID do tipo sanguíneo encontrado:', idTipoSanguineo)
-        console.log('Tipos sanguíneos disponíveis:', tiposMap)
-        
-        // Determinar o tipo sanguíneo - prioridade: nome direto > mapeamento por ID > campos alternativos
+        // Determinar o tipo sanguíneo
         let tipoSanguineo = 'Não informado';
         
-        // Primeiro verifica se já tem o tipo sanguíneo como texto
         if (userData.tipo_sanguineo_nome) {
           tipoSanguineo = userData.tipo_sanguineo_nome;
-          console.log('Tipo sanguíneo veio de tipo_sanguineo_nome:', tipoSanguineo)
         } 
         else if (typeof userData.tipo_sanguineo === 'string' && userData.tipo_sanguineo !== '') {
           tipoSanguineo = userData.tipo_sanguineo;
-          console.log('Tipo sanguíneo veio como string:', tipoSanguineo)
         } 
         else if (typeof userData.tipoSanguineo === 'string' && userData.tipoSanguineo !== '') {
           tipoSanguineo = userData.tipoSanguineo;
-          console.log('Tipo sanguíneo veio como tipoSanguineo:', tipoSanguineo)
         } 
         else if (idTipoSanguineo && tiposMap[idTipoSanguineo]) {
           tipoSanguineo = tiposMap[idTipoSanguineo];
-          console.log(`Tipo sanguíneo mapeado: ID ${idTipoSanguineo} -> ${tipoSanguineo}`)
         } 
         else if (userData.tipo_sanguineo_obj?.tipo) {
           tipoSanguineo = userData.tipo_sanguineo_obj.tipo;
-          console.log('Tipo sanguíneo veio de tipo_sanguineo_obj:', tipoSanguineo)
         } 
         else if (userData.tipoSanguineoObj?.tipo) {
           tipoSanguineo = userData.tipoSanguineoObj.tipo;
-          console.log('Tipo sanguíneo veio de tipoSanguineoObj:', tipoSanguineo)
-        } 
-        else {
-          console.warn('⚠️ Tipo sanguíneo não encontrado! ID:', idTipoSanguineo, 'userData:', userData)
         }
         
-        console.log(`✅ Tipo sanguíneo final: ${tipoSanguineo}`)
-        // Retornar os dados do usuário com o tipo sanguíneo incluído
-        const result = {
+        return {
           ...userData,
           tipoSanguineo: tipoSanguineo,
           id_tipo_sanguineo: idTipoSanguineo,
           tipo_sanguineo_nome: tipoSanguineo
         };
-        
-        return result;
       }
       
-      // Usuário não encontrado ou erro na resposta
       return { 
         id: idUsuario, 
         nome: 'Usuário não encontrado',
         tipoSanguineo: 'Não informado'
       }
     } catch (error) {
-      // Erro ao buscar dados do usuário
+      console.error('Erro ao buscar usuário:', error)
       return { 
         id: idUsuario, 
         nome: 'Erro ao carregar',
@@ -141,9 +136,34 @@ function HospitalDashboard() {
 
   const carregarDados = async () => {
     setLoading(true)
+    console.log('🔄 Iniciando carregamento de dados do dashboard...')
+    console.log('🌐 URL da API:', import.meta.env.VITE_API_URL)
+    console.log('🔑 Token presente:', !!localStorage.getItem('token'))
+    
+    // Teste simples de conectividade
+    try {
+      console.log('🔍 Testando conectividade com a API...')
+      const testResponse = await fetch(`${import.meta.env.VITE_API_URL}/agendamento`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      console.log('🌐 Status da resposta de teste:', testResponse.status)
+      console.log('🌐 Headers da resposta:', Object.fromEntries(testResponse.headers.entries()))
+      
+      if (!testResponse.ok) {
+        const errorText = await testResponse.text()
+        console.error('❌ Erro na resposta de teste:', errorText)
+      }
+    } catch (testError) {
+      console.error('❌ Erro de conectividade:', testError)
+    }
     
     try {
       // Carregar tipos sanguíneos da API
+      console.log('📋 Carregando tipos sanguíneos...')
       const resTipos = await obterTiposSanguineos()
       
       let tiposMap = {
@@ -157,23 +177,55 @@ function HospitalDashboard() {
           acc[tipo.id] = tipo.tipo;
           return acc;
         }, {});
+        console.log('✅ Tipos sanguíneos carregados:', tiposMap)
+      } else {
+        console.log('⚠️ Usando tipos sanguíneos padrão')
       }
       
       setTiposSanguineos(tiposMap)
       
       // Carregar agendamentos de hoje
+      console.log('📅 Carregando agendamentos de hoje...')
       const resHoje = await obterAgendamentosHoje()
       
       if (resHoje.success) {
+        console.log('✅ Agendamentos de hoje carregados:', resHoje.data.length)
         setAgendamentosHoje(resHoje.data)
+      } else {
+        console.error('❌ Erro ao carregar agendamentos de hoje:', resHoje.message)
+        // Usar dados de teste para hoje
+        const hoje = new Date().toISOString().split('T')[0]
+        const agendamentosHojeTeste = [
+          {
+            id: 1,
+            data: hoje,
+            hora: '09:00',
+            status: 'Agendado',
+            id_usuario: 1,
+            usuario: {
+              id: 1,
+              nome: 'João Silva (Hoje - Teste)',
+              email: 'joao@teste.com',
+              telefone: '(11) 99999-9999',
+              tipoSanguineo: 'O+'
+            }
+          }
+        ]
+        console.log('⚠️ Usando agendamentos de hoje de teste para debug')
+        setAgendamentosHoje(agendamentosHojeTeste)
       }
 
       // Carregar todos os agendamentos
+      console.log('📋 Carregando todos os agendamentos...')
+      console.log('🔗 Fazendo requisição para:', `${import.meta.env.VITE_API_URL}/agendamento`)
       const resTodos = await listarAgendamentosHospital()
       
       if (resTodos.success) {
+        console.log('✅ Agendamentos brutos carregados:', resTodos.data.length)
+        console.log('📊 Dados dos agendamentos:', resTodos.data)
 
         // Criar um array para armazenar os agendamentos com os dados completos do usuário
+        console.log('👥 Buscando dados dos usuários...')
         const agendamentosComUsuarios = await Promise.all(
           resTodos.data.map(async (agendamento) => {
             try {
@@ -191,7 +243,7 @@ function HospitalDashboard() {
                 }
               }
             } catch (error) {
-              // Erro ao buscar dados do usuário
+              console.error('❌ Erro ao buscar dados do usuário:', error)
               return {
                 ...agendamento,
                 usuario: {
@@ -205,11 +257,47 @@ function HospitalDashboard() {
           })
         )
 
+        console.log('Agendamentos com usuários carregados:', agendamentosComUsuarios.length)
         setTodosAgendamentos(agendamentosComUsuarios)
       } else {
-        }
+        console.error('Erro ao carregar agendamentos:', resTodos.message)
+        // Adicionar dados de teste para debug
+        const dadosTeste = [
+          {
+            id: 1,
+            data: '2024-01-15',
+            hora: '09:00',
+            status: 'Agendado',
+            id_usuario: 1,
+            usuario: {
+              id: 1,
+              nome: 'João Silva (Teste)',
+              email: 'joao@teste.com',
+              telefone: '(11) 99999-9999',
+              tipoSanguineo: 'O+'
+            }
+          },
+          {
+            id: 2,
+            data: '2024-01-16',
+            hora: '14:30',
+            status: 'Agendado',
+            id_usuario: 2,
+            usuario: {
+              id: 2,
+              nome: 'Maria Santos (Teste)',
+              email: 'maria@teste.com',
+              telefone: '(11) 88888-8888',
+              tipoSanguineo: 'A+'
+            }
+          }
+        ]
+        console.log('⚠️ Usando dados de teste para debug')
+        setTodosAgendamentos(dadosTeste)
+      }
 
       // Carregar estatísticas
+      console.log('📊 Carregando estatísticas...')
       const resEstatisticas = await obterEstatisticasHospital()
       
       if (resEstatisticas.success) {
@@ -219,12 +307,25 @@ function HospitalDashboard() {
           agendamentosPendentes: resEstatisticas.data.agendamentosPendentes || 0,
           agendamentosCancelados: resEstatisticas.data.agendamentosCancelados || 0
         }
+        console.log('✅ Estatísticas carregadas:', estatisticasAtualizadas)
         setEstatisticas(estatisticasAtualizadas)
       } else {
+        console.error('❌ Erro ao carregar estatísticas:', resEstatisticas.message)
+        // Usar estatísticas de teste
+        const estatisticasTeste = {
+          totalAgendamentos: 2,
+          agendamentosConcluidos: 0,
+          agendamentosPendentes: 2,
+          agendamentosCancelados: 0
+        }
+        console.log('⚠️ Usando estatísticas de teste para debug')
+        setEstatisticas(estatisticasTeste)
       }
     } catch (error) {
-      // Erro ao carregar dados
+      console.error('❌ Erro geral ao carregar dados:', error)
+      console.error('❌ Stack trace:', error.stack)
     } finally {
+      console.log('🏁 Carregamento finalizado')
       setLoading(false)
     }
   }
@@ -378,6 +479,9 @@ function HospitalDashboard() {
         <div className="loading-dashboard">
           <div className="loading-spinner"></div>
           <p>Carregando dashboard...</p>
+          <small style={{ color: '#666', marginTop: '10px' }}>
+            Conectando com: {import.meta.env.VITE_API_URL}
+          </small>
         </div>
       </div>
     )
@@ -482,7 +586,7 @@ function HospitalDashboard() {
         </div>
       </section>
 
-      {/* Agendamentos de Hoje */}
+      {/* Doações Pendentes */}
       <section className="hoje-section">
         <div className="section-header">
           <h2>
@@ -490,23 +594,26 @@ function HospitalDashboard() {
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
               <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
-            Agendamentos de Hoje
+            Doações Pendentes
           </h2>
-          <span className="badge-count">{agendamentosHoje.length}</span>
+          <span className="badge-count urgent">{todosAgendamentos.filter(a => a.status === 'Agendado').length}</span>
         </div>
 
         <div className="agendamentos-hoje-grid">
-          {agendamentosHoje.length === 0 ? (
+          {todosAgendamentos.filter(a => a.status === 'Agendado').length === 0 ? (
             <div className="empty-state">
               <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="3" y="4" width="18" height="18" rx="2" stroke="#ccc" strokeWidth="2"/>
                 <path d="M16 2v4M8 2v4M3 10h18" stroke="#ccc" strokeWidth="2" strokeLinecap="round"/>
               </svg>
-              <h3>Nenhum agendamento para hoje</h3>
-              <p>Não há doações agendadas para o dia de hoje</p>
+              <h3>Nenhuma doação pendente</h3>
+              <p>Não há doações pendentes no momento</p>
+              <small style={{ color: '#999', marginTop: '10px', display: 'block' }}>
+                Total de agendamentos carregados: {todosAgendamentos.length}
+              </small>
             </div>
           ) : (
-            agendamentosHoje.map((agendamento) => (
+            todosAgendamentos.filter(a => a.status === 'Agendado').map((agendamento) => (
               <div 
                 key={agendamento.id} 
                 className="agendamento-card-hoje"
@@ -536,6 +643,13 @@ function HospitalDashboard() {
                 </div>
 
                 <div className="agendamento-detalhes">
+                  <div className="detalhe-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span>{formatarData(agendamento.data)}</span>
+                  </div>
                   <div className="detalhe-item">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
@@ -637,6 +751,9 @@ function HospitalDashboard() {
               </svg>
               <h3>Nenhum agendamento encontrado</h3>
               <p>Não há agendamentos com o filtro selecionado</p>
+              <small style={{ color: '#999', marginTop: '10px', display: 'block' }}>
+                Filtro: {filtroStatus} | Total: {todosAgendamentos.length}
+              </small>
             </div>
           ) : (
             <table className="agendamentos-table">

@@ -198,18 +198,6 @@ function Home() {
         {/* HERO */}
         <section className="hero-grid" aria-labelledby="hero-title">
           <div className="hero-left">
-            {isLoggedIn && (
-              <div className="hero-user-info">
-                <img
-                  src={getPhotoUrl(80)}
-                  alt="Foto de perfil"
-                  className="hero-user-avatar"
-                  onError={(e) => {
-                    e.target.src = getPhotoUrl(80);
-                  }}
-                />
-              </div>
-            )}
             <h2 id="hero-title" className="hero-title">
               {isLoggedIn ? (
                 <>
