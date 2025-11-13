@@ -27,13 +27,19 @@ function buildUpdatePayload(data) {
     numero: data.numero || null,
     data_nascimento: data.data_nascimento || null,
     foto_perfil: data.foto_perfil ?? null,
-    id_sexo: data.id_sexo,
-    id_tipo_sanguineo: data.id_tipo_sanguineo,
+    id_sexo: data.id_sexo || null,
+    id_tipo_sanguineo: data.id_tipo_sanguineo || null,
     telefone: data.telefone || null,
   };
 
   // Se o usuário informou nova senha
   if (data.senha_hash) out.senha_hash = data.senha_hash;
+  
+  console.log('===== DEBUG FRONTEND buildUpdatePayload =====');
+  console.log('Dados recebidos:', data);
+  console.log('Payload montado:', out);
+  console.log('============================================');
+  
   return out;
 }
 

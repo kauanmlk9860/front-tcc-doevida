@@ -20,7 +20,6 @@ function Perfil() {
   const [formData, setFormData] = useState({
     nome: '',
     email: '',
-    senha: '',
     cpf: '',
     cep: '',
     data_nascimento: '',
@@ -121,7 +120,6 @@ function Perfil() {
         setFormData({
           nome: user.nome || '',
           email: user.email || '',
-          senha: '',
           cpf: user.cpf || '',
           cep: user.cep || '',
           data_nascimento: dataNascimento,
@@ -156,23 +154,18 @@ function Perfil() {
       return
     }
 
-    if (!formData.senha) {
-      setMessage({ type: 'error', text: 'Por favor, informe sua senha para confirmar as alterações' })
-      return
-    }
-
     setSaving(true)
     setMessage({ type: '', text: '' })
 
     try {
       const dataToUpdate = { ...formData }
+      delete dataToUpdate.senha
 
       const response = await atualizarUsuario(user.id, dataToUpdate)
       
       if (response.success) {
         setMessage({ type: 'success', text: 'Perfil atualizado com sucesso!' })
         setEditMode(false)
-        setFormData(prev => ({ ...prev, senha: '' }))
         await updateUser()
         setTimeout(() => {
           carregarDados()
@@ -195,7 +188,6 @@ function Perfil() {
 
   const handleCancel = () => {
     setEditMode(false)
-    setFormData(prev => ({ ...prev, senha: '' }))
     carregarDados()
     setMessage({ type: '', text: '' })
   }
@@ -426,33 +418,7 @@ function Perfil() {
                 </div>
               </div>
 
-              {/* Senha (apenas quando editando) */}
-              {editMode && (
-                <div className="form-section">
-                  <h3 className="section-title">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                    Confirmação de Senha
-                  </h3>
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label htmlFor="senha">Senha Atual *</label>
-                      <input
-                        type="password"
-                        id="senha"
-                        name="senha"
-                        value={formData.senha}
-                        onChange={handleChange}
-                        placeholder="Digite sua senha para confirmar"
-                        required={editMode}
-                      />
-                      <small>Necessário para confirmar as alterações</small>
-                    </div>
-                  </div>
-                </div>
-              )}
+
 
               {/* Botões de Ação */}
               <div className="form-actions">
