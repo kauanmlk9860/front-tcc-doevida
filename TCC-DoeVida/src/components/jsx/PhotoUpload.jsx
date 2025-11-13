@@ -1,4 +1,4 @@
-import { useState, forwardRef, useImperativeHandle } from 'react';
+import { useState, forwardRef, useImperativeHandle, useEffect } from 'react';
 import '../style/PhotoUpload.css';
 
 const PhotoUpload = forwardRef(({ 
@@ -7,6 +7,7 @@ const PhotoUpload = forwardRef(({
   disabled = false,
   accept = "image/*",
   maxSize = 1 * 1024 * 1024, // 1MB
+  initialPhoto = null,
   onFileChange,
   ...props 
 }, ref) => {
@@ -15,9 +16,19 @@ const PhotoUpload = forwardRef(({
   const [error, setError] = useState('');
   const [isDragging, setIsDragging] = useState(false);
 
+  // Carregar foto inicial se fornecida
+  useEffect(() => {
+    if (initialPhoto && !selectedFile) {
+      setPreview(initialPhoto);
+    }
+  }, [initialPhoto, selectedFile]);
+
   // Expor métodos para o componente pai
   useImperativeHandle(ref, () => ({
     get file() {
+      return selectedFile;
+    },
+    getFile: () => {
       return selectedFile;
     },
     get preview() {

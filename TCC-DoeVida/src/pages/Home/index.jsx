@@ -6,6 +6,7 @@ import logoSemFundo from "../../assets/icons/logo_semfundo.png";
 import { useNavigate } from "react-router-dom";
 import LogoutModal from "../../components/jsx/LogoutModal";
 import { useUser } from "../../contexts/UserContext";
+import { useProfilePhoto } from "../../hooks/useProfilePhoto";
 
 import icHospital from "../../assets/icons/hospital.png";
 import icBancoSangue from "../../assets/icons/banco-sangue.png";
@@ -89,6 +90,7 @@ function formatDateBR(value) {
 function Home() {
   const navigate = useNavigate();
   const { user, isLoggedIn, logout, loading } = useUser();
+  const { getPhotoUrl } = useProfilePhoto(user);
   const [showModal, setShowModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
@@ -96,6 +98,8 @@ function Home() {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
+
+
 
   // Redirecionar hospitais para dashboard específico
   useEffect(() => {
@@ -155,13 +159,13 @@ function Home() {
           {isLoggedIn ? (
             <div className="user-info">
               <img
-                src={user?.foto_perfil || "https://via.placeholder.com/40x40/990410/ffffff?text=U"}
+                src={getPhotoUrl(40)}
                 alt="Foto de perfil"
                 className="user-avatar"
                 onClick={() => setShowUserModal(true)}
                 style={{ cursor: "pointer" }}
                 onError={(e) => {
-                  e.target.src = "https://via.placeholder.com/40x40/990410/ffffff?text=U"
+                  e.target.src = getPhotoUrl(40);
                 }}
               />
               <div className="user-details">
@@ -194,6 +198,18 @@ function Home() {
         {/* HERO */}
         <section className="hero-grid" aria-labelledby="hero-title">
           <div className="hero-left">
+            {isLoggedIn && (
+              <div className="hero-user-info">
+                <img
+                  src={getPhotoUrl(80)}
+                  alt="Foto de perfil"
+                  className="hero-user-avatar"
+                  onError={(e) => {
+                    e.target.src = getPhotoUrl(80);
+                  }}
+                />
+              </div>
+            )}
             <h2 id="hero-title" className="hero-title">
               {isLoggedIn ? (
                 <>
@@ -641,11 +657,11 @@ function Home() {
             <div className="user-modal-avatar-section">
               <div className="user-modal-avatar-container">
                 <img
-                  src={user?.foto_perfil || "https://via.placeholder.com/120x120/990410/ffffff?text=Usuario"}
+                  src={getPhotoUrl(120)}
                   alt="Foto de perfil"
                   className="user-modal-avatar"
                   onError={(e) => {
-                    e.target.src = "https://via.placeholder.com/120x120/990410/ffffff?text=Usuario"
+                    e.target.src = getPhotoUrl(120);
                   }}
                 />
                 <div className="user-modal-avatar-glow"></div>

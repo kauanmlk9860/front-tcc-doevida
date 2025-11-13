@@ -10,9 +10,13 @@ import { criarUsuario as criarUsuarioAPI } from '../../api/usuario/usuario'
 import { createUserDev } from '../../services/httpDev'
 import AuthService from '../../services/auth.js'
 import { uploadBase64ToAzure, validateSasToken } from '../../services/azureStorage'
+import { useProfilePhoto } from '../../hooks/useProfilePhoto'
+import { useUser } from '../../contexts/UserContext'
 
 function Cadastro() {
   const navigate = useNavigate()
+  const { user } = useUser()
+  const { getPhotoUrl } = useProfilePhoto(user)
 
   // Refs
   const nomeRef = useRef()
@@ -149,10 +153,17 @@ function Cadastro() {
       if (photoUploadRef.current?.hasFile) {
         try {
           if (import.meta.env.VITE_DEVELOPMENT_MODE === 'true') {
-            // Modo desenvolvimento - usar base64 da imagem
-            console.log('Modo dev: usando base64 da foto')
-            const base64Data = await photoUploadRef.current.getBase64()
-            fotoPerfilUrl = base64Data // Salvar o base64 diretamente
+            // Modo desenvolvimento - criar Object URL da imagem
+            const file = photoUploadRef.current.getFile()
+            if (file) {
+              fotoPerfilUrl = URL.createObjectURL(file)
+              // Salvar também o arquivo no sessionStorage para persistir durante a sessão
+              const reader = new FileReader()
+              reader.onload = () => {
+                sessionStorage.setItem('user_photo_blob', reader.result)
+              }
+              reader.readAsDataURL(file)
+            }
           } else {
             // Produção - upload real para Azure
             if (!validateSasToken()) {
@@ -206,11 +217,12 @@ function Cadastro() {
         return
       }
       
-      if (dadosUsuario.foto_perfil && dadosUsuario.foto_perfil.length > 255) {
-        setError('Nome da foto muito longo')
-        setLoading(false)
-        return
-      }
+      // Remover validação de tamanho da foto para permitir base64
+      // if (dadosUsuario.foto_perfil && dadosUsuario.foto_perfil.length > 255) {
+      //   setError('Nome da foto muito longo')
+      //   setLoading(false)
+      //   return
+      // }
       
       console.log('Dados do usuário:', {
         ...dadosUsuario,
@@ -230,7 +242,11 @@ function Cadastro() {
           console.warn('Backend não está rodando. Simulando cadastro local.')
           resultado = {
             success: true,
-            data: { ...dadosUsuario, id: Date.now() },
+            data: { 
+              ...dadosUsuario, 
+              id: Date.now(),
+              foto_perfil: fotoPerfilUrl // Garantir que a foto seja incluída
+            },
             message: 'Usuário criado localmente (backend offline)'
           }
         } else {
@@ -432,6 +448,7 @@ function Cadastro() {
             ref={photoUploadRef}
             placeholder="Adicione sua foto de perfil"
             disabled={loading}
+            initialPhoto={user?.foto_perfil ? getPhotoUrl(200) : null}
           />
         </div>
       </div>

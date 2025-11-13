@@ -182,6 +182,20 @@ body::after {
   text-align: left;
 }
 
+.hero-user-info {
+  margin-bottom: 1rem;
+}
+
+.hero-user-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid var(--brand);
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(153, 4, 16, 0.3);
+  display: block;
+}
+
 .hero-title {
   margin: 0 0 1.5rem 0;
   color: var(--text);
