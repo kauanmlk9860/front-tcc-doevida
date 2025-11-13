@@ -178,21 +178,64 @@ export async function concluirDoacao(id) {
 
 /**
  * Cancelar um agendamento
- * Endpoint: DELETE /agendamento/:id
+ * Endpoint: PUT /agendamento/:id
  */
 export async function cancelarAgendamentoHospital(id) {
   try {
     console.log('🔄 Cancelando agendamento ID:', id);
-    const res = await http.delete(`/agendamento/${id}`);
     
-    console.log('✅ Resposta ao cancelar:', res.data);
+    // Buscar agendamento completo
+    const response = await http.get(`/agendamento/${id}`);
+    const dados = response.data.agendamento || response.data.data || response.data;
+    
+    // Validar campos obrigatórios
+    if (!dados.id_usuario || !dados.id_hospital || !dados.data || !dados.hora) {
+      return {
+        success: false,
+        message: 'Dados do agendamento incompletos'
+      };
+    }
+    
+    // Formatar data (YYYY-MM-DD)
+    let dataFormatada = dados.data;
+    if (typeof dados.data === 'string' && dados.data.includes('T')) {
+      dataFormatada = dados.data.split('T')[0];
+    }
+    
+    // Formatar hora (HH:MM:SS)
+    let horaFormatada = dados.hora;
+    if (typeof dados.hora === 'string' && dados.hora.includes('T')) {
+      horaFormatada = new Date(dados.hora).toISOString().substring(11, 19);
+    } else if (typeof dados.hora === 'string' && dados.hora.length === 5) {
+      horaFormatada = `${dados.hora}:00`;
+    } else if (typeof dados.hora === 'string' && dados.hora.length === 8) {
+      horaFormatada = dados.hora;
+    }
+    
+    // Montar payload
+    const payload = {
+      status: 'Cancelado',
+      data: dataFormatada,
+      hora: horaFormatada,
+      id_usuario: Number(dados.id_usuario),
+      id_hospital: Number(dados.id_hospital)
+    };
+    
+    // Adicionar id_doacao se existir
+    if (dados.id_doacao && Number(dados.id_doacao) > 0) {
+      payload.id_doacao = Number(dados.id_doacao);
+    }
+    
+    const res = await http.put(`/agendamento/${id}`, payload);
+    
+    console.log('✅ Agendamento cancelado:', res.data);
     return {
       success: true,
       data: res.data,
-      message: res.data.message || 'Agendamento cancelado com sucesso!'
+      message: 'Agendamento cancelado com sucesso!'
     };
   } catch (error) {
-    console.error('❌ Erro ao cancelar agendamento:', error.response?.data || error.message);
+    console.error('❌ Erro ao cancelar:', error.response?.data || error.message);
     return {
       success: false,
       message: error.response?.data?.message || 'Erro ao cancelar agendamento'

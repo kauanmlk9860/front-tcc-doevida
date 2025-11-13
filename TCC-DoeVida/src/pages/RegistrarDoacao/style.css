@@ -508,6 +508,30 @@
   line-height: 1.6;
 }
 
+/* Info Box */
+.info-box {
+  background: linear-gradient(135deg, #fff5f5 0%, white 100%);
+  border: 2px solid rgba(153, 4, 16, 0.1);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.info-box strong {
+  display: block;
+  color: #990410;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.info-box p {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0.4rem 0;
+  line-height: 1.5;
+}
+
 /* ========================================
    RESPONSIVIDADE
    ======================================== */

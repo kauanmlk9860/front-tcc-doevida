@@ -1,18 +1,23 @@
-import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRef, useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import './style.css'
 import logoSemFundo from '../../assets/icons/logo_semfundo.png'
 import PhotoUpload from '../../components/jsx/PhotoUpload'
 import { InputIcons } from '../../components/jsx/InputIcons'
 import { useUser } from '../../contexts/UserContext'
+import { 
+  criarRegistroDoacao, 
+  uploadComprovanteDoacao
+} from '../../api/registroDoacao'
+import { listarMeusAgendamentos } from '../../api/agendamento'
 
 function RegistrarDoacao() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { user, isLoggedIn } = useUser()
   
   // Refs
-  const localDoacaoRef = useRef()
-  const dataDoacaoRef = useRef()
+  const agendamentoRef = useRef()
   const observacoesRef = useRef()
   const photoUploadRef = useRef()
 
@@ -20,6 +25,9 @@ function RegistrarDoacao() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [agendamentos, setAgendamentos] = useState([])
+  const [loadingAgendamentos, setLoadingAgendamentos] = useState(true)
+  const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null)
 
   // Verificar se está logado
   if (!isLoggedIn) {
@@ -27,23 +35,54 @@ function RegistrarDoacao() {
     return null
   }
 
-  const validarFormulario = () => {
-    const localDoacao = localDoacaoRef.current?.value?.trim()
-    const dataDoacao = dataDoacaoRef.current?.value
+  // Carregar agendamentos concluídos
+  useEffect(() => {
+    carregarAgendamentos()
+  }, [])
 
-    if (!localDoacao) return 'Local da doação é obrigatório'
-    if (localDoacao.length > 200) return 'Local deve ter no máximo 200 caracteres'
-    
-    if (!dataDoacao) return 'Data da doação é obrigatória'
-    
-    // Validar se a data não é futura
-    const hoje = new Date()
-    hoje.setHours(0, 0, 0, 0)
-    const dataSelecionada = new Date(dataDoacao + 'T00:00:00')
-    
-    if (dataSelecionada > hoje) {
-      return 'A data da doação não pode ser futura'
+  // Pré-selecionar agendamento se fornecido
+  useEffect(() => {
+    const agendamentoId = searchParams.get('agendamento')
+    if (agendamentoId && agendamentoRef.current) {
+      agendamentoRef.current.value = agendamentoId
+      handleAgendamentoChange({ target: { value: agendamentoId } })
     }
+  }, [searchParams, agendamentos])
+
+  const carregarAgendamentos = async () => {
+    try {
+      setLoadingAgendamentos(true)
+      const resultado = await listarMeusAgendamentos()
+      if (resultado.success) {
+        const concluidos = resultado.data.filter(a => a.status === 'Concluído')
+        setAgendamentos(concluidos)
+        
+        if (concluidos.length === 0) {
+          setError('Você não possui agendamentos concluídos para registrar')
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar agendamentos:', error)
+      setError('Erro ao carregar agendamentos')
+    } finally {
+      setLoadingAgendamentos(false)
+    }
+  }
+
+  const handleAgendamentoChange = (e) => {
+    const id = e.target.value
+    if (id) {
+      const agendamento = agendamentos.find(a => a.id === parseInt(id))
+      setAgendamentoSelecionado(agendamento)
+    } else {
+      setAgendamentoSelecionado(null)
+    }
+  }
+
+  const validarFormulario = () => {
+    const agendamentoId = agendamentoRef.current?.value
+
+    if (!agendamentoId) return 'Selecione o agendamento da doação'
     
     return null
   }
@@ -58,54 +97,66 @@ function RegistrarDoacao() {
     setLoading(true)
 
     try {
-      // Preparar foto do comprovante
-      let fotoComprovanteData = null
-      if (photoUploadRef.current?.hasFile) {
-        try {
-          fotoComprovanteData = await photoUploadRef.current.getBase64()
-          if (fotoComprovanteData && fotoComprovanteData.length > 1000000) {
-            setError('Foto muito grande. Tente uma imagem menor (máx 1MB).')
+      const idAgendamento = parseInt(agendamentoRef.current.value)
+      
+      if (!idAgendamento || isNaN(idAgendamento)) {
+        setError('ID do agendamento inválido')
+        setLoading(false)
+        return
+      }
+
+      let fotoUrl = null
+      
+      // Upload da foto se fornecida
+      if (photoUploadRef.current) {
+        const file = photoUploadRef.current.getFile()
+        if (file) {
+          console.log('📤 Fazendo upload da foto...')
+          const uploadResult = await uploadComprovanteDoacao(file)
+          if (uploadResult.success) {
+            fotoUrl = uploadResult.url
+            console.log('✅ Foto enviada:', fotoUrl)
+          } else {
+            setError(uploadResult.message || 'Erro ao fazer upload da foto')
             setLoading(false)
             return
           }
-        } catch (error) {
-          setError('Erro ao processar foto: ' + error.message)
-          setLoading(false)
-          return
         }
       }
 
-      // Preparar dados da doação
+      // Preparar dados - Backend preenche automaticamente:
+      // id_usuario (do token), id_hospital, data_doacao, local_doacao (do agendamento)
       const dadosDoacao = {
-        local_doacao: localDoacaoRef.current.value.trim(),
-        data_doacao: dataDoacaoRef.current.value,
-        observacoes: observacoesRef.current?.value?.trim() || null,
-        foto_comprovante: fotoComprovanteData,
-        id_usuario: user?.id
+        id_agendamento: idAgendamento,
+        observacao: observacoesRef.current?.value?.trim() || null,
+        foto_comprovante: fotoUrl
       }
 
-      console.log('📝 Dados da doação:', dadosDoacao)
+      console.log('📝 Enviando dados para registro:', dadosDoacao)
+      console.log('ℹ️ Backend preencherá automaticamente: id_usuario, id_hospital, data_doacao, local_doacao')
       
-      // TODO: Integrar com API quando endpoint estiver pronto
-      // const resultado = await registrarDoacaoAPI(dadosDoacao)
+      const resultado = await criarRegistroDoacao(dadosDoacao)
       
-      // Simulação de sucesso
-      setSuccess('Doação registrada com sucesso! Obrigado por salvar vidas! 🩸')
-      
-      // Limpar formulário
-      setTimeout(() => {
-        localDoacaoRef.current.value = ''
-        dataDoacaoRef.current.value = ''
-        if (observacoesRef.current) observacoesRef.current.value = ''
-        if (photoUploadRef.current) photoUploadRef.current.clear()
+      if (resultado.success) {
+        console.log('✅ Doação registrada:', resultado.data)
+        setSuccess('Doação registrada com sucesso! Obrigado por salvar vidas! 🩸')
         
-        // Redirecionar para histórico após 2 segundos
-        setTimeout(() => navigate('/historico'), 2000)
-      }, 1500)
+        setTimeout(() => {
+          if (agendamentoRef.current) agendamentoRef.current.value = ''
+          setAgendamentoSelecionado(null)
+          if (observacoesRef.current) observacoesRef.current.value = ''
+          if (photoUploadRef.current?.clear) photoUploadRef.current.clear()
+          
+          setTimeout(() => navigate('/historico'), 2000)
+        }, 1500)
+      } else {
+        console.error('❌ Erro do backend:', resultado.message)
+        setError(resultado.message || 'Erro ao registrar doação')
+      }
       
     } catch (error) {
-      console.error('Erro ao registrar doação:', error)
-      setError('Erro ao registrar doação. Tente novamente.')
+      console.error('❌ Erro ao registrar doação:', error)
+      setError(error.response?.data?.message || 'Erro ao registrar doação. Tente novamente.')
     } finally {
       setLoading(false)
     }
@@ -144,45 +195,72 @@ function RegistrarDoacao() {
       <form className="registrar-doacao__form" onSubmit={(e) => e.preventDefault()}>
         <div className="form-grid">
           
-          {/* Local da Doação */}
+          {/* Agendamento */}
           <div className="field field--full">
-            <label htmlFor="local-doacao">
-              <span className="field-label">Local da Doação *</span>
-              <span className="field-hint">Hospital, hemocentro ou posto de coleta</span>
-            </label>
-            <div className="input-wrapper">
-              <InputIcons.Location />
-              <input
-                id="local-doacao"
-                ref={localDoacaoRef}
-                type="text"
-                className="input"
-                placeholder="Ex: Hospital São Paulo - Hemocentro"
-                onKeyPress={handleKeyPress}
-                disabled={loading}
-                maxLength={200}
-              />
-            </div>
-          </div>
-
-          {/* Data da Doação */}
-          <div className="field">
-            <label htmlFor="data-doacao">
-              <span className="field-label">Data da Doação *</span>
-              <span className="field-hint">Quando você doou</span>
+            <label htmlFor="agendamento">
+              <span className="field-label">Agendamento *</span>
+              <span className="field-hint">Selecione o agendamento da doação concluída</span>
             </label>
             <div className="input-wrapper">
               <InputIcons.Calendar />
-              <input
-                id="data-doacao"
-                ref={dataDoacaoRef}
-                type="date"
+              <select
+                id="agendamento"
+                ref={agendamentoRef}
                 className="input"
-                disabled={loading}
-                max={new Date().toISOString().split('T')[0]}
-              />
+                disabled={loading || loadingAgendamentos || agendamentos.length === 0}
+                onChange={handleAgendamentoChange}
+              >
+                <option value="">
+                  {loadingAgendamentos 
+                    ? 'Carregando agendamentos...' 
+                    : agendamentos.length === 0 
+                      ? 'Nenhum agendamento concluído disponível' 
+                      : 'Selecione o agendamento'}
+                </option>
+                {agendamentos.map(agendamento => {
+                  const dataObj = new Date(agendamento.data)
+                  const data = dataObj.toLocaleDateString('pt-BR')
+                  let hora = ''
+                  if (agendamento.hora) {
+                    try {
+                      const horaObj = new Date(agendamento.hora)
+                      hora = horaObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+                    } catch (e) {
+                      hora = agendamento.hora
+                    }
+                  }
+                  return (
+                    <option key={agendamento.id} value={agendamento.id}>
+                      {data} {hora && `- ${hora}`} - {agendamento.nome_hospital || 'Hospital'}
+                    </option>
+                  )
+                })}
+              </select>
             </div>
           </div>
+
+          {/* Info do Agendamento Selecionado */}
+          {agendamentoSelecionado && (
+            <div className="field field--full">
+              <div className="info-box">
+                <strong>Dados que serão registrados automaticamente:</strong>
+                <p>🏥 Hospital: {agendamentoSelecionado.nome_hospital || 'N/A'}</p>
+                <p>📅 Data da Doação: {new Date(agendamentoSelecionado.data).toLocaleDateString('pt-BR')}</p>
+                {agendamentoSelecionado.hora && (
+                  <p>🕐 Horário: {(() => {
+                    try {
+                      return new Date(agendamentoSelecionado.hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+                    } catch (e) {
+                      return agendamentoSelecionado.hora
+                    }
+                  })()}</p>
+                )}
+                <p style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: '#999', fontStyle: 'italic' }}>
+                  ℹ️ Estes dados serão preenchidos automaticamente pelo sistema
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Observações */}
           <div className="field field--full">
@@ -203,15 +281,15 @@ function RegistrarDoacao() {
             </div>
           </div>
 
-          {/* Foto do Comprovante */}
+          {/* Foto da Doação */}
           <div className="field field--full">
             <label>
-              <span className="field-label">Comprovante de Doação</span>
-              <span className="field-hint">Foto do comprovante ou carteirinha (opcional)</span>
+              <span className="field-label">Foto da Doação</span>
+              <span className="field-hint">Foto sua doando ou comprovante (opcional)</span>
             </label>
             <PhotoUpload
               ref={photoUploadRef}
-              placeholder="Adicione uma foto do comprovante"
+              placeholder="Adicione uma foto da doação"
               disabled={loading}
             />
           </div>
