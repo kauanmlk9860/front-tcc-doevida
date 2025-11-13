@@ -40,18 +40,30 @@ const PhotoUpload = forwardRef(({
 
         const reader = new FileReader();
         reader.onload = (e) => {
-          const base64 = e.target.result;
-          
-          // Validar tamanho do base64 (máximo ~200KB para ser seguro)
-          const maxBase64Size = 200 * 1024; // 200KB
-          if (base64.length > maxBase64Size) {
-            reject(new Error('Imagem muito grande mesmo após compressão. Tente uma imagem menor.'));
-            return;
+          try {
+            const base64 = e.target.result;
+            
+            // Validar se é uma string base64 válida
+            if (!base64 || typeof base64 !== 'string' || !base64.startsWith('data:')) {
+              reject(new Error('Formato de imagem inválido'));
+              return;
+            }
+            
+            // Validar tamanho do base64 (máximo ~500KB para ser mais flexível)
+            const maxBase64Size = 500 * 1024; // 500KB
+            if (base64.length > maxBase64Size) {
+              reject(new Error('Imagem muito grande mesmo após compressão. Tente uma imagem menor.'));
+              return;
+            }
+            
+            resolve(base64);
+          } catch (error) {
+            reject(new Error('Erro ao processar imagem: ' + error.message));
           }
-          
-          resolve(base64);
         };
-        reader.onerror = () => reject(new Error('Erro ao processar imagem'));
+        reader.onerror = (error) => {
+          reject(new Error('Erro ao ler arquivo: ' + (error.message || 'Erro desconhecido')));
+        };
         reader.readAsDataURL(selectedFile);
       });
     }
@@ -73,36 +85,50 @@ const PhotoUpload = forwardRef(({
   };
 
   const compressImage = (file, maxWidth = 800, maxHeight = 600, quality = 0.8) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       const img = new Image();
 
       img.onload = () => {
-        // Calcular novas dimensões mantendo proporção
-        let { width, height } = img;
-        
-        if (width > height) {
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width;
-            width = maxWidth;
+        try {
+          // Calcular novas dimensões mantendo proporção
+          let { width, height } = img;
+          
+          if (width > height) {
+            if (width > maxWidth) {
+              height = (height * maxWidth) / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = (width * maxHeight) / height;
+              height = maxHeight;
+            }
           }
-        } else {
-          if (height > maxHeight) {
-            width = (width * maxHeight) / height;
-            height = maxHeight;
-          }
+
+          // Configurar canvas
+          canvas.width = width;
+          canvas.height = height;
+
+          // Desenhar imagem redimensionada
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Converter para blob comprimido
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('Falha ao comprimir imagem'));
+            }
+          }, 'image/jpeg', quality);
+        } catch (error) {
+          reject(error);
         }
-
-        // Configurar canvas
-        canvas.width = width;
-        canvas.height = height;
-
-        // Desenhar imagem redimensionada
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // Converter para blob comprimido
-        canvas.toBlob(resolve, 'image/jpeg', quality);
+      };
+      
+      img.onerror = () => {
+        reject(new Error('Erro ao carregar imagem'));
       };
 
       img.src = URL.createObjectURL(file);

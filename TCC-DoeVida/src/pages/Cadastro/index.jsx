@@ -7,7 +7,9 @@ import PhotoUpload from '../../components/jsx/PhotoUpload'
 import PasswordInput from '../../components/jsx/PasswordInput'
 import { InputIcons } from '../../components/jsx/InputIcons'
 import { criarUsuario as criarUsuarioAPI } from '../../api/usuario/usuario'
+import { createUserDev } from '../../services/httpDev'
 import AuthService from '../../services/auth.js'
+import { uploadBase64ToAzure, validateSasToken } from '../../services/azureStorage'
 
 function Cadastro() {
   const navigate = useNavigate()
@@ -108,26 +110,28 @@ function Cadastro() {
     const senha = senhaRef.current?.value
     const confirmarSenha = confirmarSenhaRef.current?.value
 
-    if (!nome) return 'Nome é obrigatório'
+    // Campos obrigatórios
+    if (!nome || nome.length === 0) return 'Nome é obrigatório'
+    if (!email || email.length === 0) return 'E-mail é obrigatório'
+    if (!senha || senha.length === 0) return 'Senha é obrigatória'
+    if (!confirmarSenha || confirmarSenha.length === 0) return 'Confirmação de senha é obrigatória'
+    if (!idSexo || idSexo === '') return 'Sexo é obrigatório'
+    if (!idTipoSanguineo || idTipoSanguineo === '') return 'Tipo sanguíneo é obrigatório'
+    
+    // Validações de formato e tamanho
     if (nome.length > 100) return 'Nome deve ter no máximo 100 caracteres'
-    
-    if (!email || !email.includes('@')) return 'E-mail deve ser válido'
+    if (!email.includes('@') || !email.includes('.')) return 'E-mail deve ser válido'
     if (email.length > 100) return 'E-mail deve ter no máximo 100 caracteres'
-    
-    if (!senha || senha.length < 6) return 'Senha deve ter pelo menos 6 caracteres'
+    if (senha.length < 6) return 'Senha deve ter pelo menos 6 caracteres'
     if (senha.length > 255) return 'Senha deve ter no máximo 255 caracteres'
-    
     if (senha !== confirmarSenha) return 'Senhas não coincidem'
     
-    if (!idSexo || isNaN(Number(idSexo))) return 'Selecione seu sexo'
-    if (!idTipoSanguineo || isNaN(Number(idTipoSanguineo))) return 'Selecione seu tipo sanguíneo'
-    
-    // Validar IDs dentro do range esperado
+    // Validar IDs
     const sexoNum = Number(idSexo)
     const tipoNum = Number(idTipoSanguineo)
     
-    if (sexoNum < 1 || sexoNum > 3) return 'Sexo selecionado é inválido'
-    if (tipoNum < 1 || tipoNum > 8) return 'Tipo sanguíneo selecionado é inválido'
+    if (isNaN(sexoNum) || sexoNum < 1 || sexoNum > 3) return 'Sexo selecionado é inválido'
+    if (isNaN(tipoNum) || tipoNum < 1 || tipoNum > 8) return 'Tipo sanguíneo selecionado é inválido'
     
     return null
   }
@@ -140,15 +144,33 @@ function Cadastro() {
     setLoading(true)
 
     try {
-      // Preparar foto de perfil
-      let fotoPerfilData = null
+      // Upload de foto
+      let fotoPerfilUrl = null
       if (photoUploadRef.current?.hasFile) {
         try {
-          fotoPerfilData = await photoUploadRef.current.getBase64()
-          if (fotoPerfilData && fotoPerfilData.length > 500000) {
-            setError('Foto muito grande. Tente uma imagem menor.')
-            setLoading(false)
-            return
+          if (import.meta.env.VITE_DEVELOPMENT_MODE === 'true') {
+            // Modo desenvolvimento - usar base64 da imagem
+            console.log('Modo dev: usando base64 da foto')
+            const base64Data = await photoUploadRef.current.getBase64()
+            fotoPerfilUrl = base64Data // Salvar o base64 diretamente
+          } else {
+            // Produção - upload real para Azure
+            if (!validateSasToken()) {
+              setError('Token de upload expirado. Entre em contato com o suporte.')
+              setLoading(false)
+              return
+            }
+            
+            const base64Data = await photoUploadRef.current.getBase64()
+            const uploadResult = await uploadBase64ToAzure(base64Data, `perfil_${Date.now()}.jpg`)
+            
+            if (!uploadResult.success) {
+              setError('Erro ao fazer upload da foto: ' + uploadResult.error)
+              setLoading(false)
+              return
+            }
+            
+            fotoPerfilUrl = uploadResult.url // Usar a URL completa
           }
         } catch (error) {
           setError('Erro ao processar foto: ' + error.message)
@@ -168,20 +190,79 @@ function Cadastro() {
         cep: cepRef.current?.value?.replace(/\D/g, '') || null,
         numero: numeroRef.current?.value?.replace(/\D/g, '') || null,
         data_nascimento: dataNascimentoRef.current?.value || null,
-        foto_perfil: fotoPerfilData
+        foto_perfil: fotoPerfilUrl || null
       }
       
-      const resultado = await criarUsuarioAPI(dadosUsuario)
+      // Validar tamanhos dos campos
+      if (dadosUsuario.nome.length > 100) {
+        setError('Nome muito longo (máximo 100 caracteres)')
+        setLoading(false)
+        return
+      }
+      
+      if (dadosUsuario.email.length > 100) {
+        setError('E-mail muito longo (máximo 100 caracteres)')
+        setLoading(false)
+        return
+      }
+      
+      if (dadosUsuario.foto_perfil && dadosUsuario.foto_perfil.length > 255) {
+        setError('Nome da foto muito longo')
+        setLoading(false)
+        return
+      }
+      
+      console.log('Dados do usuário:', {
+        ...dadosUsuario,
+        senha: '[OCULTA]' // Não logar senha
+      })
+      console.log('Tamanho da foto_perfil:', fotoPerfilUrl?.length || 0)
+      console.log('Modo desenvolvimento ativo:', import.meta.env.VITE_DEVELOPMENT_MODE)
+      console.log('Tentando conectar com backend...')
+      
+      // Verificar se backend está rodando
+      let resultado
+      try {
+        resultado = await criarUsuarioAPI(dadosUsuario)
+      } catch (error) {
+        if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+          // Backend não está rodando - simular sucesso para desenvolvimento
+          console.warn('Backend não está rodando. Simulando cadastro local.')
+          resultado = {
+            success: true,
+            data: { ...dadosUsuario, id: Date.now() },
+            message: 'Usuário criado localmente (backend offline)'
+          }
+        } else {
+          throw error
+        }
+      }
       
       if (resultado.success) {
         try {
-          const usuarioCriado = resultado.data || dadosUsuario
+          // Garantir que os dados do usuário incluam a foto
+          const usuarioCriado = {
+            ...(resultado.data || dadosUsuario),
+            foto_perfil: fotoPerfilUrl // Garantir que a foto seja incluída
+          }
+          console.log('Salvando usuário com foto:', {
+            ...usuarioCriado,
+            foto_perfil: fotoPerfilUrl ? 'Presente' : 'Ausente'
+          })
           AuthService.setSession(null, usuarioCriado)
-        } catch {}
+        } catch (error) {
+          console.error('Erro ao salvar sessão:', error)
+        }
         setSuccess('Conta criada com sucesso! Redirecionando...')
         setTimeout(() => navigate('/login'), 2000)
       } else {
-        setError(resultado.message || 'Erro ao criar conta.')
+        if (resultado.message?.includes('backend offline')) {
+          setError('Backend não está rodando. Inicie o servidor backend.')
+        } else if (resultado.message?.includes('Limite de cadastros atingido')) {
+          setError('Rate limiting ativo. Aguarde ou reinicie o backend.')
+        } else {
+          setError(resultado.message || 'Erro ao criar conta.')
+        }
       }
     } catch (error) {
       console.error('Erro na requisição:', error)

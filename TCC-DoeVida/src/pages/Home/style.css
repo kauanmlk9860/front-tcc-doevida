@@ -575,6 +575,8 @@ body::after {
   background: #f5f5f5;
   box-shadow: 0 0 8px rgba(153, 4, 16, 0.25);
   transition: transform 0.3s ease;
+  display: block;
+  flex-shrink: 0;
 }
 
 .user-avatar:hover {
@@ -798,6 +800,8 @@ body::after {
   object-fit: cover;
   position: relative;
   z-index: 2;
+  display: block;
+  background: #f5f5f5;
 }
 
 .user-modal-avatar-glow {
@@ -1662,4 +1666,19 @@ body::after {
     padding: 1rem 2rem;
     font-size: 1rem;
   }
+}
+
+/* ================= LOADING CONTAINER ================= */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+.loading-spinner {
+  font-size: 1.2rem;
+  color: var(--brand);
+  font-weight: 600;
 }

@@ -155,11 +155,14 @@ function Home() {
           {isLoggedIn ? (
             <div className="user-info">
               <img
-                src={user?.foto_perfil || "/placeholder-profile.png"}
+                src={user?.foto_perfil || "https://via.placeholder.com/40x40/990410/ffffff?text=U"}
                 alt="Foto de perfil"
                 className="user-avatar"
                 onClick={() => setShowUserModal(true)}
                 style={{ cursor: "pointer" }}
+                onError={(e) => {
+                  e.target.src = "https://via.placeholder.com/40x40/990410/ffffff?text=U"
+                }}
               />
               <div className="user-details">
                 <span className="user-name">Olá, {user?.nome || "Usuário"}!</span>
@@ -607,6 +610,8 @@ function Home() {
         </div>
       )}
 
+
+
       {/* MODAL PREMIUM DE PERFIL DO USUÁRIO */}
       {showUserModal && (
         <div className="user-modal-overlay" onClick={() => setShowUserModal(false)}>
@@ -636,9 +641,12 @@ function Home() {
             <div className="user-modal-avatar-section">
               <div className="user-modal-avatar-container">
                 <img
-                  src={user?.foto_perfil || "/placeholder-profile.png"}
+                  src={user?.foto_perfil || "https://via.placeholder.com/120x120/990410/ffffff?text=Usuario"}
                   alt="Foto de perfil"
                   className="user-modal-avatar"
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/120x120/990410/ffffff?text=Usuario"
+                  }}
                 />
                 <div className="user-modal-avatar-glow"></div>
               </div>
@@ -705,31 +713,7 @@ function Home() {
                   <div className="user-modal-info-content">
                     <span className="user-modal-info-label">Data de Nascimento</span>
                     <span className="user-modal-info-value">
-                      {(() => {
-                        try {
-                          // Criar data a partir da string fornecida
-                          const data = new Date(user.data_nascimento);
-                          if (isNaN(data.getTime())) return 'Data inválida';
-                          
-                          // Adicionar um dia para compensar a diferença de fuso horário
-                          data.setDate(data.getDate() + 1);
-                          
-                          // Formatar a data no formato brasileiro
-                          return data.toLocaleDateString('pt-BR');
-                        } catch (error) {
-                          console.error('Erro ao formatar data de nascimento:', error);
-                          try {
-                            // Tentar extrair a data diretamente da string se o formato for conhecido
-                            const match = user.data_nascimento.match(/(\d{4})-(\d{2})-(\d{2})/);
-                            if (match) {
-                              return `${match[3]}/${match[2]}/${match[1]}`; // Formato DD/MM/YYYY
-                            }
-                            return 'Data inválida';
-                          } catch (e) {
-                            return 'Data inválida';
-                          }
-                        }
-                      })()}
+                      {formatDateBR(user.data_nascimento)}
                     </span>
                   </div>
                 </div>

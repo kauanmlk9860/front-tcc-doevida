@@ -114,8 +114,24 @@ class AuthService {
           const role = deriveRoleFrom(usuarioRaw, token);
           const prevRaw = localStorage.getItem(STORAGE_KEYS.user);
           const prevUser = prevRaw ? JSON.parse(prevRaw) : null;
-          const merged = { ...(prevUser || {}), ...(usuarioRaw || {}) };
+          
+          // Preservar foto_perfil do usuário anterior se não vier na resposta
+          const merged = { 
+            ...(prevUser || {}), 
+            ...(usuarioRaw || {})
+          };
+          
+          // Se não tem foto na resposta mas tinha antes, manter a anterior
+          if (!merged.foto_perfil && prevUser?.foto_perfil) {
+            merged.foto_perfil = prevUser.foto_perfil;
+          }
+          
           const usuarioPersist = role ? { ...merged, role } : merged;
+          
+          console.log('Dados do usuário após login:', {
+            ...usuarioPersist,
+            foto_perfil: usuarioPersist.foto_perfil ? 'Presente' : 'Ausente'
+          });
 
           this.setSession(token, usuarioPersist);
 
