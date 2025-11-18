@@ -144,15 +144,14 @@ function HospitalHome() {
 
         <nav className="nav-buttons" aria-label="Ações principais">
           <div className="user-info">
-            <img
-              src={user?.foto || "/placeholder-profile.png"}
-              alt="Foto do hospital"
-              className="user-avatar"
-              onClick={() => setShowUserModal(true)}
-              style={{ cursor: "pointer" }}
-            />
             <div className="user-details">
-              <span className="user-name">Olá, {user?.nome || "Hospital"}!</span>
+              <span 
+                className="user-name"
+                onClick={() => setShowUserModal(true)}
+                style={{ cursor: "pointer" }}
+              >
+                Olá, {user?.nome || "Hospital"}!
+              </span>
             </div>
           </div>
         </nav>
