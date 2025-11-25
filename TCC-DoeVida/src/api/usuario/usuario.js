@@ -151,13 +151,74 @@ export async function listarUsuarios() {
   }
 }
 
-/** BUSCAR USUÁRIO POR ID */
+/** BUSCAR USUÁRIO POR ID COM DADOS COMPLETOS */
 export async function buscarUsuario(id) {
   try {
+    console.log('🔍 Buscando usuário ID:', id);
     const res = await http.get(`/usuario/${id}`);
+    
+    let userData = res.data.usuario || res.data || {};
+    console.log('📋 Dados brutos do usuário da API:', JSON.stringify(userData, null, 2));
+    
+    // Buscar tipos sanguíneos para mapear
+    let tiposMap = {};
+    try {
+      const tiposRes = await http.get('/tipo-sanguineo');
+      const tipos = tiposRes.data.tipos_sanguineos || tiposRes.data || [];
+      console.log('🩸 Tipos sanguíneos disponíveis:', tipos);
+      
+      if (Array.isArray(tipos)) {
+        tiposMap = tipos.reduce((acc, tipo) => {
+          acc[tipo.id] = tipo.tipo;
+          return acc;
+        }, {});
+      }
+    } catch (tipoError) {
+      console.log('Erro ao buscar tipos sanguíneos:', tipoError);
+      // Fallback para tipos padrão
+      tiposMap = {
+        1: 'A+', 2: 'A-', 3: 'B+', 4: 'B-',
+        5: 'AB+', 6: 'AB-', 7: 'O+', 8: 'O-'
+      };
+    }
+    
+    // Mapear tipo sanguíneo
+    let tipoSanguineo = 'Não informado';
+    if (userData.tipo_sanguineo_nome) {
+      tipoSanguineo = userData.tipo_sanguineo_nome;
+    } else if (userData.tipo_sanguineo && typeof userData.tipo_sanguineo === 'string') {
+      tipoSanguineo = userData.tipo_sanguineo;
+    } else if (userData.id_tipo_sanguineo && tiposMap[userData.id_tipo_sanguineo]) {
+      tipoSanguineo = tiposMap[userData.id_tipo_sanguineo];
+    }
+    
+    // Mapear telefone
+    let telefone = 'Não informado';
+    if (userData.telefone) {
+      telefone = userData.telefone;
+    } else if (userData.numero) {
+      telefone = userData.numero;
+    } else if (userData.phone) {
+      telefone = userData.phone;
+    } else if (userData.celular) {
+      telefone = userData.celular;
+    }
+    
+    // Atualizar userData com os dados processados
+    userData.tipo_sanguineo = tipoSanguineo;
+    userData.tipo_sanguineo_nome = tipoSanguineo;
+    userData.telefone = telefone;
+    
+    console.log('✅ Dados processados do usuário:', {
+      nome: userData.nome,
+      telefone: telefone,
+      tipoSanguineo: tipoSanguineo,
+      id_tipo_sanguineo: userData.id_tipo_sanguineo
+    });
+    
     return {
-      success: res.data.status || false,
-      data: res.data.usuario || res.data,
+      success: true,
+      data: userData,
       message: res.data.message
     };
   } catch (error) {

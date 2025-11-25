@@ -392,13 +392,7 @@ function Home() {
               Para dúvidas gerais sobre doação, consulte também a seção "Saiba Mais".
             </p>
 
-            <button
-              type="button"
-              className="btn-close-modal"
-              onClick={() => setShowModal(false)}
-            >
-              Fechar
-            </button>
+
           </div>
         </div>
       )}

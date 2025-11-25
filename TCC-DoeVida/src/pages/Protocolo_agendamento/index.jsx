@@ -134,11 +134,15 @@ export default function Protocolo_agendamento() {
 
       <div className="agendamento-body">
         <h2>Lembrete</h2>
-        <p><strong>No dia da sua doação, não se esqueça de:</strong></p>
+        <p><strong>Antes da doação:</strong></p>
         <ul>
-          <li>✅ Levar um documento oficial com foto (RG ou CNH).</li>
-          <li>✅ Estar bem alimentado e hidratado (evite jejum, comidas gordurosas e álcool nas 12h anteriores).</li>
-          <li>✅ Usar roupas confortáveis e fáceis de arregaçar a manga.</li>
+          <li>✅ <strong>Alimentação:</strong> Não vá em jejum. Evite alimentos gordurosos (como frituras, ovos, massas e queijos) nas 4 horas que antecedem a doação.</li>
+          <li>✅ <strong>Hidratação:</strong> Beba bastante líquido, preferencialmente água.</li>
+          <li>✅ <strong>Descanso:</strong> Durma pelo menos 6 horas na noite anterior.</li>
+          <li>✅ <strong>Álcool e cigarro:</strong> Não beba álcool nas 12 horas anteriores e não fume por pelo menos 2 horas antes e depois da doação.</li>
+          <li>✅ <strong>Documentação:</strong> Apresente um documento oficial com foto, como RG, CNH ou carteira de trabalho.</li>
+          <li>✅ <strong>Profissões:</strong> Profissionais que dirigem veículos grandes, pilotam aviões ou trabalham com atividades de risco (como paraquedismo e mergulho) devem suspender essas atividades por 12 horas antes da doação.</li>
+          <li>✅ <strong>Roupas:</strong> Use roupas confortáveis e fáceis de arregaçar a manga.</li>
         </ul>
         <p>
           Sua doação fará toda a diferença. Obrigado por esse gesto de amor e solidariedade!

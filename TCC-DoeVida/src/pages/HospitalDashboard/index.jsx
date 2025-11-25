@@ -75,6 +75,8 @@ function HospitalDashboard() {
       if (res && res.success && res.data) {
         const userData = res.data?.usuario || res.data || {};
         
+        console.log('📋 Dados brutos do usuário:', JSON.stringify(userData, null, 2));
+        
         // Extrair o ID do tipo sanguíneo do usuário
         let idTipoSanguineo = userData.id_tipo_sanguineo || 
                              userData.idTipoSanguineo || 
@@ -83,6 +85,9 @@ function HospitalDashboard() {
                              userData.tipo_sanguineo_id ||
                              (userData.tipo_sanguineo && parseInt(userData.tipo_sanguineo)) ||
                              (userData.tipoSanguineo && parseInt(userData.tipoSanguineo));
+        
+        console.log('🩸 ID tipo sanguíneo encontrado:', idTipoSanguineo);
+        console.log('📞 Telefone encontrado:', userData.telefone || userData.numero || userData.phone);
         
         // Se for string, converter para número
         if (typeof idTipoSanguineo === 'string') {
@@ -111,17 +116,20 @@ function HospitalDashboard() {
           tipoSanguineo = userData.tipoSanguineoObj.tipo;
         }
         
+        // Usar os dados já processados pela API
         return {
-          ...userData,
-          tipoSanguineo: tipoSanguineo,
-          id_tipo_sanguineo: idTipoSanguineo,
-          tipo_sanguineo_nome: tipoSanguineo
+          nome: userData.nome || 'Nome não informado',
+          telefone: userData.telefone || 'Telefone não informado',
+          tipoSanguineo: userData.tipo_sanguineo || 'Tipo não informado',
+          email: userData.email || 'Email não informado',
+          ...userData
         };
       }
       
       return { 
         id: idUsuario, 
         nome: 'Usuário não encontrado',
+        telefone: 'Não informado',
         tipoSanguineo: 'Não informado'
       }
     } catch (error) {
@@ -129,6 +137,7 @@ function HospitalDashboard() {
       return { 
         id: idUsuario, 
         nome: 'Erro ao carregar',
+        telefone: 'Não informado',
         tipoSanguineo: 'Não informado'
       }
     }
@@ -211,7 +220,7 @@ function HospitalDashboard() {
         console.log('✅ Agendamentos brutos carregados:', resTodos.data.length)
         console.log('📊 Dados dos agendamentos:', resTodos.data)
 
-        // Criar um array para armazenar os agendamentos com os dados completos do usuário
+        // Buscar dados dos usuários para cada agendamento
         console.log('👥 Buscando dados dos usuários...')
         const agendamentosComUsuarios = await Promise.all(
           resTodos.data.map(async (agendamento) => {
@@ -221,12 +230,11 @@ function HospitalDashboard() {
               return {
                 ...agendamento,
                 usuario: {
-                  ...dadosUsuario,
                   id: agendamento.id_usuario,
-                  nome: dadosUsuario?.nome || 'Usuário não encontrado',
-                  email: dadosUsuario?.email || '',
-                  telefone: dadosUsuario?.numero || dadosUsuario?.telefone || '',
-                  tipoSanguineo: dadosUsuario?.tipoSanguineo || 'Não informado'
+                  nome: dadosUsuario?.nome || 'Nome não informado',
+                  email: dadosUsuario?.email || 'Email não informado',
+                  telefone: dadosUsuario?.telefone || 'Telefone não informado',
+                  tipoSanguineo: dadosUsuario?.tipoSanguineo || 'Tipo não informado'
                 }
               }
             } catch (error) {
@@ -236,8 +244,9 @@ function HospitalDashboard() {
                 usuario: {
                   id: agendamento.id_usuario,
                   nome: 'Erro ao carregar',
-                  email: '',
-                  tipoSanguineo: 'N/A'
+                  email: 'Erro ao carregar',
+                  telefone: 'Erro ao carregar',
+                  tipoSanguineo: 'Erro ao carregar'
                 }
               }
             }
