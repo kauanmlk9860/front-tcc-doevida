@@ -6,7 +6,7 @@ import FormattedInput from '../../components/jsx/FormattedInput'
 import PhotoUpload from '../../components/jsx/PhotoUpload'
 import PasswordInput from '../../components/jsx/PasswordInput'
 import { InputIcons } from '../../components/jsx/InputIcons'
-import { uploadBase64ToAzure, validateSasToken } from '../../services/azureStorage'
+import { uploadFotoHospital } from '../../api/hospital'
 
 function Hospital_cadastro() {
   const navigate = useNavigate()
@@ -115,41 +115,28 @@ function Hospital_cadastro() {
       let fotoHospitalUrl = null;
       if (photoUploadRef.current?.hasFile) {
         try {
-          if (import.meta.env.VITE_DEVELOPMENT_MODE === 'true') {
-            // Modo desenvolvimento - criar Object URL da imagem
-            const file = photoUploadRef.current.getFile()
-            if (file) {
-              fotoHospitalUrl = URL.createObjectURL(file)
-              // Salvar também o arquivo no sessionStorage para persistir durante a sessão
-              const reader = new FileReader()
-              reader.onload = () => {
-                sessionStorage.setItem('hospital_photo_blob', reader.result)
-              }
-              reader.readAsDataURL(file)
-            }
-          } else {
-            // Produção - upload real para Azure
-            if (!validateSasToken()) {
-              setError('Token de upload expirado. Entre em contato com o suporte.')
-              setLoading(false)
-              return
-            }
+          const file = photoUploadRef.current.getFile()
+          if (file) {
+            console.log('📤 Fazendo upload da foto do hospital...')
+            const uploadResult = await uploadFotoHospital(file)
             
-            const base64Data = await photoUploadRef.current.getBase64()
-            const uploadResult = await uploadBase64ToAzure(base64Data, `hospital_${Date.now()}.jpg`)
-            
-            if (!uploadResult.success) {
-              setError('Erro ao fazer upload da foto: ' + uploadResult.error)
-              setLoading(false)
-              return
+            if (uploadResult.success) {
+              fotoHospitalUrl = uploadResult.url
+              console.log('✅ Foto do hospital enviada:', fotoHospitalUrl)
+            } else {
+              // Se o upload falhar, não enviar foto temporariamente
+              console.warn('⚠️ Upload da foto falhou:', uploadResult.message)
+              console.warn('⚠️ Cadastrando hospital SEM foto por enquanto')
+              console.warn('💡 Para usar fotos, configure o backend seguindo BACKEND_UPLOAD_GUIDE.md')
+              
+              // NÃO usar base64 - muito grande para o backend processar
+              fotoHospitalUrl = null
             }
-            
-            fotoHospitalUrl = uploadResult.url
           }
         } catch (error) {
-          setError('Erro ao processar foto: ' + error.message)
-          setLoading(false)
-          return
+          console.warn('⚠️ Erro ao processar foto, continuando sem foto:', error.message)
+          // Não bloquear o cadastro se a foto falhar
+          fotoHospitalUrl = null
         }
       }
 
@@ -168,13 +155,19 @@ function Hospital_cadastro() {
         foto: fotoHospitalUrl || null
       }
 
+      console.log('📤 Enviando dados do hospital:', JSON.stringify(dadosHospital, null, 2))
+
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/v1/doevida'}/hospital`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dadosHospital)
       })
 
+      console.log('📥 Status da resposta:', response.status, response.statusText)
+
       const resultado = await response.json().catch(() => ({}))
+      console.log('📥 Resposta do servidor:', resultado)
+      
       const okDaApi = response.ok && (resultado.status === true || resultado.status_code === 201 || resultado.status_code === 200)
 
       if (okDaApi) {
