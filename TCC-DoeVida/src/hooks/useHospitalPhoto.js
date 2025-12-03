@@ -6,16 +6,8 @@ export const useHospitalPhoto = (hospital) => {
     
     if (!hospital?.foto) return placeholder;
     if (typeof hospital.foto !== 'string') return placeholder;
-    
-    // Se já é uma URL completa (http/https/data/blob)
     if (hospital.foto.startsWith('data:') || hospital.foto.startsWith('http') || hospital.foto.startsWith('blob:')) {
       return hospital.foto;
-    }
-    
-    // Se é um caminho relativo (/uploads/...), construir URL completa
-    if (hospital.foto.startsWith('/uploads/')) {
-      const baseUrl = import.meta.env.VITE_API_URL?.replace('/v1/doevida', '') || 'http://localhost:8080';
-      return `${baseUrl}${hospital.foto}`;
     }
     
     const saved = sessionStorage.getItem('hospital_photo_blob');

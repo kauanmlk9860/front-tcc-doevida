@@ -9,6 +9,15 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)), // @ -> src
     },
   },
+  build: {
+    outDir: 'dist',
+    // Copiar arquivo _redirects para o build
+    rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url))
+      }
+    }
+  },
   server: {
     proxy: {
       '/v1/doevida': {
@@ -17,5 +26,7 @@ export default defineConfig({
         secure: false,
       }
     }
-  }
+  },
+  // Copiar _redirects para dist
+  publicDir: 'public'
 })

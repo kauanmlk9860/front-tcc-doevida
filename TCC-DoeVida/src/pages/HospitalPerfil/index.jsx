@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
 import { atualizarHospital, buscarHospital } from '../../api/usuario/hospital';
+import { useHospitalPhoto } from '../../hooks/useHospitalPhoto';
 import './style.css';
 import logo from '../../assets/logo.png';
 import LogoutModal from '../../components/jsx/LogoutModal';
@@ -14,6 +15,7 @@ function HospitalPerfil() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [editMode, setEditMode] = useState(false);
+  const { getPhotoUrl } = useHospitalPhoto(formData);
 
   const [formData, setFormData] = useState({
     nome: '',
@@ -154,6 +156,7 @@ function HospitalPerfil() {
           };
           
           console.log('FormData preenchido:', formDataAtualizado);
+          console.log('📸 URL da foto do hospital:', hospital.foto);
           setFormData(formDataAtualizado);
         } else {
           console.error('Resposta da API sem sucesso ou sem dados:', response);
@@ -285,7 +288,7 @@ function HospitalPerfil() {
             <div className="profile-header">
               <div className="profile-avatar">
                 {formData.foto ? (
-                  <img src={formData.foto} alt={formData.nome} />
+                  <img src={getPhotoUrl(300, 300)} alt={formData.nome} />
                 ) : (
                   <div className="avatar-placeholder">
                     <span>🏥</span>

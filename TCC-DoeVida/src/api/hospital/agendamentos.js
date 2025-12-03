@@ -37,7 +37,29 @@ export async function listarAgendamentosHospital(filtros = {}) {
     
     console.log('📋 Total de agendamentos encontrados:', agendamentos.length);
     
-    // Aplicar filtros
+    // Filtrar apenas agendamentos do hospital logado
+    const usuarioStr = localStorage.getItem('usuario');
+    if (usuarioStr) {
+      try {
+        const usuario = JSON.parse(usuarioStr);
+        const hospitalId = usuario.id;
+        
+        console.log('🏥 Filtrando agendamentos do hospital ID:', hospitalId);
+        console.log('📊 Agendamentos antes do filtro:', agendamentos.length);
+        
+        // Filtrar por id_hospital
+        agendamentos = agendamentos.filter(a => {
+          const idHospital = a.id_hospital || a.idHospital || a.hospital_id;
+          return idHospital === hospitalId || idHospital === String(hospitalId);
+        });
+        
+        console.log('✅ Agendamentos após filtro do hospital:', agendamentos.length);
+      } catch (error) {
+        console.error('❌ Erro ao filtrar por hospital:', error);
+      }
+    }
+    
+    // Aplicar filtros adicionais
     if (filtros.status) {
       agendamentos = agendamentos.filter(a => a.status === filtros.status);
     }
@@ -278,7 +300,23 @@ export async function obterEstatisticasHospital(periodo = 'mes') {
   try {
     // Buscar todos os agendamentos
     const res = await http.get('/agendamento');
-    const agendamentos = res.data.agendamentos || res.data.dados || res.data || [];
+    let agendamentos = res.data.agendamentos || res.data.dados || res.data || [];
+    
+    // Filtrar apenas agendamentos do hospital logado
+    const usuarioStr = localStorage.getItem('usuario');
+    if (usuarioStr) {
+      try {
+        const usuario = JSON.parse(usuarioStr);
+        const hospitalId = usuario.id;
+        
+        agendamentos = agendamentos.filter(a => {
+          const idHospital = a.id_hospital || a.idHospital || a.hospital_id;
+          return idHospital === hospitalId || idHospital === String(hospitalId);
+        });
+      } catch (error) {
+        console.error('❌ Erro ao filtrar estatísticas por hospital:', error);
+      }
+    }
     
     // Calcular estatísticas
     const stats = {
@@ -315,7 +353,23 @@ export async function obterEstatisticasHospital(periodo = 'mes') {
 export async function obterAgendamentosHoje() {
   try {
     const res = await http.get('/agendamento');
-    const agendamentos = res.data.agendamentos || res.data.dados || res.data || [];
+    let agendamentos = res.data.agendamentos || res.data.dados || res.data || [];
+    
+    // Filtrar apenas agendamentos do hospital logado
+    const usuarioStr = localStorage.getItem('usuario');
+    if (usuarioStr) {
+      try {
+        const usuario = JSON.parse(usuarioStr);
+        const hospitalId = usuario.id;
+        
+        agendamentos = agendamentos.filter(a => {
+          const idHospital = a.id_hospital || a.idHospital || a.hospital_id;
+          return idHospital === hospitalId || idHospital === String(hospitalId);
+        });
+      } catch (error) {
+        console.error('❌ Erro ao filtrar agendamentos de hoje por hospital:', error);
+      }
+    }
     
     // Obter data de hoje no formato YYYY-MM-DD
     const hoje = new Date().toISOString().split('T')[0];

@@ -38,6 +38,7 @@ function HospitalDashboard() {
     console.log('👤 Usuário atual:', user)
     console.log('🏥 Role do usuário:', user?.role)
     console.log('🏢 CNPJ do usuário:', user?.cnpj)
+    console.log('🆔 ID do hospital:', user?.id)
     
     if (!user) {
       console.log('❌ Usuário não encontrado, redirecionando para login')
@@ -53,6 +54,7 @@ function HospitalDashboard() {
       navigate('/hospital-login')
     } else {
       console.log('✅ Hospital autenticado com sucesso')
+      console.log('📋 Dashboard mostrará apenas agendamentos do hospital ID:', user?.id)
     }
   }, [user, navigate])
 
@@ -488,6 +490,28 @@ function HospitalDashboard() {
           </div>
         </div>
       </header>
+
+      {/* Info Badge */}
+      {user?.id && (
+        <div style={{
+          backgroundColor: '#e3f2fd',
+          border: '1px solid #2196f3',
+          borderRadius: '8px',
+          padding: '12px 16px',
+          margin: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="#2196f3" strokeWidth="2"/>
+            <path d="M12 16v-4M12 8h.01" stroke="#2196f3" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+          <span style={{ color: '#1565c0', fontSize: '14px', fontWeight: '500' }}>
+            Exibindo apenas agendamentos do seu hospital (ID: {user.id})
+          </span>
+        </div>
+      )}
 
       {/* Estatísticas */}
       <section className="stats-section">
